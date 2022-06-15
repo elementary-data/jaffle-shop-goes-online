@@ -1,0 +1,65 @@
+version: 2
+
+models:
+  - name: stg_customers
+    tests:
+      - elementary.all_columns_anomalies:
+          tags: ["all_columns_anomalies"]
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              to: ref('stg_singups')
+              field: signup_id
+
+  - name: stg_orders
+    config:
+      elementary:
+        timestamp_column: "order_date"
+    tests:
+      - elementary.all_columns_anomalies:
+          tags: ["all_columns_anomalies"]
+      - elementary.table_anomalies:
+          tags: ["table_anomalies"]
+          table_anomalies:
+            - row_count
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: status
+        tests:
+          - accepted_values:
+              values:
+                ["placed", "shipped", "completed", "return_pending", "returned"]
+
+  - name: stg_payments
+    tests:
+      - elementary.all_columns_anomalies:
+          tags: ["all_columns_anomalies"]
+    columns:
+      - name: payment_id
+        tests:
+          - unique
+          - not_null
+      - name: payment_method
+        tests:
+          - accepted_values:
+              values: ["credit_card", "coupon", "bank_transfer", "gift_card"]
+
+  - name: stg_signups
+    tests:
+      - elementary.all_columns_anomalies:
+          tags: ["all_columns_anomalies"]
+    columns:
+      - name: signup_id
+        tests:
+          - unique
+          - not_null
+      - name: customer_email
+        tests:
+          - unique
+          - not_null
