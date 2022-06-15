@@ -3,6 +3,10 @@ version: 2
 models:
   - name: customers
     description: This table has basic information about a customer, as well as some derived facts based on a customer's orders
+    meta:
+      owner: "Maayan"
+    config:
+      tags: ["PII"]
     tests:
       - elementary.all_columns_anomalies:
           tags: ["all_columns_anomalies"]
@@ -33,7 +37,10 @@ models:
 
   - name: orders
     description: This table has basic information about orders, as well as some derived facts based on payments
+    meta:
+      owner: "Or"
     config:
+      tags: ["finance"]
       elementary:
         timestamp_column: "order_date"
     tests:

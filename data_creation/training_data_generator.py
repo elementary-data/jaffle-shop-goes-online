@@ -12,7 +12,7 @@ NEW_JAFFLE_VALIDATION_DATA_DIRECORTY_RELATIVE_PATH = "../jaffle_shop_online/seed
 
 CUSTOMERS_COUNT = 2000
 ORDERS_COUNT = 10000
-TIME_SPAN_IN_DAYS = 30
+TIME_SPAN_IN_DAYS = 35
 LOWEST_PAYMENT_IN_HUNDRENDS = 0
 HIGHEST_PAYMENT_IN_HUNDRENDS = 28
 MAX_PAYMENTS_PER_ORDER = 2
@@ -44,7 +44,7 @@ def generate_orders_data():
         new_orders.append([
             order_id,  # ORDER ID
             random.randint(1, CUSTOMERS_COUNT),  # CUSTOMER ID
-            (datetime.now() - timedelta(random.randint(1, TIME_SPAN_IN_DAYS))).strftime("%Y-%m-%d"),  # ORDER DATE
+            (datetime.now() - timedelta(random.randint(2, TIME_SPAN_IN_DAYS))).strftime("%Y-%m-%d"),  # ORDER DATE
             all_order_statuses[random.randint(0, len(all_order_statuses) - 1)]  # ORDER STATUS
         ])
     write_to_csv(new_data_path, headers, new_orders)

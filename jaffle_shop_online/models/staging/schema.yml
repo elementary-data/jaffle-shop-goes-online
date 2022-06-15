@@ -2,6 +2,10 @@ version: 2
 
 models:
   - name: stg_customers
+    meta:
+      owner: "Idan"
+    config:
+      tags: ["staging", "PII"]
     tests:
       - elementary.all_columns_anomalies:
           tags: ["all_columns_anomalies"]
@@ -15,7 +19,10 @@ models:
               field: signup_id
 
   - name: stg_orders
+    meta:
+      owner: "Idan"
     config:
+      tags: ["staging", "finance"]
       elementary:
         timestamp_column: "order_date"
     tests:
@@ -37,6 +44,10 @@ models:
                 ["placed", "shipped", "completed", "return_pending", "returned"]
 
   - name: stg_payments
+    meta:
+      owner: "Idan"
+    config:
+      tags: ["staging", "finance"]
     tests:
       - elementary.all_columns_anomalies:
           tags: ["all_columns_anomalies"]
@@ -51,6 +62,10 @@ models:
               values: ["credit_card", "coupon", "bank_transfer", "gift_card"]
 
   - name: stg_signups
+    meta:
+      owner: "Idan"
+    config:
+      tags: ["staging", "PII"]
     tests:
       - elementary.all_columns_anomalies:
           tags: ["all_columns_anomalies"]
