@@ -15,8 +15,8 @@ models:
           - unique
           - not_null
           - relationships:
-              to: ref('stg_singups')
-              field: signup_id
+              to: ref('stg_signups')
+              field: customer_id
 
   - name: stg_orders
     meta:

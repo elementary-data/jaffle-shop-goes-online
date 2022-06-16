@@ -3,7 +3,7 @@ import os
 import random
 from collections import defaultdict
 import hashlib
-from utils.csv import split_csv_to_headers_and_data, write_to_csv
+from data_creation.jaffle_shop_utils.csv import split_csv_to_headers_and_data, write_to_csv
 
 CURRENT_DIRECTORY_PATH = os.path.dirname(os.path.realpath(__file__))
 ORIGINAL_JAFFLE_DATA_DIRECTORY_NAME = "original_jaffle_shop_data"
@@ -16,6 +16,13 @@ TIME_SPAN_IN_DAYS = 35
 LOWEST_PAYMENT_IN_HUNDRENDS = 0
 HIGHEST_PAYMENT_IN_HUNDRENDS = 28
 MAX_PAYMENTS_PER_ORDER = 2
+
+
+def generate_training_data():
+    generate_customers_data()
+    generate_orders_data()
+    generate_payments_data()
+    generate_signups_data()
 
 
 def generate_customers_data():
@@ -107,7 +114,4 @@ def generate_signups_data():
 
 
 if __name__ == "__main__":
-    generate_customers_data()
-    generate_orders_data()
-    generate_payments_data()
-    generate_signups_data()
+    generate_training_data()

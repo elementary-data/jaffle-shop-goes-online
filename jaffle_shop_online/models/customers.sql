@@ -16,6 +16,11 @@ payments as (
 
 ),
 
+signups as (
+
+    select * from {{ ref('stg_signups') }}
+),
+
 customer_orders as (
 
         select
@@ -54,7 +59,9 @@ final as (
         customer_orders.first_order,
         customer_orders.most_recent_order,
         customer_orders.number_of_orders,
-        customer_payments.total_amount as customer_lifetime_value
+        customer_payments.total_amount as customer_lifetime_value,
+        signups.customer_email,
+        signups.signup_date
 
     from customers
 
@@ -63,6 +70,9 @@ final as (
 
     left join customer_payments
         on  customers.customer_id = customer_payments.customer_id
+
+    left join signups
+        on customers.customer_id = signups.customer_id
 
 )
 
