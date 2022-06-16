@@ -44,7 +44,9 @@ models:
         description: Customer's email. PII.
         tests:
           - unique
-          - not_null
+          - not_null:
+              config:
+                severity: warn
 
       - name: signup_date
         description: Date (UTC) of a customer's signup to the online shop.
@@ -59,9 +61,12 @@ models:
       tags: ["finance"]
       elementary:
         timestamp_column: "order_date"
+
     tests:
       - elementary.table_anomalies:
           tags: ["table_anomalies"]
+          config:
+            severity: warn
           table_anomalies:
             - row_count
     columns:
