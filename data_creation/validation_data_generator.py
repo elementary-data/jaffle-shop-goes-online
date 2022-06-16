@@ -101,9 +101,19 @@ def generate_signups_data():
         new_signups.append([
             customer[0],  # SIGNUP ID
             customer[0],  # CUSTOMER ID
-            f"{customer[1]}{customer[2].lower()}{customer[0]}@example.com",  # USER EMAIL
+            f"",  # USER EMAIL
             hashlib.sha256(datetime.now().isoformat().encode()).hexdigest(),
             customer_min_order_time_map[customer[0]]
+        ])
+    last_signup_date = max([datetime.strptime(row[4], "%Y-%m-%d") for row in training_signups_data])
+    validation_signup_date = (last_signup_date + timedelta(1)).strftime("%Y-%m-%d")
+    for i in range(len(customers_data) + 1, len(customers_data) + 3):
+        new_signups.append([
+            i,  # SIGNUP ID
+            i,  # CUSTOMER ID
+            f"abcd@example.com",  # USER EMAIL
+            hashlib.sha256(datetime.now().isoformat().encode()).hexdigest(),
+            validation_signup_date
         ])
     write_to_csv(validation_signups_path, signups_headers, new_signups)
 

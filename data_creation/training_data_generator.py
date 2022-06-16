@@ -94,7 +94,7 @@ def generate_signups_data():
     customers_headers, customers_data = split_csv_to_headers_and_data(csv_path=customers_csv_path)
     orders_headers, orders_data = split_csv_to_headers_and_data(csv_path=orders_csv_path)
 
-    customer_min_order_time_map = defaultdict(lambda: (datetime.now() - timedelta(random.randint(1, TIME_SPAN_IN_DAYS))).strftime("%Y-%m-%d"))
+    customer_min_order_time_map = defaultdict(lambda: (datetime.now() - timedelta(random.randint(2, TIME_SPAN_IN_DAYS))).strftime("%Y-%m-%d"))
     for order in orders_data:
         customer_min_order_time_map[order[1]] = min(
             datetime.strptime(customer_min_order_time_map[order[1]], "%Y-%m-%d"),
@@ -106,7 +106,7 @@ def generate_signups_data():
         new_signups.append([
             customer[0],  # SIGNUP ID
             customer[0],  # CUSTOMER ID
-            f"{customer[1]}{customer[2].lower()}{customer[0]}@example.com",  # USER EMAIL
+            f"{customer[1]}{customer[2].lower()}{customer[0]}@example.com" if random.randint(0, 30) else "",  # USER EMAIL
             hashlib.sha256(datetime.now().isoformat().encode()).hexdigest(),
             customer_min_order_time_map[customer[0]]
         ])

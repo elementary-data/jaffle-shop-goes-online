@@ -44,9 +44,6 @@ models:
         description: Customer's email. PII.
         tests:
           - unique
-          - not_null:
-              config:
-                severity: warn
 
       - name: signup_date
         description: Date (UTC) of a customer's signup to the online shop.

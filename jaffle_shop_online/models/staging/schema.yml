@@ -26,8 +26,6 @@ models:
       elementary:
         timestamp_column: "order_date"
     tests:
-      - elementary.all_columns_anomalies:
-          tags: ["all_columns_anomalies"]
       - elementary.table_anomalies:
           tags: ["table_anomalies"]
           table_anomalies:
@@ -68,6 +66,8 @@ models:
       owner: "Idan"
     config:
       tags: ["staging", "PII"]
+      elementary:
+        timestamp_column: "signup_date"
     tests:
       - elementary.all_columns_anomalies:
           tags: ["all_columns_anomalies"]
@@ -79,4 +79,10 @@ models:
       - name: customer_email
         tests:
           - unique
-          - not_null
+          - elementary.column_anomalies:
+              tags: ["column_anomalies"]
+              sensitivity: 2
+              config:
+                severity: warn
+              column_anomalies:
+                - missing_count
