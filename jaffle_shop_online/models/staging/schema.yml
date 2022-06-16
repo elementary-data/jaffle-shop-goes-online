@@ -40,6 +40,8 @@ models:
       - name: status
         tests:
           - accepted_values:
+              config:
+                severity: warn
               values:
                 ["placed", "shipped", "completed", "return_pending", "returned"]
 
