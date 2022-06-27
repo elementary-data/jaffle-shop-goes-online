@@ -62,8 +62,6 @@ models:
     tests:
       - elementary.table_anomalies:
           tags: ["table_anomalies"]
-          config:
-            severity: warn
           table_anomalies:
             - row_count
     columns:
@@ -96,6 +94,8 @@ models:
         tests:
           - not_null
           - elementary.column_anomalies:
+              config:
+                severity: warn
               tags: ["column_anomalies"]
               column_anomalies:
                 - zero_count
