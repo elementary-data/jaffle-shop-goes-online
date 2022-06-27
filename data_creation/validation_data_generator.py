@@ -101,7 +101,7 @@ def generate_signups_data():
         new_signups.append([
             customer[0],  # SIGNUP ID
             customer[0],  # CUSTOMER ID
-            f"",  # USER EMAIL
+            f"abcd@example.com",  # USER EMAIL
             hashlib.sha256(datetime.now().isoformat().encode()).hexdigest(),
             customer_min_order_time_map[customer[0]]
         ])
