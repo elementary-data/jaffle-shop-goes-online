@@ -1,5 +1,5 @@
 import click
-from data_creation.initial_demo import initial_demo
+from data_creation.initial_demo import initial_demo, initial_incremental_demo
 from data_creation.training_data_generator import generate_training_data
 from data_creation.validation_data_generator import generate_validation_data
 
@@ -12,6 +12,17 @@ def cli():
 @cli.command()
 def initial_demo_flow():
     initial_demo()
+
+
+@cli.command()
+@click.option(
+    '--days-back',
+    default=30,
+    help='Amount of days of tests',
+    type=int
+)
+def initial_incremental_demo_flow(days_back):
+    initial_incremental_demo(days_back=days_back)
 
 
 @cli.command()

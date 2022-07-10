@@ -8,7 +8,7 @@ from data_creation.jaffle_shop_utils.csv import split_csv_to_headers_and_data, w
 CURRENT_DIRECTORY_PATH = os.path.dirname(os.path.realpath(__file__))
 ORIGINAL_JAFFLE_DATA_DIRECTORY_NAME = "original_jaffle_shop_data"
 NEW_JAFFLE_TRAINING_DATA_DIRECORTY_RELATIVE_PATH = "../jaffle_shop_online/seeds/training"
-NEW_JAFFLE_VALIDATION_DATA_DIRECORTY_RELATIVE_PATH = "../jaffle_shop_online/seeds/training"
+NEW_JAFFLE_VALIDATION_DATA_DIRECORTY_RELATIVE_PATH = "../jaffle_shop_online/seeds/validation"
 
 CUSTOMERS_COUNT = 2000
 ORDERS_COUNT = 10000
