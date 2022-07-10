@@ -1,6 +1,6 @@
 -- depends_on: {{ ref('raw_orders_validation') }}
 
-{% if elementary.table_exists_in_target('raw_orders_validation') %}
+{% if elementary.get_config_var('validation') %}
     with source as (
         select * from {{ ref('raw_orders_validation') }}
     ),
