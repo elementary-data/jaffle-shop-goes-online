@@ -1,0 +1,44 @@
+version: 2
+
+exposures:
+  - name: orders_dashboard
+    description: exposure for orders model
+    type: dashboard
+    url: https://example-dashboards/orders
+    maturity: low
+    tags: ["exposures"]
+    owner:
+      name: Owner
+      email: owner@jaffle-shop.example
+
+    depends_on:
+      - ref('orders')
+
+  - name: customers_dashboard
+    description: exposure for customers model
+    type: dashboard
+    url: https://example-dashboards/customers
+    maturity: low
+    tags: ["exposures"]
+    owner:
+      # name: Owner
+      email: owner@jaffle-shop.example
+
+    depends_on:
+      - ref('customers')
+
+  - name: staging_dashboard
+    description: exposure for staging models
+    type: dashboard
+    url: https://example-dashboards/staging
+    maturity: low
+    tags: ["exposures"]
+    owner:
+      name: Owner
+      email: owner@jaffle-shop.example
+
+    depends_on:
+      - ref('stg_customers')
+      - ref('stg_orders')
+      - ref('stg_payments')
+      - ref('stg_signups')
