@@ -18,7 +18,7 @@ setup(
     install_requires=[
         'click>=7.0,<9',
         'dbt-core>=0.20,<2.0.0',
-        'elementary-data'
+        'elementary-data<0.4.2'
     ],
     extras_require={
         'snowflake': ['dbt-snowflake>=0.20,<2.0.0'],
