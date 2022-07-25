@@ -16,7 +16,6 @@ models:
       - name: customer_id
         description: This is a unique identifier for a customer
         tests:
-          - unique
           - not_null
           - relationships:
               to: ref('stg_signups')
@@ -67,7 +66,6 @@ models:
     columns:
       - name: order_id
         tests:
-          - unique
           - not_null
         description: This is a unique identifier for an order
 
@@ -88,6 +86,144 @@ models:
           - accepted_values:
               values:
                 ["placed", "shipped", "completed", "return_pending", "returned"]
+
+      - name: amount
+        description: Total amount (AUD) of the order
+        tests:
+          - not_null
+          - elementary.column_anomalies:
+              config:
+                severity: warn
+              tags: ["column_anomalies"]
+              column_anomalies:
+                - zero_count
+                - zero_percent
+
+      - name: credit_card_amount
+        description: Amount of the order (AUD) paid for by credit card
+        tests:
+          - not_null
+
+      - name: coupon_amount
+        description: Amount of the order (AUD) paid for by coupon
+        tests:
+          - not_null
+
+      - name: bank_transfer_amount
+        description: Amount of the order (AUD) paid for by bank transfer
+        tests:
+          - not_null
+
+      - name: gift_card_amount
+        description: Amount of the order (AUD) paid for by gift card
+        tests:
+          - not_null
+
+  - name: returned_orders
+    description: This table contains all of the returned orders
+    meta:
+      owner: "Or"
+    config:
+      tags: ["finance"]
+      elementary:
+        timestamp_column: "order_date"
+
+    tests:
+      - elementary.table_anomalies:
+          tags: ["table_anomalies"]
+          table_anomalies:
+            - row_count
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+        description: This is a unique identifier for an order
+
+      - name: customer_id
+        description: Foreign key to the customers table
+        tests:
+          - not_null
+          - relationships:
+              to: ref('customers')
+              field: customer_id
+
+      - name: order_date
+        description: Date (UTC) that the order was placed
+
+      - name: status
+        description: '{{ doc("orders_status") }}'
+        tests:
+          - accepted_values:
+              values: ["return_pending", "returned"]
+
+      - name: amount
+        description: Total amount (AUD) of the order
+        tests:
+          - not_null
+          - elementary.column_anomalies:
+              config:
+                severity: warn
+              tags: ["column_anomalies"]
+              column_anomalies:
+                - zero_count
+                - zero_percent
+
+      - name: credit_card_amount
+        description: Amount of the order (AUD) paid for by credit card
+        tests:
+          - not_null
+
+      - name: coupon_amount
+        description: Amount of the order (AUD) paid for by coupon
+        tests:
+          - not_null
+
+      - name: bank_transfer_amount
+        description: Amount of the order (AUD) paid for by bank transfer
+        tests:
+          - not_null
+
+      - name: gift_card_amount
+        description: Amount of the order (AUD) paid for by gift card
+        tests:
+          - not_null
+
+  - name: lost_orders
+    description: This table contains all of the lost orders
+    meta:
+      owner: "Or"
+    config:
+      tags: ["finance"]
+      elementary:
+        timestamp_column: "order_date"
+
+    tests:
+      - elementary.table_anomalies:
+          tags: ["table_anomalies"]
+          table_anomalies:
+            - row_count
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+        description: This is a unique identifier for an order
+
+      - name: customer_id
+        description: Foreign key to the customers table
+        tests:
+          - not_null
+          - relationships:
+              to: ref('customers')
+              field: customer_id
+
+      - name: order_date
+        description: Date (UTC) that the order was placed
+
+      - name: status
+        description: '{{ doc("orders_status") }}'
+        tests:
+          - accepted_values:
+              values: ["shipped", "return_pending"]
 
       - name: amount
         description: Total amount (AUD) of the order
