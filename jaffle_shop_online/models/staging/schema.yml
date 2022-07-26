@@ -13,7 +13,6 @@ models:
       - name: customer_id
         tests:
           - unique
-          - not_null
           - relationships:
               to: ref('stg_signups')
               field: customer_id
@@ -34,7 +33,6 @@ models:
       - name: order_id
         tests:
           - unique
-          - not_null
       - name: status
         tests:
           - accepted_values:
@@ -55,7 +53,6 @@ models:
       - name: payment_id
         tests:
           - unique
-          - not_null
       - name: payment_method
         tests:
           - accepted_values:
@@ -75,7 +72,6 @@ models:
       - name: signup_id
         tests:
           - unique
-          - not_null
       - name: customer_email
         tests:
           - unique

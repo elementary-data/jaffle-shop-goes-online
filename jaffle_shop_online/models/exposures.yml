@@ -21,7 +21,7 @@ exposures:
     maturity: low
     tags: ["exposures"]
     owner:
-      # name: Owner
+      name: Owner
       email: owner@jaffle-shop.example
 
     depends_on:
