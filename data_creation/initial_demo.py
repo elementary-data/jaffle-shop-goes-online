@@ -1,7 +1,7 @@
 import logging
 import os
 from pathlib import Path
-from monitor.dbt_runner import DbtRunner
+from elementary.clients.dbt.dbt_runner import DbtRunner
 from datetime import datetime, timedelta
 import glob
 import random
@@ -52,7 +52,7 @@ def initial_incremental_demo(target = None, days_back = 30):
     clear_data(validation=True, training=True)
 
     logger.info(f"Running incremental demo fo {days_back} days back")
-    current_time = datetime.now()
+    current_time = datetime.utcnow()
     for run_index in range(1, days_back):
         custom_run_time = current_time - timedelta(days_back - run_index)
 
@@ -76,7 +76,7 @@ def initial_incremental_demo(target = None, days_back = 30):
         first_run = False
     
     clear_data(validation=True)
-    generate_incremental_validation_data(current_time, ammount_of_new_data=250)
+    generate_incremental_validation_data(current_time, ammount_of_new_data=600)
     dbt_runner.seed(select='validation')
     dbt_runner.run(vars={"custom_run_started_at": current_time.isoformat(), "validation": True})
     dbt_runner.test(vars={"custom_run_started_at": current_time.isoformat(), "validation": True})
@@ -100,4 +100,5 @@ def clear_data(validation = False, training = False):
 
 
 if __name__ == '__main__':
-    initial_demo()
+    # initial_demo()
+    initial_incremental_demo()
