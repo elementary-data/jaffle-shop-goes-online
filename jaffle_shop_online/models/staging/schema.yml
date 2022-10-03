@@ -12,7 +12,9 @@ models:
     columns:
       - name: customer_id
         tests:
-          - unique
+          - unique:
+              config:
+                severity: warn
           - relationships:
               to: ref('stg_signups')
               field: customer_id
@@ -32,7 +34,9 @@ models:
     columns:
       - name: order_id
         tests:
-          - unique
+          - unique:
+              config:
+                severity: warn
       - name: status
         tests:
           - accepted_values:
@@ -52,10 +56,14 @@ models:
     columns:
       - name: payment_id
         tests:
-          - unique
+          - unique:
+              config:
+                severity: warn
       - name: payment_method
         tests:
           - accepted_values:
+              config:
+                severity: warn
               values: ["credit_card", "coupon", "bank_transfer", "gift_card"]
 
   - name: stg_signups
@@ -71,7 +79,9 @@ models:
     columns:
       - name: signup_id
         tests:
-          - unique
+          - unique:
+              config:
+                severity: warn
       - name: customer_email
         tests:
           - unique
