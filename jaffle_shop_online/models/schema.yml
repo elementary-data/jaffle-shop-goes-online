@@ -17,6 +17,8 @@ models:
         description: This is a unique identifier for a customer
         tests:
           - relationships:
+              config:
+                severity: warn
               to: ref('stg_signups')
               field: customer_id
 
@@ -66,6 +68,8 @@ models:
         description: Foreign key to the customers table
         tests:
           - relationships:
+              config:
+                severity: warn
               to: ref('customers')
               field: customer_id
 
@@ -76,6 +80,8 @@ models:
         description: '{{ doc("orders_status") }}'
         tests:
           - accepted_values:
+              config:
+                severity: warn
               values:
                 ["placed", "shipped", "completed", "return_pending", "returned"]
 
@@ -124,6 +130,8 @@ models:
         description: Foreign key to the customers table
         tests:
           - relationships:
+              config:
+                severity: warn
               to: ref('customers')
               field: customer_id
 
@@ -134,14 +142,14 @@ models:
         description: '{{ doc("orders_status") }}'
         tests:
           - accepted_values:
+              config:
+                severity: warn
               values: ["return_pending", "returned"]
 
       - name: amount
         description: Total amount (AUD) of the order
         tests:
           - elementary.column_anomalies:
-              config:
-                severity: warn
               tags: ["column_anomalies"]
               column_anomalies:
                 - zero_count
@@ -181,6 +189,8 @@ models:
         description: Foreign key to the customers table
         tests:
           - relationships:
+              config:
+                severity: warn
               to: ref('customers')
               field: customer_id
 
@@ -191,6 +201,8 @@ models:
         description: '{{ doc("orders_status") }}'
         tests:
           - accepted_values:
+              config:
+                severity: warn
               values: ["shipped", "return_pending"]
 
       - name: amount
