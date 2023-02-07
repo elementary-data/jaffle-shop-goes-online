@@ -135,4 +135,4 @@ def clear_data(validation=False, training=False):
 
 if __name__ == "__main__":
     # initial_demo()
-    initial_incremental_demo()
+    initial_incremental_demo(target="postgres", days_back=14)
