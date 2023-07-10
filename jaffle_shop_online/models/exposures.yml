@@ -10,6 +10,11 @@ exposures:
     owner:
       name: Owner
       email: owner@jaffle-shop.example
+    meta:
+      platform: Tableau
+      workbook: JaffleShop
+      path: JaffleShop/Orders/JaffleShop
+    label: Orders
 
     depends_on:
       - ref('orders')
@@ -23,6 +28,11 @@ exposures:
     owner:
       name: Owner
       email: owner@jaffle-shop.example
+    meta:
+      platform: Tableau
+      workbook: JaffleShop
+      path: JaffleShop/Customers/JaffleShop
+    label: Customers
 
     depends_on:
       - ref('customers')
@@ -36,6 +46,11 @@ exposures:
     owner:
       name: Owner
       email: owner@jaffle-shop.example
+    meta:
+      platform: Tableau
+      workbook: JaffleShop
+      path: JaffleShop/Staging/JaffleShop
+    label: Staging State
 
     depends_on:
       - ref('stg_customers')

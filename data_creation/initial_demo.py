@@ -2,6 +2,7 @@ import glob
 import logging
 import os
 import random
+import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -76,24 +77,51 @@ def initial_incremental_demo(target=None, days_back=30):
                 vars={
                     "custom_run_started_at": custom_run_time.isoformat(),
                     "validation": True,
+                    "orchestrator": "dbt_cloud",
+                    "job_name": "jaffle_shop_online_data_load",
+                    "job_id": str(uuid.uuid4())
                 }
             )
             dbt_runner.test(
                 vars={
                     "custom_run_started_at": custom_run_time.isoformat(),
                     "validation": True,
+                    "orchestrator": "dbt_cloud",
+                    "job_name": "jaffle_shop_online_data_test",
+                    "job_id": str(uuid.uuid4())
                 }
             )
             clear_data(validation=True)
             generate_incremental_training_data(custom_run_time)
             dbt_runner.seed(select="training")
-            dbt_runner.run(vars={"custom_run_started_at": custom_run_time.isoformat()})
+            dbt_runner.run(
+                vars={
+                    "custom_run_started_at": custom_run_time.isoformat(),
+                    "orchestrator": "dbt_cloud",
+                    "job_name": "jaffle_shop_online_data_load",
+                    "job_id": str(uuid.uuid4())
+                }
+            )
 
         else:
             generate_incremental_training_data(custom_run_time)
             dbt_runner.seed(select="training")
-            dbt_runner.run(vars={"custom_run_started_at": custom_run_time.isoformat()})
-            dbt_runner.test(vars={"custom_run_started_at": custom_run_time.isoformat()})
+            dbt_runner.run(
+                vars={
+                    "custom_run_started_at": custom_run_time.isoformat(),
+                    "orchestrator": "dbt_cloud",
+                    "job_name": "jaffle_shop_online_data_load",
+                    "job_id": str(uuid.uuid4())
+                }
+            )
+            dbt_runner.test(
+                vars={
+                    "custom_run_started_at": custom_run_time.isoformat(),
+                    "orchestrator": "dbt_cloud",
+                    "job_name": "jaffle_shop_online_data_test",
+                    "job_id": str(uuid.uuid4())
+                }
+            )
 
         first_run = False
 
@@ -101,10 +129,22 @@ def initial_incremental_demo(target=None, days_back=30):
     generate_incremental_validation_data(current_time, ammount_of_new_data=600)
     dbt_runner.seed(select="validation")
     dbt_runner.run(
-        vars={"custom_run_started_at": current_time.isoformat(), "validation": True}
+        vars={
+            "custom_run_started_at": current_time.isoformat(),
+            "validation": True,
+            "orchestrator": "dbt_cloud",
+            "job_name": "jaffle_shop_online_data_load",
+            "job_id": str(uuid.uuid4())
+        }
     )
     dbt_runner.test(
-        vars={"custom_run_started_at": current_time.isoformat(), "validation": True}
+        vars={
+            "custom_run_started_at": current_time.isoformat(),
+            "validation": True,
+            "orchestrator": "dbt_cloud",
+            "job_name": "jaffle_shop_online_data_test",
+            "job_id": str(uuid.uuid4())
+        }
     )
 
 
