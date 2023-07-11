@@ -9,9 +9,6 @@ models:
       tags: ["PII"]
       elementary:
         timestamp_column: "signup_date"
-    tests:
-      - elementary.all_columns_anomalies:
-          tags: ["all_columns_anomalies"]
     columns:
       - name: customer_id
         description: This is a unique identifier for a customer
@@ -42,6 +39,11 @@ models:
 
       - name: customer_email
         description: Customer's email. PII.
+        tests:
+          - unique
+          - elementary.column_anomalies:
+              column_anomalies:
+                - missing_count
 
       - name: signup_date
         description: Date (UTC) of a customer's signup to the online shop.
@@ -51,16 +53,17 @@ models:
     meta:
       owner: "Or"
     config:
-      tags: ["finance"]
+      tags: ["finance", "sales"]
       elementary:
         timestamp_column: "order_date"
 
     tests:
-      - elementary.table_anomalies:
-          tags: ["table_anomalies"]
-          table_anomalies:
-            - row_count
-      - elementary.schema_changes
+      - elementary.freshness_anomalies
+      - elementary.dimension_anomalies:
+          dimensions: 
+            - customer_id
+          config:
+            tags: ["stability"]
     columns:
       - name: order_id
         description: This is a unique identifier for an order
@@ -82,9 +85,13 @@ models:
         tests:
           - accepted_values:
               config:
+                tags: ["customer_success"]
                 severity: warn
               values:
                 ["placed", "shipped", "completed", "return_pending", "returned"]
+          - dbt_expectations.expect_column_values_to_be_in_set:
+              value_set: ["placed", "shipped", "completed", "return_pending", "returned"]
+              quote_values: true
 
       - name: amount
         description: Total amount (AUD) of the order
@@ -92,7 +99,6 @@ models:
           - elementary.column_anomalies:
               config:
                 severity: warn
-              tags: ["column_anomalies"]
               column_anomalies:
                 - zero_count
                 - zero_percent
@@ -119,10 +125,7 @@ models:
         timestamp_column: "order_date"
 
     tests:
-      - elementary.table_anomalies:
-          tags: ["table_anomalies"]
-          table_anomalies:
-            - row_count
+      - elementary.volume_anomalies
       - elementary.schema_changes
     columns:
       - name: order_id
@@ -152,7 +155,6 @@ models:
         description: Total amount (AUD) of the order
         tests:
           - elementary.column_anomalies:
-              tags: ["column_anomalies"]
               column_anomalies:
                 - zero_count
                 - zero_percent
@@ -179,14 +181,12 @@ models:
         timestamp_column: "order_date"
 
     tests:
-      - elementary.table_anomalies:
-          tags: ["table_anomalies"]
-          table_anomalies:
-            - row_count
-      - elementary.schema_changes
+      - elementary.volume_anomalies
+      - elementary.schema_changes_from_baseline
     columns:
       - name: order_id
         description: This is a unique identifier for an order
+        data_type: integer
 
       - name: customer_id
         description: Foreign key to the customers table
@@ -214,7 +214,6 @@ models:
           - elementary.column_anomalies:
               config:
                 severity: warn
-              tags: ["column_anomalies"]
               column_anomalies:
                 - zero_count
                 - zero_percent

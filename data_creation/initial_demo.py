@@ -126,7 +126,7 @@ def initial_incremental_demo(target=None, days_back=30):
         first_run = False
 
     clear_data(validation=True)
-    generate_incremental_validation_data(current_time, ammount_of_new_data=600)
+    generate_incremental_validation_data(current_time, ammount_of_new_data=600, last_run=True)
     dbt_runner.seed(select="validation")
     dbt_runner.run(
         vars={

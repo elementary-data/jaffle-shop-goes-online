@@ -6,9 +6,6 @@ models:
       owner: "Idan"
     config:
       tags: ["staging", "PII"]
-    tests:
-      - elementary.all_columns_anomalies:
-          tags: ["all_columns_anomalies"]
     columns:
       - name: customer_id
         tests:
@@ -23,14 +20,11 @@ models:
     meta:
       owner: "Idan"
     config:
-      tags: ["staging", "finance"]
+      tags: ["staging", "finance", "sales"]
       elementary:
         timestamp_column: "order_date"
     tests:
-      - elementary.table_anomalies:
-          tags: ["table_anomalies"]
-          table_anomalies:
-            - row_count
+      - elementary.volume_anomalies
     columns:
       - name: order_id
         tests:
@@ -44,15 +38,15 @@ models:
                 severity: warn
               values:
                 ["placed", "shipped", "completed", "return_pending", "returned"]
+          - dbt_expectations.expect_column_values_to_be_in_set:
+              value_set: ["placed", "shipped", "completed", "return_pending", "returned"]
+              quote_values: true
 
   - name: stg_payments
     meta:
       owner: "Idan"
     config:
       tags: ["staging", "finance"]
-    tests:
-      - elementary.all_columns_anomalies:
-          tags: ["all_columns_anomalies"]
     columns:
       - name: payment_id
         tests:
@@ -73,9 +67,6 @@ models:
       tags: ["staging", "PII"]
       elementary:
         timestamp_column: "signup_date"
-    tests:
-      - elementary.all_columns_anomalies:
-          tags: ["all_columns_anomalies"]
     columns:
       - name: signup_id
         tests:
@@ -86,7 +77,6 @@ models:
         tests:
           - unique
           - elementary.column_anomalies:
-              tags: ["column_anomalies"]
               sensitivity: 2
               config:
                 severity: warn

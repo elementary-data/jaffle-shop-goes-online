@@ -113,7 +113,7 @@ def generate_incremental_orders_data(data_creation_date, ammount_of_new_data=Non
             [
                 order_id,  # ORDER ID
                 random.randint(1, len(current_customers_data)),  # CUSTOMER ID
-                data_creation_date.strftime("%Y-%m-%d"),  # ORDER DATE
+                data_creation_date.strftime("%Y-%m-%d 02:00:00"),  # ORDER DATE
                 all_order_statuses[
                     random.randint(0, len(all_order_statuses) - 1)
                 ],  # ORDER STATUS
@@ -204,13 +204,13 @@ def generate_incremental_signups_data(data_creation_date, ammount_of_new_custome
     customer_min_order_time_map = defaultdict(
         lambda: (
             datetime.now() - timedelta(random.randint(2, TIME_SPAN_IN_DAYS))
-        ).strftime("%Y-%m-%d")
+        ).strftime("%Y-%m-%d 02:00:00")
     )
     for order in orders_data:
         customer_min_order_time_map[order[1]] = min(
-            datetime.strptime(customer_min_order_time_map[order[1]], "%Y-%m-%d"),
-            datetime.strptime(order[2], "%Y-%m-%d"),
-        ).strftime("%Y-%m-%d")
+            datetime.strptime(customer_min_order_time_map[order[1]], "%Y-%m-%d %H:%M:%S"),
+            datetime.strptime(order[2], "%Y-%m-%d %H:%M:%S"),
+        ).strftime("%Y-%m-%d %H:%M:%S")
 
     new_signups_data = [*signups_data]
     for customer in customers_data[len(customers_data) - ammount_of_new_customers :]:
