@@ -180,7 +180,7 @@ def main():
     args_parser.add_argument("-d", "--days-back")
     args = args_parser.parse_args()
 
-    initial_incremental_demo(target=args.target, days_back=args.days_back or 14)
+    initial_incremental_demo(target=args.target, days_back=args.days_back or 7)
 
 
 if __name__ == "__main__":
