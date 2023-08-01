@@ -23,7 +23,7 @@ jobs:
 
       - name: Write dbt profiles
         env:
-          PROFILES_YML: ${{ secrets.DEMO_CLOUD_PROFILES_YML }}
+          PROFILES_YML: ${{ secrets.CLOUD_DEMO_PROFILES_YML }}
         run: |
           echo "$PROFILES_YML" | base64 -d > ./jaffle_shop_online/profiles.yml
 
@@ -49,9 +49,4 @@ jobs:
           dbt deps --project-dir "./jaffle_shop_online"
              
       - name: Run initial demo
-        env:
-          PROFILES_YML: ${{ secrets.DEMO_CLOUD_PROFILES_YML }}
-        run: |
-          echo "$PROFILES_YML" | base64 -d
-          echo "$PROFILES_YML" | base64 -d > ./jaffle_shop_online/profiles.yml
-          python data_creation/initial_demo.py --target ${{ inputs.warehouse-type || 'snowflake' }} --days-back 8 --profiles-dir "./jaffle_shop_online"
+        run: python data_creation/initial_demo.py --target ${{ inputs.warehouse-type || 'snowflake' }} --days-back 8 --profiles-dir "./jaffle_shop_online"
