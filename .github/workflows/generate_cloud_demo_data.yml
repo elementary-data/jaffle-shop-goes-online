@@ -27,7 +27,7 @@ jobs:
           PROFILES_YML: ${{ secrets.DEMO_CLOUD_PROFILES_YML }}
         run: |
           mkdir -p ~/.dbt
-          echo "$PROFILES_YML" | base64 -d > ~/.dbt/profiles.yml
+          echo "$PROFILES_YML" | base64 -d > /home/runner/.dbt/profiles.yml
 
       - name: Setup python
         uses: actions/setup-python@v4
