@@ -1,0 +1,57 @@
+name: Generate cloud demo data
+on:
+  schedule:
+    - cron: "0 */8 * * *"
+  workflow_dispatch:
+    inputs:
+      warehouse-type:
+        type: choice
+        required: true
+        description: Type of warehouse platform
+        options:
+          - snowflake
+
+env:
+  DBT_PACKAGE_DEMO_BRANCH_NAME: now-uses-custom-run-started-at
+  JAFFLE_SHOP_DBT_PROJECT_DIR: ${{ github.workspace }}/jaffle-shop-goes-online/jaffale_shop_online
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: elementary
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Write dbt profiles
+        env:
+          PROFILES_YML: ${{ secrets.DEMO_CLOUD_PROFILES_YML }}
+        run: |
+          mkdir -p ~/.dbt
+          echo "$PROFILES_YML" | base64 -d > ~/.dbt/profiles.yml
+
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9.13"
+
+      - name: Install dbt
+        run: >
+          pip install --pre
+          "dbt-core"
+          "dbt-${{ inputs.warehouse-type || 'snowflake' }}"
+
+      - name: Install jaffle shop online project
+        run: |
+          pip install -e.
+
+      - name: Install dbt package
+        run: |
+          sed -i 's/package: elementary-data\/elementary/git: https:\/\/github.com\/elementary-data\/dbt-data-reliability.git/' ./jaffle_shop_online/packages.yml
+          sed -i '3s/version: [0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$/revision: ${{ env.DBT_PACKAGE_DEMO_BRANCH_NAME }}' ./jaffle_shop_online/packages.yml
+          dbt deps --project-dir "$JAFFLE_SHOP_DBT_PROJECT_DIR"
+             
+      - name: Run initial demo
+        run: python data_creation/initial_demo.py --target ${{ inputs.warehouse-type || 'snowflake' }}
