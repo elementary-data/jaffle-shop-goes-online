@@ -1,3 +1,4 @@
+import argparse
 import glob
 import logging
 import os
@@ -173,6 +174,14 @@ def clear_data(validation=False, training=False):
             clear_csv(csv_file)
 
 
+def main():
+    args_parser = argparse.ArgumentParser()
+    args_parser.add_argument("-t", "--target", required=True)
+    args_parser.add_argument("-d", "--days-back")
+    args = args_parser.parse_args()
+
+    initial_incremental_demo(target=args.target, days_back=args.days_back or 14)
+
+
 if __name__ == "__main__":
-    # initial_demo()
-    initial_incremental_demo(target="postgres", days_back=14)
+    main()
