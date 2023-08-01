@@ -51,4 +51,4 @@ jobs:
           dbt deps --project-dir "./jaffle_shop_online"
              
       - name: Run initial demo
-        run: python data_creation/initial_demo.py --target ${{ inputs.warehouse-type || 'snowflake' }} --days-back 7
+        run: python data_creation/initial_demo.py --target ${{ inputs.warehouse-type || 'snowflake' }} --days-back 8

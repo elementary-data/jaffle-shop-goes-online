@@ -177,10 +177,10 @@ def clear_data(validation=False, training=False):
 def main():
     args_parser = argparse.ArgumentParser()
     args_parser.add_argument("-t", "--target", required=True)
-    args_parser.add_argument("-d", "--days-back")
+    args_parser.add_argument("-d", "--days-back", type=int, default=8)
     args = args_parser.parse_args()
 
-    initial_incremental_demo(target=args.target, days_back=args.days_back or 7)
+    initial_incremental_demo(target=args.target, days_back=args.days_back)
 
 
 if __name__ == "__main__":
