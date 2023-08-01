@@ -28,7 +28,7 @@ DBT_PROFILES_DIR = os.path.join(os.path.expanduser("~"), ".dbt")
 def initial_demo(target=None):
     dbt_runner = DbtRunner(
         project_dir=DBT_PROJECT_DIR,
-        profiles_dir=REPO_DIR,
+        profiles_dir=DBT_PROFILES_DIR,
         target=target,
         raise_on_failure=False,
     )
@@ -51,10 +51,10 @@ def initial_demo(target=None):
     dbt_runner.test()
 
 
-def initial_incremental_demo(target=None, days_back=30):
+def initial_incremental_demo(target=None, days_back=30, profiles_dir=None):
     dbt_runner = DbtRunner(
         project_dir=DBT_PROJECT_DIR,
-        profiles_dir=REPO_DIR,
+        profiles_dir=profiles_dir or DBT_PROFILES_DIR,
         target=target,
         raise_on_failure=False,
     )
@@ -178,9 +178,10 @@ def main():
     args_parser = argparse.ArgumentParser()
     args_parser.add_argument("-t", "--target", required=True)
     args_parser.add_argument("-d", "--days-back", type=int, default=8)
+    args_parser.add_argument("-pd", "--profiles-dir")
     args = args_parser.parse_args()
 
-    initial_incremental_demo(target=args.target, days_back=args.days_back)
+    initial_incremental_demo(target=args.target, days_back=args.days_back, profiles_dir=args.profiles_dir)
 
 
 if __name__ == "__main__":

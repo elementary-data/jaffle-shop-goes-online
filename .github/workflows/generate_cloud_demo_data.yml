@@ -13,7 +13,6 @@ on:
 
 env:
   DBT_PACKAGE_DEMO_BRANCH_NAME: now-uses-custom-run-started-at
-  JAFFLE_SHOP_DBT_PROJECT_DIR: ${{ github.workspace }}/jaffle-shop-goes-online/jaffale_shop_online
 
 jobs:
   test:
@@ -26,7 +25,7 @@ jobs:
         env:
           PROFILES_YML: ${{ secrets.DEMO_CLOUD_PROFILES_YML }}
         run: |
-          echo "$PROFILES_YML" | base64 -d > ./profiles.yml
+          echo "$PROFILES_YML" | base64 -d > ./jaffle_shop_online/profiles.yml
 
       - name: Setup python
         uses: actions/setup-python@v4
@@ -50,4 +49,4 @@ jobs:
           dbt deps --project-dir "./jaffle_shop_online"
              
       - name: Run initial demo
-        run: python data_creation/initial_demo.py --target ${{ inputs.warehouse-type || 'snowflake' }} --days-back 8
+        run: python data_creation/initial_demo.py --target ${{ inputs.warehouse-type || 'snowflake' }} --days-back 8 --profiles-dir "./jaffle_shop_online"
