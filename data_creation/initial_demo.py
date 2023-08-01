@@ -28,7 +28,7 @@ DBT_PROFILES_DIR = os.path.join(os.path.expanduser("~"), ".dbt")
 def initial_demo(target=None):
     dbt_runner = DbtRunner(
         project_dir=DBT_PROJECT_DIR,
-        profiles_dir=DBT_PROFILES_DIR,
+        profiles_dir=REPO_DIR,
         target=target,
         raise_on_failure=False,
     )
@@ -54,7 +54,7 @@ def initial_demo(target=None):
 def initial_incremental_demo(target=None, days_back=30):
     dbt_runner = DbtRunner(
         project_dir=DBT_PROJECT_DIR,
-        profiles_dir=DBT_PROFILES_DIR,
+        profiles_dir=REPO_DIR,
         target=target,
         raise_on_failure=False,
     )
