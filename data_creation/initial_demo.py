@@ -34,7 +34,7 @@ def initial_demo(target=None):
     )
 
     logger.info("Clear demo environment")
-    dbt_runner.run_operation(macro_name="clear_tests")
+    dbt_runner.run_operation(macro_name="jaffle_shop_online.clear_tests")
 
     logger.info("Seeding training data")
     dbt_runner.seed(select="training")
@@ -61,7 +61,7 @@ def initial_incremental_demo(target=None, days_back=30, profiles_dir=None):
     first_run = True
 
     logger.info("Clearing demo environment")
-    dbt_runner.run_operation(macro_name="clear_tests")
+    dbt_runner.run_operation(macro_name="jaffle_shop_online.clear_tests")
     clear_data(validation=True, training=True)
 
     logger.info(f"Running incremental demo for {days_back} days back")
