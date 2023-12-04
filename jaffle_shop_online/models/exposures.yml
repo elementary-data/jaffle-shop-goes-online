@@ -13,7 +13,7 @@ exposures:
     meta:
       platform: Tableau
       workbook: JaffleShop
-      path: JaffleShop/Orders/JaffleShop
+      path: Tableau/JaffleShop
     label: Orders
 
     depends_on:
@@ -31,7 +31,7 @@ exposures:
     meta:
       platform: Tableau
       workbook: JaffleShop
-      path: JaffleShop/Customers/JaffleShop
+      path: Tableau/JaffleShop
     label: Customers
 
     depends_on:
@@ -49,7 +49,7 @@ exposures:
     meta:
       platform: Tableau
       workbook: JaffleShop
-      path: JaffleShop/Staging/JaffleShop
+      path: Tableau/Staging
     label: Staging State
 
     depends_on:
