@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: ads
+    schema: elementary_demo
+    tables:
+      - name: stg_google_ads
+      - name: stg_facebook_ads
+      - name: stg_instagram_ads
+
+  - name: sessions
+    schema: elementary_demo
+    tables:
+      - name: stg_website_sessions
+      - name: stg_app_sessions
