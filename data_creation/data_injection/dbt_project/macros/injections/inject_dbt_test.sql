@@ -1,4 +1,6 @@
 {% macro inject_dbt_test(test_id, test_name, test_column_name, test_params, description) %}
+    {% set rows_to_insert = {'dbt_tests': []} %}
+
     {% set relation = elementary.get_elementary_relation('dbt_tests') %}
     {% set test_data = {
         'unique_id': test_id,
@@ -20,5 +22,7 @@
         'depends_on_macros': '[]',
         'depends_on_nodes': '[]'
     } %}
-    {% do elementary.insert_rows(relation, [test_data], true) %}
+    {% do rows_to_insert['dbt_tests'].append(test_data) %}
+
+    {% do return(rows_to_insert) %}
 {% endmacro %}

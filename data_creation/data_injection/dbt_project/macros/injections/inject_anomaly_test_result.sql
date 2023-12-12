@@ -1,5 +1,7 @@
 {% macro inject_anomaly_test_result(test_id, test_name, test_column_name, test_sub_type, test_params, test_timestamp,
                          test_status, model_id, model_name, test_metrics, result_description) %}
+    {% set rows_to_insert = {'elementary_test_results': [], 'test_result_rows': []} %}
+
     {% set test_results_relation = elementary.get_elementary_relation('elementary_test_results') %}
     {% set test_result_id = data_injection.generate_uuid() %}
     {% set result = {
@@ -32,7 +34,7 @@
         'result_rows': None,
         'failed_row_count': None
     } %}
-    {% do elementary.insert_rows(test_results_relation, [result], true) %}
+    {% do rows_to_insert['elementary_test_results'].append(result) %}
 
     {% set result_rows_relation = elementary.get_elementary_relation('test_result_rows') %}
     {% set db_result_rows = [] %}
@@ -44,5 +46,7 @@
             'created_at': test_timestamp
         }) %}
     {% endfor %}
-    {% do elementary.insert_rows(result_rows_relation, db_result_rows, true) %}
+    {% do rows_to_insert['test_result_rows'].extend(db_result_rows) %}
+
+    {% do return(rows_to_insert) %}
 {% endmacro %}
