@@ -3,7 +3,7 @@ import os
 import random
 from collections import defaultdict
 import hashlib
-from data_creation.jaffle_shop_utils.csv import (
+from utils.csv import (
     split_csv_to_headers_and_data,
     write_to_csv,
 )
@@ -208,7 +208,9 @@ def generate_incremental_signups_data(data_creation_date, ammount_of_new_custome
     )
     for order in orders_data:
         customer_min_order_time_map[order[1]] = min(
-            datetime.strptime(customer_min_order_time_map[order[1]], "%Y-%m-%d %H:%M:%S"),
+            datetime.strptime(
+                customer_min_order_time_map[order[1]], "%Y-%m-%d %H:%M:%S"
+            ),
             datetime.strptime(order[2], "%Y-%m-%d %H:%M:%S"),
         ).strftime("%Y-%m-%d %H:%M:%S")
 

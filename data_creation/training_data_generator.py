@@ -3,7 +3,7 @@ import os
 import random
 from collections import defaultdict
 import hashlib
-from data_creation.jaffle_shop_utils.csv import (
+from utils.csv import (
     split_csv_to_headers_and_data,
     write_to_csv,
 )

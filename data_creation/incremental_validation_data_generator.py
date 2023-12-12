@@ -3,7 +3,7 @@ import os
 import random
 from collections import defaultdict
 import hashlib
-from data_creation.jaffle_shop_utils.csv import (
+from utils.csv import (
     split_csv_to_headers_and_data,
     write_to_csv,
 )
@@ -26,10 +26,15 @@ HIGHEST_PAYMENT_IN_HUNDRENDS = 28
 MAX_PAYMENTS_PER_ORDER = 2
 
 
-def generate_incremental_validation_data(data_creation_date, ammount_of_new_data=None, last_run=False):
+def generate_incremental_validation_data(
+    data_creation_date, ammount_of_new_data=None, last_run=False
+):
     data_creation_dates = [data_creation_date]
     if last_run:
-         data_creation_dates = [data_creation_date - timedelta(days=1), data_creation_date]
+        data_creation_dates = [
+            data_creation_date - timedelta(days=1),
+            data_creation_date,
+        ]
 
     amount_of_new_customers = generate_customers_data(
         data_creation_dates, ammount_of_new_data, last_run
@@ -41,7 +46,9 @@ def generate_incremental_validation_data(data_creation_date, ammount_of_new_data
     generate_signups_data(data_creation_dates, ammount_of_new_data, last_run)
 
 
-def generate_customers_data(data_creation_dates, ammount_of_new_data=None, last_run=False):
+def generate_customers_data(
+    data_creation_dates, ammount_of_new_data=None, last_run=False
+):
     ammount_of_new_data = (
         ammount_of_new_data
         if ammount_of_new_data
@@ -111,25 +118,40 @@ def generate_orders_data(data_creation_dates, ammount_of_new_data=None, last_run
     for data_creation_date in data_creation_dates:
         validation_orders_date = data_creation_date.strftime("%Y-%m-%d 02:00:00")
         if last_run:
-            validation_orders_date = (datetime.strptime(validation_orders_date, "%Y-%m-%d %H:%M:%S") + timedelta(hours=21)).strftime("%Y-%m-%d %H:%M:%S")
+            validation_orders_date = (
+                datetime.strptime(validation_orders_date, "%Y-%m-%d %H:%M:%S")
+                + timedelta(hours=21)
+            ).strftime("%Y-%m-%d %H:%M:%S")
 
         for order_id in range(
             len(training_orders) + 1, len(training_orders) + ammount_of_new_data + 1
         ):
-            order_status = all_order_statuses[random.randint(0, len(all_order_statuses) - 1)] if random.randint(0, 1) else "lost"
+            order_status = (
+                all_order_statuses[random.randint(0, len(all_order_statuses) - 1)]
+                if random.randint(0, 1)
+                else "lost"
+            )
             new_orders.append(
                 [
                     order_id,  # ORDER ID
                     random.randint(1, len(validation_customers)),  # CUSTOMER ID
                     validation_orders_date,  # ORDER DATE
-                    all_order_statuses[random.randint(0, len(all_order_statuses) - 1) if not last_run else 0] if random.randint(0, 1) else "lost",  # ORDER STATUS
+                    all_order_statuses[
+                        random.randint(0, len(all_order_statuses) - 1)
+                        if not last_run
+                        else 0
+                    ]
+                    if random.randint(0, 1)
+                    else "lost",  # ORDER STATUS
                 ]
             )
     write_to_csv(validation_orders_path, orders_headers, new_orders)
     return ammount_of_new_data
 
 
-def generate_payments_data(data_creation_dates, ammount_of_new_data=None, last_run=False):
+def generate_payments_data(
+    data_creation_dates, ammount_of_new_data=None, last_run=False
+):
     training_orders_path = os.path.join(
         CURRENT_DIRECTORY_PATH,
         NEW_JAFFLE_TRAINING_DATA_DIRECORTY_RELATIVE_PATH,
@@ -171,7 +193,9 @@ def generate_payments_data(data_creation_dates, ammount_of_new_data=None, last_r
     write_to_csv(validation_payments_path, payments_headers, new_payments)
 
 
-def generate_signups_data(data_creation_dates, ammount_of_new_data=None, last_run=False):
+def generate_signups_data(
+    data_creation_dates, ammount_of_new_data=None, last_run=False
+):
     training_signups_path = os.path.join(
         CURRENT_DIRECTORY_PATH,
         NEW_JAFFLE_TRAINING_DATA_DIRECORTY_RELATIVE_PATH,
@@ -218,7 +242,9 @@ def generate_signups_data(data_creation_dates, ammount_of_new_data=None, last_ru
         )
         for order in orders_data:
             customer_min_order_time_map[order[1]] = min(
-                datetime.strptime(customer_min_order_time_map[order[1]], "%Y-%m-%d %H:%M:%S"),
+                datetime.strptime(
+                    customer_min_order_time_map[order[1]], "%Y-%m-%d %H:%M:%S"
+                ),
                 datetime.strptime(order[2], "%Y-%m-%d %H:%M:%S"),
             ).strftime("%Y-%m-%d %H:%M:%S")
 
@@ -236,9 +262,14 @@ def generate_signups_data(data_creation_dates, ammount_of_new_data=None, last_ru
                 ]
             )
         last_signup_date = max(
-            [datetime.strptime(row[4], "%Y-%m-%d %H:%M:%S") for row in training_signups_data]
+            [
+                datetime.strptime(row[4], "%Y-%m-%d %H:%M:%S")
+                for row in training_signups_data
+            ]
         )
-        validation_signup_date = (last_signup_date + timedelta(1)).strftime("%Y-%m-%d %H:%M:%S")
+        validation_signup_date = (last_signup_date + timedelta(1)).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
         for i in range(
             len(customers_data) + 1, len(customers_data) + amount_of_broken_data + 1
         ):
