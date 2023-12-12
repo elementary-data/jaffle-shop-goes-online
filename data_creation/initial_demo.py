@@ -6,8 +6,8 @@ import random
 import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
-from data_creation.data_injection.model_runs import ModelRunsInjector
 
+from data_creation.data_injection.inject_jaffle_shop_tests import inject_jaffle_shop_tests
 from data_creation.incremental_training_data_generator import (
     generate_incremental_training_data,
 )
@@ -24,6 +24,8 @@ JAFFLE_SHOP_ONLINE_DIR_NAME = "jaffle_shop_online"
 REPO_DIR = Path(os.path.dirname(__file__)).parent.absolute()
 DBT_PROJECT_DIR = os.path.join(REPO_DIR, JAFFLE_SHOP_ONLINE_DIR_NAME)
 DBT_PROFILES_DIR = os.path.join(os.path.expanduser("~"), ".dbt")
+
+INJECTION_DBT_PROJECT_DIR = os.path.join(REPO_DIR, "data_creation/data_injection/dbt_project")
 
 
 def initial_demo(target=None):
@@ -157,6 +159,12 @@ def initial_incremental_demo(target=None, days_back=30, profiles_dir=None):
             "job_id": str(uuid.uuid4()),
         }
     )
+
+    injection_dbt_runner = DbtRunner(
+        INJECTION_DBT_PROJECT_DIR,
+        target=target
+    )
+    inject_jaffle_shop_tests(injection_dbt_runner)
 
 
 def clear_data(validation=False, training=False):
