@@ -108,132 +108,132 @@ models:
     columns:
       - name: date_month
         data_type: timestamp_ntz
-        description: ""
+        description: "Month (UTC)"
 
       - name: utm_source
         data_type: varchar
-        description: ""
+        description: "Source where the ad was displayed. For example, Google, Facebook, Twitter, Newsletter, etc."
 
       - name: attribution_points
         data_type: number
-        description: ""
+        description: "Total number of attribution points"
 
       - name: attribution_revenue
         data_type: number
-        description: ""
+        description: "Total revenue amount (USD)"
 
       - name: total_spend
         data_type: number
-        description: ""
+        description: "Total spend amount (USD)"
 
       - name: cost_per_acquisition
         data_type: number
-        description: ""
+        description: "Cost (USD) per acquisition, calculated as total_spend / attribution_points"
 
       - name: return_on_advertising_spend
         data_type: number
-        description: ""
+        description: "The ROI of the ad spend, calculated as attribution_revenue / total_spend"
 
   - name: marketing_ads
     description: ""
     columns:
       - name: ad_id
         data_type: varchar
-        description: ""
+        description: "Unique identifier for an ad"
 
       - name: date
         data_type: date
-        description: ""
+        description: "date (UTC) when the ad was displayed"
 
       - name: utm_medium
         data_type: varchar
-        description: ""
+        description: "The advertising or marketing medium. The medium can be social media, banners, CPC, third-party blogs, etc."
 
       - name: utm_campain
         data_type: varchar
-        description: ""
+        description: "The name of the advertising campaign"
 
       - name: cost
         data_type: number
-        description: ""
+        description: "Cost (USD) accumulated of the ad presentations so far"
 
       - name: utm_source
         data_type: varchar
-        description: ""
+        description: "Source where the ad was displayed. For example, Google, Facebook, Twitter, Newsletter, etc."
 
   - name: agg_sessions
     description: ""
     columns:
       - name: session_id
         data_type: varchar
-        description: ""
+        description: "Unique identifier for a session"
 
       - name: customer_id
         data_type: number
-        description: ""
+        description: "Unique identifier for a customer"
 
       - name: started_at
         data_type: timestamp_ntz
-        description: ""
+        description: "Time (UTC) when the session started"
 
       - name: ended_at
         data_type: timestamp_ntz
-        description: ""
+        description: "Time (UTC) when the session ended"
 
       - name: utm_source
         data_type: varchar
-        description: ""
+        description: "Source where the ad was displayed. For example, Google, Facebook, Twitter, Newsletter, etc."
 
       - name: ad_id
         data_type: varchar
-        description: ""
+        description: "Unique identifier for an ad"
 
       - name: platform
         data_type: varchar
-        description: ""
+        description: "Platform where the session was made. For example, website, iOS app, Android app, etc."
 
   - name: customer_conversions
     description: ""
     columns:
       - name: customer_id
         data_type: number
-        description: ""
+        description: "Unique identifier for a customer"
 
       - name: converted_at
         data_type: timestamp_ntz
-        description: ""
+        description: "Time (UTC) when the conversion happened"
 
       - name: revenue
         data_type: number
-        description: ""
+        description: "Total revenue amount (USD) of the conversion"
 
   - name: sessions
     description: ""
     columns:
       - name: session_id
         data_type: varchar
-        description: ""
+        description: "Unique identifier for a session"
 
       - name: customer_id
         data_type: number
-        description: ""
+        description: "Unique identifier for a customer"
 
       - name: started_at
         data_type: timestamp_ntz
-        description: ""
+        description: "Time (UTC) when the session started"
 
       - name: ended_at
         data_type: timestamp_ntz
-        description: ""
+        description: "Time (UTC) when the session ended"
 
       - name: utm_source
         data_type: varchar
-        description: ""
+        description: "Source where the ad was displayed. For example, Google, Facebook, Twitter, Newsletter, etc."
 
       - name: utm_medium
         data_type: varchar
-        description: ""
+        description: "The advertising or marketing medium. The medium can be social media, banners, CPC, third-party blogs, etc."
 
       - name: utm_campain
         data_type: varchar
-        description: ""
+        description: "The name of the advertising campaign"
