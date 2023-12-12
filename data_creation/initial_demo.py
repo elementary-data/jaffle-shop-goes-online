@@ -6,6 +6,7 @@ import random
 import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
+from data_creation.data_injection.model_runs import ModelRunsInjector
 
 from data_creation.incremental_training_data_generator import (
     generate_incremental_training_data,
@@ -13,7 +14,7 @@ from data_creation.incremental_training_data_generator import (
 from data_creation.incremental_validation_data_generator import (
     generate_incremental_validation_data,
 )
-from data_creation.jaffle_shop_utils.csv import clear_csv
+from utils.csv import clear_csv
 
 from elementary.clients.dbt.dbt_runner import DbtRunner
 
@@ -32,6 +33,9 @@ def initial_demo(target=None):
         target=target,
         raise_on_failure=False,
     )
+
+    dbt_runner.seed(select="ads")
+    dbt_runner.seed(select="sessions")
 
     logger.info("Clear demo environment")
     dbt_runner.run_operation(macro_name="jaffle_shop_online.clear_tests")
@@ -58,11 +62,15 @@ def initial_incremental_demo(target=None, days_back=30, profiles_dir=None):
         target=target,
         raise_on_failure=False,
     )
+
     first_run = True
 
     logger.info("Clearing demo environment")
     dbt_runner.run_operation(macro_name="jaffle_shop_online.clear_tests")
     clear_data(validation=True, training=True)
+
+    dbt_runner.seed(select="ads")
+    dbt_runner.seed(select="sessions")
 
     logger.info(f"Running incremental demo for {days_back} days back")
     current_time = datetime.utcnow()
@@ -80,7 +88,7 @@ def initial_incremental_demo(target=None, days_back=30, profiles_dir=None):
                     "validation": True,
                     "orchestrator": "dbt_cloud",
                     "job_name": "jaffle_shop_online_data_load",
-                    "job_id": str(uuid.uuid4())
+                    "job_id": str(uuid.uuid4()),
                 }
             )
             dbt_runner.test(
@@ -89,7 +97,7 @@ def initial_incremental_demo(target=None, days_back=30, profiles_dir=None):
                     "validation": True,
                     "orchestrator": "dbt_cloud",
                     "job_name": "jaffle_shop_online_data_test",
-                    "job_id": str(uuid.uuid4())
+                    "job_id": str(uuid.uuid4()),
                 }
             )
             clear_data(validation=True)
@@ -100,7 +108,7 @@ def initial_incremental_demo(target=None, days_back=30, profiles_dir=None):
                     "custom_run_started_at": custom_run_time.isoformat(),
                     "orchestrator": "dbt_cloud",
                     "job_name": "jaffle_shop_online_data_load",
-                    "job_id": str(uuid.uuid4())
+                    "job_id": str(uuid.uuid4()),
                 }
             )
 
@@ -112,7 +120,7 @@ def initial_incremental_demo(target=None, days_back=30, profiles_dir=None):
                     "custom_run_started_at": custom_run_time.isoformat(),
                     "orchestrator": "dbt_cloud",
                     "job_name": "jaffle_shop_online_data_load",
-                    "job_id": str(uuid.uuid4())
+                    "job_id": str(uuid.uuid4()),
                 }
             )
             dbt_runner.test(
@@ -120,14 +128,16 @@ def initial_incremental_demo(target=None, days_back=30, profiles_dir=None):
                     "custom_run_started_at": custom_run_time.isoformat(),
                     "orchestrator": "dbt_cloud",
                     "job_name": "jaffle_shop_online_data_test",
-                    "job_id": str(uuid.uuid4())
+                    "job_id": str(uuid.uuid4()),
                 }
             )
 
         first_run = False
 
     clear_data(validation=True)
-    generate_incremental_validation_data(current_time, ammount_of_new_data=600, last_run=True)
+    generate_incremental_validation_data(
+        current_time, ammount_of_new_data=600, last_run=True
+    )
     dbt_runner.seed(select="validation")
     dbt_runner.run(
         vars={
@@ -135,7 +145,7 @@ def initial_incremental_demo(target=None, days_back=30, profiles_dir=None):
             "validation": True,
             "orchestrator": "dbt_cloud",
             "job_name": "jaffle_shop_online_data_load",
-            "job_id": str(uuid.uuid4())
+            "job_id": str(uuid.uuid4()),
         }
     )
     dbt_runner.test(
@@ -144,7 +154,7 @@ def initial_incremental_demo(target=None, days_back=30, profiles_dir=None):
             "validation": True,
             "orchestrator": "dbt_cloud",
             "job_name": "jaffle_shop_online_data_test",
-            "job_id": str(uuid.uuid4())
+            "job_id": str(uuid.uuid4()),
         }
     )
 
@@ -181,7 +191,9 @@ def main():
     args_parser.add_argument("-pd", "--profiles-dir")
     args = args_parser.parse_args()
 
-    initial_incremental_demo(target=args.target, days_back=args.days_back, profiles_dir=args.profiles_dir)
+    initial_incremental_demo(
+        target=args.target, days_back=args.days_back, profiles_dir=args.profiles_dir
+    )
 
 
 if __name__ == "__main__":
