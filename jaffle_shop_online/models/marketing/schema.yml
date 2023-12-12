@@ -1,0 +1,239 @@
+version: 2
+
+models:
+  - name: ads_spend
+    description: "This table contains the daily ad spend, by source, medium and campaign"
+    columns:
+      - name: date_day
+        data_type: date
+        description: "Day (UTC) of the ad spend"
+
+      - name: utm_source
+        data_type: varchar
+        description: "Source where the ad was displayed. For example, Google, Facebook, Twitter, Newsletter, etc."
+
+      - name: utm_medium
+        data_type: varchar
+        description: "The advertising or marketing medium. The medium can be social media, banners, CPC, third-party blogs, etc."
+
+      - name: utm_campain
+        data_type: varchar
+        description: "The name of the advertising campaign"
+
+      - name: spend
+        data_type: number
+        description: "The USD amount of money spent"
+
+  - name: attribution_touches
+    description: "This is a table that contains all the touch points, by session, with the utm_source, utm_medium and utm_campain"
+    columns:
+      - name: customer_id
+        data_type: number
+        description: "A unique identifier for a customer"
+
+      - name: session_id
+        data_type: varchar
+        description: "A unique identifier for a session"
+
+      - name: started_at
+        data_type: timestamp_ntz
+        description: "Time (UTC) when the session started"
+
+      - name: ended_at
+        data_type: timestamp_ntz
+        description: "Time (UTC) when the session ended"
+
+      - name: utm_source
+        data_type: varchar
+        description: "Source where the ad was displayed. For example, Google, Facebook, Twitter, Newsletter, etc."
+
+      - name: utm_medium
+        data_type: varchar
+        description: "The advertising or marketing medium. The medium can be social media, banners, CPC, third-party blogs, etc."
+
+      - name: utm_campain
+        data_type: varchar
+        description: "The name of the advertising campaign"
+
+      - name: converted_at
+        data_type: timestamp_ntz
+        description: "The time of the conversion"
+
+      - name: revenue
+        data_type: number
+        description: "Revenue amount (USD) of the conversion"
+
+      - name: total_sessions
+        data_type: number
+        description: "Total number of sessions made by the customer"
+
+      - name: session_index
+        data_type: number
+        description: "Index of the session"
+
+      - name: first_touch_points
+        data_type: number
+        description: ""
+
+      - name: last_touch_points
+        data_type: number
+        description: ""
+
+      - name: forty_twenty_forty_points
+        data_type: number
+        description: ""
+
+      - name: linear_points
+        data_type: number
+        description: ""
+
+      - name: first_touch_revenue
+        data_type: number
+        description: "Revenue amount (USD) of the first touch point"
+
+      - name: last_touch_revenue
+        data_type: number
+        description: "Revenue amount (USD) of the last touch point"
+
+      - name: forty_twenty_forty_revenue
+        data_type: number
+        description: ""
+
+      - name: linear_revenue
+        data_type: number
+        description: ""
+
+  - name: cpa_and_roas
+    description: ""
+    columns:
+      - name: date_month
+        data_type: timestamp_ntz
+        description: ""
+
+      - name: utm_source
+        data_type: varchar
+        description: ""
+
+      - name: attribution_points
+        data_type: number
+        description: ""
+
+      - name: attribution_revenue
+        data_type: number
+        description: ""
+
+      - name: total_spend
+        data_type: number
+        description: ""
+
+      - name: cost_per_acquisition
+        data_type: number
+        description: ""
+
+      - name: return_on_advertising_spend
+        data_type: number
+        description: ""
+
+  - name: marketing_ads
+    description: ""
+    columns:
+      - name: ad_id
+        data_type: varchar
+        description: ""
+
+      - name: date
+        data_type: date
+        description: ""
+
+      - name: utm_medium
+        data_type: varchar
+        description: ""
+
+      - name: utm_campain
+        data_type: varchar
+        description: ""
+
+      - name: cost
+        data_type: number
+        description: ""
+
+      - name: utm_source
+        data_type: varchar
+        description: ""
+
+  - name: agg_sessions
+    description: ""
+    columns:
+      - name: session_id
+        data_type: varchar
+        description: ""
+
+      - name: customer_id
+        data_type: number
+        description: ""
+
+      - name: started_at
+        data_type: timestamp_ntz
+        description: ""
+
+      - name: ended_at
+        data_type: timestamp_ntz
+        description: ""
+
+      - name: utm_source
+        data_type: varchar
+        description: ""
+
+      - name: ad_id
+        data_type: varchar
+        description: ""
+
+      - name: platform
+        data_type: varchar
+        description: ""
+
+  - name: customer_conversions
+    description: ""
+    columns:
+      - name: customer_id
+        data_type: number
+        description: ""
+
+      - name: converted_at
+        data_type: timestamp_ntz
+        description: ""
+
+      - name: revenue
+        data_type: number
+        description: ""
+
+  - name: sessions
+    description: ""
+    columns:
+      - name: session_id
+        data_type: varchar
+        description: ""
+
+      - name: customer_id
+        data_type: number
+        description: ""
+
+      - name: started_at
+        data_type: timestamp_ntz
+        description: ""
+
+      - name: ended_at
+        data_type: timestamp_ntz
+        description: ""
+
+      - name: utm_source
+        data_type: varchar
+        description: ""
+
+      - name: utm_medium
+        data_type: varchar
+        description: ""
+
+      - name: utm_campain
+        data_type: varchar
+        description: ""
