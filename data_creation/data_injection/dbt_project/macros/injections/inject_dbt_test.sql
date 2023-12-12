@@ -20,7 +20,8 @@
         'model_owners': '[]',
         'meta': tojson({"description": description, "generated_result": true}),
         'depends_on_macros': '[]',
-        'depends_on_nodes': '[]'
+        'depends_on_nodes': '[]',
+        'generated_at': elementary.datetime_now_utc_as_string(),
     } %}
     {% do rows_to_insert['dbt_tests'].append(test_data) %}
 
