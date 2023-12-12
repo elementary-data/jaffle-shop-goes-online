@@ -3,6 +3,12 @@ version: 2
 models:
   - name: ads_spend
     description: "This table contains the daily ad spend, by source, medium and campaign"
+    meta:
+      owner: "Ella"
+    config:
+      tags: ["Marketing", "Finance"]
+      elementary:
+        timestamp_column: "date_day"
     columns:
       - name: date_day
         data_type: date
@@ -25,7 +31,13 @@ models:
         description: "The USD amount of money spent"
 
   - name: attribution_touches
-    description: "This is a table that contains all the touch points, by session, with the utm_source, utm_medium and utm_campain"
+    description: "This is a table that contains all the touch points, by session, with the utm_source, utm_medium and utm_campaign"
+    meta:
+      owner: "Ella"
+    config:
+      tags: ["Marketing", "PII"]
+      elementary:
+        timestamp_column: "converted_at"
     columns:
       - name: customer_id
         data_type: number
@@ -104,7 +116,13 @@ models:
         description: ""
 
   - name: cpa_and_roas
-    description: ""
+    description: "This table contains the cost per acquisition and return on ad spend, by source, and per month"
+    meta:
+      owner: "Ella"
+    config:
+      tags: ["Marketing", "Finance"]
+      elementary:
+        timestamp_column: "date_month"
     columns:
       - name: date_month
         data_type: timestamp_ntz
@@ -135,7 +153,13 @@ models:
         description: "The ROI of the ad spend, calculated as attribution_revenue / total_spend"
 
   - name: marketing_ads
-    description: ""
+    description: "This table contains information on the ad spend, by source, medium and campaign"
+    meta:
+      owner: "Ella"
+    config:
+      tags: ["Marketing", "Finance"]
+      elementary:
+        timestamp_column: "date"
     columns:
       - name: ad_id
         data_type: varchar
@@ -162,7 +186,13 @@ models:
         description: "Source where the ad was displayed. For example, Google, Facebook, Twitter, Newsletter, etc."
 
   - name: agg_sessions
-    description: ""
+    description: "This table contains aggregated information on the sessions"
+    meta:
+      owner: "Ella"
+    config:
+        tags: ["Marketing"]
+        elementary:
+            timestamp_column: "started_at"
     columns:
       - name: session_id
         data_type: varchar
@@ -193,7 +223,13 @@ models:
         description: "Platform where the session was made. For example, website, iOS app, Android app, etc."
 
   - name: customer_conversions
-    description: ""
+    description: "This table contains information on the conversions of all the customers"
+    meta:
+      owner: "Ella"
+    config:
+        tags: ["Marketing", "Finance", "PII"]
+        elementary:
+            timestamp_column: "converted_at"
     columns:
       - name: customer_id
         data_type: number
@@ -208,7 +244,13 @@ models:
         description: "Total revenue amount (USD) of the conversion"
 
   - name: sessions
-    description: ""
+    description: "This table contains information on the sessions of all the customers and the utm_source, utm_medium and utm_campaign of the session"
+    meta:
+      owner: "Ella"
+    config:
+        tags: ["Marketing", "PII"]
+        elementary:
+            timestamp_column: "started_at"
     columns:
       - name: session_id
         data_type: varchar
