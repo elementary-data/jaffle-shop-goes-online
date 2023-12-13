@@ -31,6 +31,7 @@ def run_incremental_data_creation(
         project_dir=DBT_PROJECT_DIR,
         profiles_dir=profiles_dir,
         target=target,
+        raise_on_failure=False,
     )
 
     first_run = True
