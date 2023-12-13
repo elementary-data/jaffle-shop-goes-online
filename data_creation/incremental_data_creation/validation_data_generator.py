@@ -12,10 +12,10 @@ from utils.csv import (
 CURRENT_DIRECTORY_PATH = os.path.dirname(os.path.realpath(__file__))
 ORIGINAL_JAFFLE_DATA_DIRECTORY_NAME = "original_jaffle_shop_data"
 NEW_JAFFLE_TRAINING_DATA_DIRECORTY_RELATIVE_PATH = (
-    "../jaffle_shop_online/seeds/training"
+    "../../jaffle_shop_online/seeds/training"
 )
 NEW_JAFFLE_VALIDATION_DATA_DIRECORTY_RELATIVE_PATH = (
-    "../jaffle_shop_online/seeds/validation"
+    "../../jaffle_shop_online/seeds/validation"
 )
 
 CUSTOMERS_COUNT = 2000
@@ -26,34 +26,14 @@ HIGHEST_PAYMENT_IN_HUNDRENDS = 28
 MAX_PAYMENTS_PER_ORDER = 2
 
 
-def generate_incremental_validation_data(
-    data_creation_date, ammount_of_new_data=None, last_run=False
-):
-    data_creation_dates = [data_creation_date]
-    if last_run:
-        data_creation_dates = [
-            data_creation_date - timedelta(days=1),
-            data_creation_date,
-        ]
-
-    amount_of_new_customers = generate_customers_data(
-        data_creation_dates, ammount_of_new_data, last_run
-    )
-    amount_of_new_orders = generate_orders_data(
-        data_creation_dates, amount_of_new_customers, last_run
-    )
-    generate_payments_data(data_creation_dates, amount_of_new_orders, last_run)
-    generate_signups_data(data_creation_dates, ammount_of_new_data, last_run)
+def generate_validation_data():
+    generate_customers_data()
+    generate_orders_data()
+    generate_payments_data()
+    generate_signups_data()
 
 
-def generate_customers_data(
-    data_creation_dates, ammount_of_new_data=None, last_run=False
-):
-    ammount_of_new_data = (
-        ammount_of_new_data
-        if ammount_of_new_data
-        else int(CUSTOMERS_COUNT / TIME_SPAN_IN_DAYS) * 4
-    )
+def generate_customers_data():
     training_customers_path = os.path.join(
         CURRENT_DIRECTORY_PATH,
         NEW_JAFFLE_TRAINING_DATA_DIRECORTY_RELATIVE_PATH,
@@ -71,7 +51,7 @@ def generate_customers_data(
     all_last_names = list(set([row[2] for row in training_customers]))
     new_customers = [*training_customers]
     for customer_id in range(
-        len(training_customers) + 1, len(training_customers) + ammount_of_new_data + 1
+        len(training_customers) + 1, len(training_customers) + 201
     ):
         new_customers.append(
             [
@@ -87,10 +67,9 @@ def generate_customers_data(
             ]
         )
     write_to_csv(validation_customers_path, headers, new_customers)
-    return ammount_of_new_data
 
 
-def generate_orders_data(data_creation_dates, ammount_of_new_data=None, last_run=False):
+def generate_orders_data():
     training_orders_path = os.path.join(
         CURRENT_DIRECTORY_PATH,
         NEW_JAFFLE_TRAINING_DATA_DIRECORTY_RELATIVE_PATH,
@@ -114,49 +93,25 @@ def generate_orders_data(data_creation_dates, ammount_of_new_data=None, last_run
     )
     all_order_statuses = list(set([row[3] for row in training_orders]))
     new_orders = [*training_orders]
-
-    for data_creation_date in data_creation_dates:
-        validation_orders_date = data_creation_date.strftime("%Y-%m-%d 02:00:00")
-        if last_run:
-            validation_orders_date = (
-                datetime.strptime(validation_orders_date, "%Y-%m-%d %H:%M:%S")
-                + timedelta(hours=21)
-            ).strftime("%Y-%m-%d %H:%M:%S")
-
-        for order_id in range(
-            len(training_orders) + 1, len(training_orders) + ammount_of_new_data + 1
-        ):
-            order_status = (
+    last_order_date = max(
+        [datetime.strptime(row[2], "%Y-%m-%d") for row in training_orders]
+    )
+    validation_orders_date = (last_order_date + timedelta(1)).strftime("%Y-%m-%d")
+    for order_id in range(len(training_orders) + 1, len(training_orders) + 51):
+        new_orders.append(
+            [
+                order_id,  # ORDER ID
+                random.randint(1, len(validation_customers)),  # CUSTOMER ID
+                validation_orders_date,  # ORDER DATE
                 all_order_statuses[random.randint(0, len(all_order_statuses) - 1)]
                 if random.randint(0, 1)
-                else "lost"
-            )
-            new_orders.append(
-                [
-                    order_id,  # ORDER ID
-                    random.randint(1, len(validation_customers)),  # CUSTOMER ID
-                    validation_orders_date,  # ORDER DATE
-                    all_order_statuses[
-                        random.randint(0, len(all_order_statuses) - 1)
-                        if not last_run
-                        else 0
-                    ]
-                    if random.randint(0, 1)
-                    else "lost",  # ORDER STATUS
-                ]
-            )
+                else "lost",  # ORDER STATUS
+            ]
+        )
     write_to_csv(validation_orders_path, orders_headers, new_orders)
-    return ammount_of_new_data
 
 
-def generate_payments_data(
-    data_creation_dates, ammount_of_new_data=None, last_run=False
-):
-    training_orders_path = os.path.join(
-        CURRENT_DIRECTORY_PATH,
-        NEW_JAFFLE_TRAINING_DATA_DIRECORTY_RELATIVE_PATH,
-        "raw_orders_training.csv",
-    )
+def generate_payments_data():
     training_payments_path = os.path.join(
         CURRENT_DIRECTORY_PATH,
         NEW_JAFFLE_TRAINING_DATA_DIRECORTY_RELATIVE_PATH,
@@ -170,15 +125,10 @@ def generate_payments_data(
     payments_headers, training_payments = split_csv_to_headers_and_data(
         csv_path=training_payments_path
     )
-    orders_headers, training_orders = split_csv_to_headers_and_data(
-        csv_path=training_orders_path
-    )
     all_payments_methods = list(set([row[2] for row in training_payments]))
     new_payments = [*training_payments]
     payment_id = len(training_payments) + 1
-    for order_id in range(
-        len(training_orders) + 1, len(training_orders) + ammount_of_new_data + 1
-    ):
+    for order_id in range(ORDERS_COUNT + 1, ORDERS_COUNT + 51):
         new_payments.append(
             [
                 payment_id,  # PAYMENT_ID
@@ -193,9 +143,7 @@ def generate_payments_data(
     write_to_csv(validation_payments_path, payments_headers, new_payments)
 
 
-def generate_signups_data(
-    data_creation_dates, ammount_of_new_data=None, last_run=False
-):
+def generate_signups_data():
     training_signups_path = os.path.join(
         CURRENT_DIRECTORY_PATH,
         NEW_JAFFLE_TRAINING_DATA_DIRECORTY_RELATIVE_PATH,
@@ -205,11 +153,6 @@ def generate_signups_data(
         CURRENT_DIRECTORY_PATH,
         NEW_JAFFLE_VALIDATION_DATA_DIRECORTY_RELATIVE_PATH,
         "raw_signups_validation.csv",
-    )
-    customers_training_csv_path = os.path.join(
-        CURRENT_DIRECTORY_PATH,
-        NEW_JAFFLE_TRAINING_DATA_DIRECORTY_RELATIVE_PATH,
-        "raw_customers_training.csv",
     )
     customers_csv_path = os.path.join(
         CURRENT_DIRECTORY_PATH,
@@ -224,9 +167,6 @@ def generate_signups_data(
     customers_headers, customers_data = split_csv_to_headers_and_data(
         csv_path=customers_csv_path
     )
-    customers_training_headers, customers_training_data = split_csv_to_headers_and_data(
-        csv_path=customers_training_csv_path
-    )
     orders_headers, orders_data = split_csv_to_headers_and_data(
         csv_path=orders_csv_path
     )
@@ -234,52 +174,44 @@ def generate_signups_data(
         csv_path=training_signups_path
     )
 
+    customer_min_order_time_map = defaultdict(
+        lambda: (
+            datetime.now() - timedelta(random.randint(1, TIME_SPAN_IN_DAYS))
+        ).strftime("%Y-%m-%d")
+    )
+    for order in orders_data:
+        customer_min_order_time_map[order[1]] = min(
+            datetime.strptime(customer_min_order_time_map[order[1]], "%Y-%m-%d"),
+            datetime.strptime(order[2], "%Y-%m-%d"),
+        ).strftime("%Y-%m-%d")
+
     new_signups = [*training_signups_data]
-
-    for data_creation_date in data_creation_dates:
-        customer_min_order_time_map = defaultdict(
-            lambda: data_creation_date.strftime("%Y-%m-%d 02:00:00")
-        )
-        for order in orders_data:
-            customer_min_order_time_map[order[1]] = min(
-                datetime.strptime(
-                    customer_min_order_time_map[order[1]], "%Y-%m-%d %H:%M:%S"
-                ),
-                datetime.strptime(order[2], "%Y-%m-%d %H:%M:%S"),
-            ).strftime("%Y-%m-%d %H:%M:%S")
-
-        amount_of_broken_data = random.randint(0, 30) if not last_run else 60
-        for customer in customers_data[
-            len(customers_training_data) + amount_of_broken_data :
-        ]:
-            new_signups.append(
-                [
-                    customer[0],  # SIGNUP ID
-                    customer[0],  # CUSTOMER ID
-                    f"abcd@example.com",  # USER EMAIL
-                    hashlib.sha256(datetime.now().isoformat().encode()).hexdigest(),
-                    customer_min_order_time_map[customer[0]],
-                ]
-            )
-        last_signup_date = max(
+    for customer in customers_data[CUSTOMERS_COUNT + 2 :]:
+        new_signups.append(
             [
-                datetime.strptime(row[4], "%Y-%m-%d %H:%M:%S")
-                for row in training_signups_data
+                customer[0],  # SIGNUP ID
+                customer[0],  # CUSTOMER ID
+                f"abcd@example.com",  # USER EMAIL
+                hashlib.sha256(datetime.now().isoformat().encode()).hexdigest(),
+                customer_min_order_time_map[customer[0]],
             ]
         )
-        validation_signup_date = (last_signup_date + timedelta(1)).strftime(
-            "%Y-%m-%d %H:%M:%S"
+    last_signup_date = max(
+        [datetime.strptime(row[4], "%Y-%m-%d") for row in training_signups_data]
+    )
+    validation_signup_date = (last_signup_date + timedelta(1)).strftime("%Y-%m-%d")
+    for i in range(len(customers_data) + 1, len(customers_data) + 3):
+        new_signups.append(
+            [
+                i,  # SIGNUP ID
+                i,  # CUSTOMER ID
+                f"abcd@example.com",  # USER EMAIL
+                hashlib.sha256(datetime.now().isoformat().encode()).hexdigest(),
+                validation_signup_date,
+            ]
         )
-        for i in range(
-            len(customers_data) + 1, len(customers_data) + amount_of_broken_data + 1
-        ):
-            new_signups.append(
-                [
-                    i,  # SIGNUP ID
-                    i,  # CUSTOMER ID
-                    f"abcd@example.com",  # USER EMAIL
-                    hashlib.sha256(datetime.now().isoformat().encode()).hexdigest(),
-                    validation_signup_date,
-                ]
-            )
     write_to_csv(validation_signups_path, signups_headers, new_signups)
+
+
+if __name__ == "__main__":
+    generate_validation_data()

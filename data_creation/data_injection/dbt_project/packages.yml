@@ -1,4 +1,2 @@
 packages:
-  - package: elementary-data/elementary
-    version: 0.13.0
   - local: ../../../jaffle_shop_online
