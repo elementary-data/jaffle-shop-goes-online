@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from typing import Optional
 from data_creation.data_injection.test_data_generator import (
     TestDataGenerator,
     AnomalyTestSpec,
@@ -20,8 +21,12 @@ INJECTION_DBT_PROJECT_DIR = os.path.join(
 )
 
 
-def inject_jaffle_shop_tests(target: str = None):
-    dbt_runner = DbtRunner(INJECTION_DBT_PROJECT_DIR, target=target)
+def inject_jaffle_shop_tests(
+    target: Optional[str] = None, profiles_dir: Optional[str] = None
+):
+    dbt_runner = DbtRunner(
+        project_dir=INJECTION_DBT_PROJECT_DIR, profiles_dir=profiles_dir, target=target
+    )
 
     start_time = datetime.now()
 

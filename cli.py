@@ -1,5 +1,5 @@
 import click
-from data_creation.initial_demo import initial_demo, initial_incremental_demo
+from data_creation.initial_demo import initial_incremental_demo
 from data_creation.incremental_data_creation.training_data_generator import (
     generate_training_data,
 )

@@ -1,5 +1,6 @@
 import argparse
 import logging
+from typing import Optional
 
 from data_creation.data_injection.inject_jaffle_shop_tests import (
     inject_jaffle_shop_tests,
@@ -11,9 +12,13 @@ from data_creation.incremental_data_creation.incremental_data_flow import (
 logger = logging.getLogger(__name__)
 
 
-def initial_incremental_demo(target=None, days_back=30):
-    run_incremental_data_creation(target=target, days_back=days_back)
-    inject_jaffle_shop_tests(target=target)
+def initial_incremental_demo(
+    target: Optional[str] = None, days_back=30, profiles_dir: Optional[str] = None
+):
+    run_incremental_data_creation(
+        target=target, profiles_dir=profiles_dir, days_back=days_back
+    )
+    inject_jaffle_shop_tests(target=target, profiles_dir=profiles_dir)
 
 
 def main():
@@ -23,7 +28,9 @@ def main():
     args_parser.add_argument("-pd", "--profiles-dir")
     args = args_parser.parse_args()
 
-    initial_incremental_demo(target=args.target, days_back=args.days_back)
+    initial_incremental_demo(
+        target=args.target, days_back=args.days_back, profiles_dir=args.profiles_dir
+    )
 
 
 if __name__ == "__main__":
