@@ -15,7 +15,12 @@ setup(
     python_requires=">=3.6.2",
     author="Elementary",
     long_description=README,
-    install_requires=["click>=7.0,<9", "dbt-core>=0.20,<2.0.0", "elementary-data"],
+    install_requires=[
+        "click>=7.0,<9",
+        "dbt-core>=0.20,<2.0.0",
+        "elementary-data",
+        "numpy==1.24.3",
+    ],
     extras_require={
         "snowflake": ["dbt-snowflake>=0.20,<2.0.0"],
         "bigquery": ["dbt-bigquery>=0.20,<2.0.0"],
