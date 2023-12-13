@@ -23,9 +23,7 @@ def main():
     args_parser.add_argument("-pd", "--profiles-dir")
     args = args_parser.parse_args()
 
-    initial_incremental_demo(
-        target=args.target, days_back=args.days_back, profiles_dir=args.profiles_dir
-    )
+    initial_incremental_demo(target=args.target, days_back=args.days_back)
 
 
 if __name__ == "__main__":
