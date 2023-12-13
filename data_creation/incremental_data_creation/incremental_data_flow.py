@@ -35,6 +35,7 @@ def run_incremental_data_creation(
 
     first_run = True
 
+    print("Clearing demo environment")
     logger.info("Clearing demo environment")
     dbt_runner.run_operation(macro_name="jaffle_shop_online.clear_tests")
     clear_data(validation=True, training=True)
@@ -42,6 +43,7 @@ def run_incremental_data_creation(
     dbt_runner.seed(select="ads")
     dbt_runner.seed(select="sessions")
 
+    print(f"Running incremental demo for {days_back} days back")
     logger.info(f"Running incremental demo for {days_back} days back")
     current_time = datetime.utcnow()
     for run_index in range(1, days_back):
@@ -51,7 +53,9 @@ def run_incremental_data_creation(
         if not first_run and not random.randint(0, round(days_back / 4)):
             clear_data(validation=True)
             generate_incremental_validation_data(custom_run_time)
+            print(f"Seed validation - day {run_index}")
             dbt_runner.seed(select="validation")
+            print(f"Run models with validation data - day {run_index}")
             dbt_runner.run(
                 vars={
                     "custom_run_started_at": custom_run_time.isoformat(),
@@ -61,6 +65,7 @@ def run_incremental_data_creation(
                     "job_id": str(uuid.uuid4()),
                 }
             )
+            print(f"Run tests - day {run_index}")
             dbt_runner.test(
                 vars={
                     "custom_run_started_at": custom_run_time.isoformat(),
@@ -72,7 +77,9 @@ def run_incremental_data_creation(
             )
             clear_data(validation=True)
             generate_incremental_training_data(custom_run_time)
+            print(f"Seed training - day {run_index}")
             dbt_runner.seed(select="training")
+            print(f"Run models with training data - day {run_index}")
             dbt_runner.run(
                 vars={
                     "custom_run_started_at": custom_run_time.isoformat(),
@@ -84,7 +91,9 @@ def run_incremental_data_creation(
 
         else:
             generate_incremental_training_data(custom_run_time)
+            print(f"Seed training - day {run_index}")
             dbt_runner.seed(select="training")
+            print(f"Run models with training data - day {run_index}")
             dbt_runner.run(
                 vars={
                     "custom_run_started_at": custom_run_time.isoformat(),
@@ -93,6 +102,7 @@ def run_incremental_data_creation(
                     "job_id": str(uuid.uuid4()),
                 }
             )
+            print(f"Run tests - day {run_index}")
             dbt_runner.test(
                 vars={
                     "custom_run_started_at": custom_run_time.isoformat(),
@@ -132,10 +142,10 @@ def run_incremental_data_creation(
 def clear_data(validation=False, training=False):
     current_directory_path = os.path.dirname(os.path.realpath(__file__))
     new_jaffle_training_data_direcorty_relative_path = (
-        "../jaffle_shop_online/seeds/training"
+        "../../jaffle_shop_online/seeds/training"
     )
     new_jaffle_validation_data_direcorty_relative_path = (
-        "../jaffle_shop_online/seeds/validation"
+        "../../jaffle_shop_online/seeds/validation"
     )
 
     training_path = os.path.join(
@@ -152,11 +162,3 @@ def clear_data(validation=False, training=False):
     if training:
         for csv_file in glob.glob(training_path + "/*.csv"):
             clear_csv(csv_file)
-
-
-if __name__ == "__main__":
-    JAFFLE_SHOP_ONLINE_DIR_NAME = "jaffle_shop_online"
-    REPO_DIR = Path(os.path.dirname(__file__)).parent.parent.absolute()
-    DBT_PROJECT_DIR = os.path.join(REPO_DIR, JAFFLE_SHOP_ONLINE_DIR_NAME)
-
-    print(REPO_DIR, DBT_PROJECT_DIR)
