@@ -1,17 +1,16 @@
 import click
 from data_creation.initial_demo import initial_demo, initial_incremental_demo
-from data_creation.training_data_generator import generate_training_data
-from data_creation.validation_data_generator import generate_validation_data
+from data_creation.incremental_data_creation.training_data_generator import (
+    generate_training_data,
+)
+from data_creation.incremental_data_creation.validation_data_generator import (
+    generate_validation_data,
+)
 
 
 @click.group()
 def cli():
     pass
-
-
-@cli.command()
-def initial_demo_flow():
-    initial_demo()
 
 
 @cli.command()
