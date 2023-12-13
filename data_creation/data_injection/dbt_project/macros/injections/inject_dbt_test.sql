@@ -23,6 +23,7 @@
         'depends_on_nodes': '[]',
         'generated_at': elementary.datetime_now_utc_as_string(),
     } %}
+    {% do elementary.insert_rows(relation, [test_data], true) %}
     {% do rows_to_insert['dbt_tests'].append(test_data) %}
 
     {% do return(rows_to_insert) %}

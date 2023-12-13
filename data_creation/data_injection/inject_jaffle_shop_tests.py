@@ -1,4 +1,4 @@
-from data_injection.test_data_generator import TestDataGenerator, AnomalyTestSpec, AutomatedTestsSpec, get_values_around_middle, get_values_around_middle_anomalous, get_values_around_middle_anomalous_weekly_seasonality, SourceFreshnessPeriod
+from data_creation.data_injection.test_data_generator import TestDataGenerator, AnomalyTestSpec, AutomatedTestsSpec, get_values_around_middle, get_values_around_middle_anomalous, get_values_around_middle_anomalous_weekly_seasonality, SourceFreshnessPeriod
 from elementary.clients.dbt.dbt_runner import DbtRunner
 
 from datetime import datetime, timedelta

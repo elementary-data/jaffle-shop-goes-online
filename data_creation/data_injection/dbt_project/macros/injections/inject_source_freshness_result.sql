@@ -21,6 +21,7 @@
         'execute_started_at': elementary.datetime_now_utc_as_string(),
         'execute_completed_at': elementary.datetime_now_utc_as_string(),
     } %}
+    {% do elementary.insert_rows(test_results_relation, [result], true) %}
     {% do rows_to_insert['dbt_source_freshness_results'].append(result) %}
 
     {% do return(rows_to_insert) %}

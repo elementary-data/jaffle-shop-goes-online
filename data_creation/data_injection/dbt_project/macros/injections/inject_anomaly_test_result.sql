@@ -35,6 +35,7 @@
         'failed_row_count': None
     } %}
     {% do rows_to_insert['elementary_test_results'].append(result) %}
+    {% do elementary.insert_rows(test_results_relation, [result], true) %}
 
     {% set result_rows_relation = elementary.get_elementary_relation('test_result_rows') %}
     {% set db_result_rows = [] %}
@@ -46,6 +47,7 @@
             'created_at': test_timestamp
         }) %}
     {% endfor %}
+    {% do elementary.insert_rows(result_rows_relation, db_result_rows, true) %}
     {% do rows_to_insert['test_result_rows'].extend(db_result_rows) %}
 
     {% do return(rows_to_insert) %}
