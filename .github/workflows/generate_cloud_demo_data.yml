@@ -25,7 +25,7 @@ jobs:
         env:
           PROFILES_YML: ${{ secrets.CLOUD_DEMO_PROFILES_YML }}
         run: |
-          echo "$PROFILES_YML" | base64 -d > /home/profiles/profiles.yml
+          echo "$PROFILES_YML" | base64 -d > ./profiles.yml
 
       - name: Setup python
         uses: actions/setup-python@v4
@@ -49,4 +49,4 @@ jobs:
           dbt deps --project-dir "./jaffle_shop_online"
 
       - name: Run initial demo
-        run: python data_creation/initial_demo.py --target ${{ inputs.warehouse-type || 'snowflake' }} --days-back 14 --profiles-dir "/home/profiles"
+        run: python data_creation/initial_demo.py --target ${{ inputs.warehouse-type || 'snowflake' }} --days-back 14
