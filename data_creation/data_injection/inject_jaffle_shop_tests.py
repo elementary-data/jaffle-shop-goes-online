@@ -27,6 +27,7 @@ def inject_jaffle_shop_tests(
     dbt_runner = DbtRunner(
         project_dir=INJECTION_DBT_PROJECT_DIR, profiles_dir=profiles_dir, target=target
     )
+    dbt_runner.deps()
 
     start_time = datetime.now()
 
