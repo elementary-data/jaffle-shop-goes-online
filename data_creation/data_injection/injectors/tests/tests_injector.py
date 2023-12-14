@@ -13,12 +13,34 @@ class TestTypes(Enum):
     DBT_TEST = "dbt_test"
 
 
+class TestSubTypes(Enum):
+    GENGERIC = "generic"
+
+    # dbt test
+    DBT_EXPECTATIONS = "expectation"
+    SINGULAR = "singular"
+
+    # schema change
+    TYPE_CHANGED = "type_changed"
+
+    # anomaly detection
+    ROW_COUNT = "row_count"
+    ZERO_COUNT = "zero_count"
+    ZERO_PRECENT = "zero_precent"
+    MISSING_COUNT = "missing_count"
+    FRESHNESS = "freshness"
+    NULL_COUNT = "null_count"
+
+    # automated test
+    AUTOMATED = "automated"
+
+
 class TestSchema(BaseModel):
     test_id: str
     test_name: str
     test_column_name: Optional[str]
-    test_type: str
-    test_sub_type: str
+    test_type: TestTypes
+    test_sub_type: TestSubTypes
     test_params: dict
     description: str
     model_id: str
@@ -43,7 +65,7 @@ class TestsInjector(BaseInjector):
                 test_column_name=test.test_column_name,
                 test_params=test.test_params,
                 description=test.description,
-                type=test.test_type,
+                type=test.test_type.value,
             ),
         )
 

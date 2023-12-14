@@ -13,10 +13,10 @@ from data_creation.data_injection.injectors.tests.test_run_results_injector impo
     SourceFreshnessPeriod,
     SourceFreshnessResult,
     TestRunResultsInjector,
-    TestSubTypes,
 )
 from data_creation.data_injection.injectors.tests.tests_injector import (
     TestSchema,
+    TestSubTypes,
     TestTypes,
 )
 
@@ -55,12 +55,12 @@ def get_values_around_middle_anomalous_weekly_seasonality(
     return values
 
 
-class TestSpec(BaseModel):
+class BaseSpec(BaseModel):
     def generate(self, dbt_runner: DbtRunner):
         raise NotImplementedError()
 
 
-class SourceFreshnessSpec(TestSpec):
+class SourceFreshnessSpec(BaseSpec):
     result: SourceFreshnessResult
 
     def generate(self, dbt_runner: DbtRunner):
@@ -68,18 +68,24 @@ class SourceFreshnessSpec(TestSpec):
         injector.inject_source_freshness_result(self.result)
 
 
-class AnomalyTestSpec(TestSpec):
+class TestSpec(BaseSpec):
     model_name: str
     test_name: str
+    test_column_name: Optional[str] = None
+    test_sub_type: TestSubTypes = TestSubTypes.GENGERIC
+
+    def generate(self, dbt_runner: DbtRunner):
+        raise NotImplementedError()
+
+
+class AnomalyTestSpec(TestSpec):
     is_automated: bool
     metric_values: list[float]
-    test_column_name: Optional[str] = None
     timestamp_column: Optional[str] = None
     sensitivity: int = 3
     min_values_bound: int = 0
     bucket_period: str = "day"
-    test_sub_type: str = TestSubTypes.GENGERIC.value
-    test_type: str = TestTypes.ANOMALY_DETECTION.value
+    test_type: TestTypes = TestTypes.ANOMALY_DETECTION
     day_of_week_seasonality: bool = False
 
     @property

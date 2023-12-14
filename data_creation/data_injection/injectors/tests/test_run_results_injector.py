@@ -11,30 +11,14 @@ from data_creation.data_injection.injectors.tests.tests_injector import (
 )
 
 
-class TestSubTypes(Enum):
-    GENGERIC = "generic"
-
-    # dbt test
-    DBT_EXPECTATIONS = "expectation"
-    SINGULAR = "singular"
-
-    # schema change
-    TYPE_CHANGED = "type_changed"
-
-    # anomaly detection
-    ROW_COUNT = "row_count"
-    ZERO_COUNT = "zero_count"
-    ZERO_PRECENT = "zero_precent"
-    MISSING_COUNT = "missing_count"
-    FRESHNESS = "freshness"
-    NULL_COUNT = "null_count"
-
-    # automated test
-    AUTOMATED = "automated"
-
-
 class TestResult(BaseModel):
-    pass
+    test_timestamp: datetime
+    test_status: str
+    result_description: str
+
+
+class DbtTestResult(TestResult):
+    test_result_rows: list[dict]
 
 
 class AnomalyTestMetric(BaseModel):
@@ -49,11 +33,8 @@ class AnomalyTestMetric(BaseModel):
         return (self.value < self.min_value) or (self.value > self.max_value)
 
 
-class AnomalyTestResult(BaseModel):
-    test_timestamp: datetime
-    test_status: str
+class AnomalyTestResult(TestResult):
     test_metrics: list[AnomalyTestMetric]
-    result_description: str
 
 
 class SourceFreshnessPeriod(BaseModel):
@@ -78,8 +59,26 @@ class TestRunResultsInjector(TestsInjector):
     def __init__(self, dbt_runner: DbtRunner) -> None:
         super().__init__(dbt_runner)
 
-    def inject_test_result(self, test: TestSchema, test_result: TestResult):
-        pass
+    def inject_dbt_test_result(self, test: TestSchema, test_result: DbtTestResult):
+        self.dbt_runner.run_operation(
+            macro_name="data_injection.inject_elementary_test_result",
+            macro_args=dict(
+                test_id=test.test_id,
+                test_name=test.test_name,
+                test_column_name=test.test_column_name,
+                test_type=test.test_type.value,
+                test_sub_type=test.test_sub_type.value,
+                test_params=test.test_params,
+                test_timestamp=test_result.test_timestamp.isoformat(),
+                test_status=test_result.test_status,
+                model_id=test.model_id,
+                model_name=test.model_name,
+                test_result_rows=[
+                    result_row for result_row in test_result.test_result_rows
+                ],
+                result_description=test_result.result_description,
+            ),
+        )
 
     def inject_anomaly_test_result(
         self, test: TestSchema, test_result: AnomalyTestResult
