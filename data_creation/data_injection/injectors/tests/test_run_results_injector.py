@@ -1,21 +1,40 @@
 from datetime import datetime
+from enum import Enum
 from typing import Optional
 
 from elementary.clients.dbt.dbt_runner import DbtRunner
 from pydantic import BaseModel
 
-from data_injection.base_injector import BaseInjector
+from data_creation.data_injection.injectors.tests.tests_injector import (
+    TestSchema,
+    TestsInjector,
+)
 
 
-class DbtTest(BaseModel):
-    test_id: str
-    test_name: str
-    test_column_name: Optional[str]
-    test_sub_type: str
-    test_params: dict
-    description: str
-    model_id: str
-    model_name: str
+class TestSubTypes(Enum):
+    GENGERIC = "generic"
+
+    # dbt test
+    DBT_EXPECTATIONS = "expectation"
+    SINGULAR = "singular"
+
+    # schema change
+    TYPE_CHANGED = "type_changed"
+
+    # anomaly detection
+    ROW_COUNT = "row_count"
+    ZERO_COUNT = "zero_count"
+    ZERO_PRECENT = "zero_precent"
+    MISSING_COUNT = "missing_count"
+    FRESHNESS = "freshness"
+    NULL_COUNT = "null_count"
+
+    # automated test
+    AUTOMATED = "automated"
+
+
+class TestResult(BaseModel):
+    pass
 
 
 class AnomalyTestMetric(BaseModel):
@@ -55,29 +74,23 @@ class SourceFreshnessResult(BaseModel):
         return (datetime.utcnow() - self.max_loaded_at).total_seconds()
 
 
-class AnomalyTestInjector(BaseInjector):
+class TestRunResultsInjector(TestsInjector):
     def __init__(self, dbt_runner: DbtRunner) -> None:
         super().__init__(dbt_runner)
 
-    def inject_test(self, test: DbtTest):
-        self.dbt_runner.run_operation(
-            macro_name="data_injection.inject_dbt_test",
-            macro_args=dict(
-                test_id=test.test_id,
-                test_name=test.test_name,
-                test_column_name=test.test_column_name,
-                test_params=test.test_params,
-                description=test.description
-            )
-        )
+    def inject_test_result(self, test: TestSchema, test_result: TestResult):
+        pass
 
-    def inject_test_result(self, test: DbtTest, test_result: AnomalyTestResult):
+    def inject_anomaly_test_result(
+        self, test: TestSchema, test_result: AnomalyTestResult
+    ):
         self.dbt_runner.run_operation(
-            macro_name="data_injection.inject_anomaly_test_result",
+            macro_name="data_injection.inject_elementary_test_result",
             macro_args=dict(
                 test_id=test.test_id,
                 test_name=test.test_name,
                 test_column_name=test.test_column_name,
+                test_type=test.test_type,
                 test_sub_type=test.test_sub_type,
                 test_params=test.test_params,
                 test_timestamp=test_result.test_timestamp.isoformat(),
@@ -85,8 +98,8 @@ class AnomalyTestInjector(BaseInjector):
                 model_id=test.model_id,
                 model_name=test.model_name,
                 test_metrics=[metric.dict() for metric in test_result.test_metrics],
-                result_description=test_result.result_description
-            )
+                result_description=test_result.result_description,
+            ),
         )
 
     def inject_source_freshness_result(self, test_result: SourceFreshnessResult):
@@ -98,14 +111,11 @@ class AnomalyTestInjector(BaseInjector):
                 max_loaded_at_time_ago_in_s=test_result.max_loaded_at_time_ago_in_s,
                 status=test_result.status,
                 warn_after=test_result.warn_after.dict(),
-                error_after=test_result.error_after.dict()
-            )
+                error_after=test_result.error_after.dict(),
+            ),
         )
 
     def delete_test_data(self, test_id: str):
         self.dbt_runner.run_operation(
-            "data_injection.delete_test_data",
-            macro_args=dict(
-                test_id=test_id
-            )
+            "data_injection.delete_test_data", macro_args=dict(test_id=test_id)
         )

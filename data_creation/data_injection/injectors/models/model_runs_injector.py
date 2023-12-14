@@ -1,11 +1,10 @@
 from datetime import datetime
 from enum import Enum
-import json
 from typing import List, Optional
 from elementary.clients.dbt.dbt_runner import DbtRunner
 from pydantic import BaseModel
 
-from data_creation.data_injection.base_injector import BaseInjector
+from data_creation.data_injection.injectors.models.models_injector import ModelsInjector
 
 
 class ModelRunStatus(Enum):
@@ -34,11 +33,14 @@ class ModelRunSchema(BaseModel):
         return self.generated_at.strftime("%Y-%m-%d %H:%M:%S")
 
 
-class ModelRunsInjector(BaseInjector):
+class ModelRunsInjector(ModelsInjector):
     def __init__(
-        self, dbt_runner: Optional[DbtRunner] = None, target: Optional[str] = None
+        self,
+        dbt_runner: Optional[DbtRunner] = None,
+        target: Optional[str] = None,
+        profiles_dir: Optional[str] = None,
     ) -> None:
-        super().__init__(dbt_runner, target)
+        super().__init__(dbt_runner, target, profiles_dir)
 
     def inject_model_run(self, model_run: ModelRunSchema):
         self.dbt_runner.run_operation(
@@ -55,11 +57,3 @@ class ModelRunsInjector(BaseInjector):
     def inject_model_runs(self, model_runs: List[ModelRunSchema]):
         for model_run in model_runs:
             self.inject_model_run(model_run)
-
-    def get_model_ids(self, select: Optional[str] = None) -> List[str]:
-        model_ids_output = self.dbt_runner.run_operation(
-            macro_name="data_injection.get_models_unique_ids",
-            macro_args=dict(filter=select),
-        )
-        model_ids = json.loads(model_ids_output[0])
-        return model_ids

@@ -1,4 +1,4 @@
-{% macro inject_dbt_test(test_id, test_name, test_column_name, test_params, description) %}
+{% macro inject_dbt_test(test_id, test_name, test_column_name, test_params, type, description, tags = [], model_tags = [], model_owners = []) %}
     {% set rows_to_insert = {'dbt_tests': []} %}
 
     {% set relation = elementary.get_elementary_relation('dbt_tests') %}
@@ -10,14 +10,15 @@
         'short_name': test_name,
         'alias': test_name,
         'test_column_name': test_column_name,
+        'type': type,
         'severity': 'warn',
         'warn_if': '',
         'error_if': '',
         'test_params': test_params | tojson,
         'test_namespace': 'elementary',
-        'tags': '[]',
-        'model_tags': '[]',
-        'model_owners': '[]',
+        'tags': tags,
+        'model_tags': model_tags,
+        'model_owners': model_owners,
         'meta': tojson({"description": description, "generated_result": true}),
         'depends_on_macros': '[]',
         'depends_on_nodes': '[]',
