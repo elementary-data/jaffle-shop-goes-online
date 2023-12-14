@@ -1,6 +1,5 @@
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, time, timedelta
 import random
-import time
 from typing import Any, Optional
 
 import numpy
@@ -38,7 +37,9 @@ class AnomalyTestSpec(TestSpec):
                 "Column-level anomaly monitors (null_count, null_percent, zero_count, string_length, "
                 "variance, etc.) on the column according to its data type."
             )
-        return ""
+        return (
+            "Elementary test is an advance dbt test that is used to validate your data"
+        )
 
     def get_result_description(self, last_metric: AnomalyTestMetric):
         metric_average = (last_metric.min_value + last_metric.max_value) / 2
