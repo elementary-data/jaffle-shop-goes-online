@@ -17,7 +17,7 @@ class TestSchema(BaseModel):
     test_id: str
     test_name: str
     test_column_name: Optional[str]
-    test_type: TestTypes
+    test_type: str
     test_sub_type: str
     test_params: dict
     description: str
@@ -43,7 +43,7 @@ class TestsInjector(BaseInjector):
                 test_column_name=test.test_column_name,
                 test_params=test.test_params,
                 description=test.description,
-                type=test.test_type.value,
+                type=test.test_type,
             ),
         )
 

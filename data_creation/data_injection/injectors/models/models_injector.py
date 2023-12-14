@@ -1,5 +1,5 @@
 import json
-from typing import Optional
+from typing import List, Optional
 from elementary.clients.dbt.dbt_runner import DbtRunner
 from data_creation.data_injection.injectors.base_injector import BaseInjector
 

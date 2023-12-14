@@ -97,7 +97,7 @@ class TestRunResultsInjector(TestsInjector):
                 test_status=test_result.test_status,
                 model_id=test.model_id,
                 model_name=test.model_name,
-                test_metrics=[metric.dict() for metric in test_result.test_metrics],
+                test_result_rows=[metric.dict() for metric in test_result.test_metrics],
                 result_description=test_result.result_description,
             ),
         )
