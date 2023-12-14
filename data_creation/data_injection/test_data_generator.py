@@ -1,6 +1,6 @@
 import random
 from datetime import datetime, date, timedelta, time
-from typing import Optional, Any
+from typing import Optional, Any, Union
 
 import numpy
 from elementary.clients.dbt.dbt_runner import DbtRunner
@@ -238,7 +238,7 @@ class AnomalyTestSpec(TestSpec):
             injector.inject_anomaly_test_result(test, prev_test_result)
 
 
-class AutomatedTestsSpec(TestSpec):
+class AutomatedTestsSpec(BaseSpec):
     include_tests: list[str] = ["volume", "freshness"]
     exceptions: dict[tuple[str, str], dict]
 
@@ -246,7 +246,7 @@ class AutomatedTestsSpec(TestSpec):
         models_injector = ModelsInjector(dbt_runner)
         all_nodes = models_injector.get_nodes()
 
-        all_tests: list[TestSpec] = []
+        all_tests: list[Union[SourceFreshnessSpec, AnomalyTestSpec]] = []
         for node in all_nodes:
             for test_name in self.include_tests:
                 if test_name == "freshness" and not (
