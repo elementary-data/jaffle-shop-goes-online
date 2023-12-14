@@ -1,18 +1,27 @@
 import os
 from pathlib import Path
 from typing import Optional
-from data_creation.data_injection.test_data_generator import (
-    TestDataGenerator,
-    AnomalyTestSpec,
-    AutomatedTestsSpec,
-    get_values_around_middle,
-    get_values_around_middle_anomalous,
-    get_values_around_middle_anomalous_weekly_seasonality,
-    SourceFreshnessPeriod,
-)
 from elementary.clients.dbt.dbt_runner import DbtRunner
 
 from datetime import datetime, timedelta
+from data_creation.data_injection.data_generator.specs.tests.anomaly_test_spec import (
+    AnomalyTestSpec,
+)
+from data_creation.data_injection.data_generator.specs.tests.automated_test_spec import (
+    AutomatedTestsSpec,
+)
+
+from data_creation.data_injection.data_generator.test_data_generator import (
+    TestDataGenerator,
+)
+from data_creation.data_injection.injectors.tests.test_run_results_injector import (
+    SourceFreshnessPeriod,
+)
+from data_creation.data_injection.utils import (
+    get_values_around_middle,
+    get_values_around_middle_anomalous,
+    get_values_around_middle_anomalous_weekly_seasonality,
+)
 
 
 REPO_DIR = Path(os.path.dirname(__file__)).parent.parent.absolute()

@@ -1,81 +1,22 @@
+from datetime import date, datetime, timedelta
 import random
-from datetime import datetime, date, timedelta, time
-from typing import Optional, Any, Union
+import time
+from typing import Any, Optional
 
 import numpy
-from elementary.clients.dbt.dbt_runner import DbtRunner
-from pydantic import BaseModel
+from data_creation.data_injection.data_generator.specs.tests.test_spec import TestSpec
 from data_creation.data_injection.injectors.models.models_injector import ModelsInjector
-
 from data_creation.data_injection.injectors.tests.test_run_results_injector import (
     AnomalyTestMetric,
     AnomalyTestResult,
-    SourceFreshnessPeriod,
-    SourceFreshnessResult,
     TestRunResultsInjector,
 )
 from data_creation.data_injection.injectors.tests.tests_injector import (
     TestSchema,
-    TestSubTypes,
     TestTypes,
 )
 
-
-def get_values_around_middle(middle, space, num_entries=14):
-    return [random.randint(middle - space, middle + space) for i in range(num_entries)]
-
-
-def get_values_around_middle_anomalous(middle, space, is_spike=False, num_entries=14):
-    values = [
-        random.randint(middle - space, middle + space) for i in range(num_entries - 1)
-    ]
-    if not is_spike:
-        values.append(0)
-    else:
-        values.append(middle + random.randint(space * 5, space * 7))
-    return values
-
-
-def get_values_around_middle_anomalous_weekly_seasonality(
-    middle, space, weekly_middle, is_spike=False, num_entries=14 * 7 + 3
-):
-    values = [
-        random.randint(weekly_middle - space, weekly_middle + space)
-        if i % 7 <= 1
-        else random.randint(middle - space, middle + space)
-        for i in range(num_entries - 1)
-    ]
-    if not is_spike:
-        values.append(0)
-    else:
-        if (num_entries - 1) % 7 <= 1:
-            values.append(weekly_middle + random.randint(space * 5, space * 7))
-        else:
-            values.append(middle + random.randint(space * 5, space * 7))
-    return values
-
-
-class BaseSpec(BaseModel):
-    def generate(self, dbt_runner: DbtRunner):
-        raise NotImplementedError()
-
-
-class SourceFreshnessSpec(BaseSpec):
-    result: SourceFreshnessResult
-
-    def generate(self, dbt_runner: DbtRunner):
-        injector = TestRunResultsInjector(dbt_runner)
-        injector.inject_source_freshness_result(self.result)
-
-
-class TestSpec(BaseSpec):
-    model_name: str
-    test_name: str
-    test_column_name: Optional[str] = None
-    test_sub_type: TestSubTypes = TestSubTypes.GENGERIC
-
-    def generate(self, dbt_runner: DbtRunner):
-        raise NotImplementedError()
+from elementary.clients.dbt.dbt_runner import DbtRunner
 
 
 class AnomalyTestSpec(TestSpec):
@@ -236,106 +177,3 @@ class AnomalyTestSpec(TestSpec):
                 result_description="",
             )
             injector.inject_anomaly_test_result(test, prev_test_result)
-
-
-class AutomatedTestsSpec(BaseSpec):
-    include_tests: list[str] = ["volume", "freshness"]
-    exceptions: dict[tuple[str, str], dict]
-
-    def generate(self, dbt_runner: DbtRunner):
-        models_injector = ModelsInjector(dbt_runner)
-        all_nodes = models_injector.get_nodes()
-
-        all_tests: list[Union[SourceFreshnessSpec, AnomalyTestSpec]] = []
-        for node in all_nodes:
-            for test_name in self.include_tests:
-                if test_name == "freshness" and not (
-                    node["model_id"].startswith("source")
-                ):
-                    continue
-
-                test_key = (node["model_name"], test_name)
-                if test_key in self.exceptions:
-                    if test_name == "freshness":
-                        all_tests.append(
-                            SourceFreshnessSpec(
-                                result=SourceFreshnessResult(
-                                    model_id=node["model_id"],
-                                    **self.exceptions[test_key],
-                                )
-                            )
-                        )
-                    else:
-                        all_tests.append(
-                            AnomalyTestSpec(
-                                model_name=node["model_name"],
-                                test_name=test_name,
-                                is_automated=True,
-                                test_sub_type=TestSubTypes.AUTOMATED.value,
-                                **self.exceptions[test_key],
-                            )
-                        )
-                else:
-                    if test_name == "freshness":
-                        all_tests.append(
-                            self.generate_source_freshness_test(node["model_id"])
-                        )
-                    else:
-                        all_tests.append(
-                            AnomalyTestSpec(
-                                model_name=node["model_name"],
-                                test_name=test_name,
-                                is_automated=True,
-                                test_sub_type=TestSubTypes.AUTOMATED.value,
-                                metric_values=self.get_random_values(),
-                            )
-                        )
-
-        for i, test in enumerate(all_tests):
-            print(f"* Generating automated test {i + 1} / {len(all_tests)} - {test}")
-            test.generate(dbt_runner)
-
-    @staticmethod
-    def generate_source_freshness_test(model_id: str):
-        utc_now = datetime.utcnow()
-        return random.choice(
-            [
-                SourceFreshnessSpec(
-                    result=SourceFreshnessResult(
-                        model_id=model_id,
-                        max_loaded_at=utc_now - timedelta(hours=3),
-                        status="pass",
-                        warn_after=SourceFreshnessPeriod(period="hour", count=4),
-                        error_after=SourceFreshnessPeriod(period="hour", count=6),
-                    )
-                ),
-                SourceFreshnessSpec(
-                    result=SourceFreshnessResult(
-                        model_id=model_id,
-                        max_loaded_at=utc_now - timedelta(hours=1),
-                        status="pass",
-                        warn_after=SourceFreshnessPeriod(period="hour", count=3),
-                        error_after=SourceFreshnessPeriod(period="hour", count=5),
-                    )
-                ),
-            ]
-        )
-
-    @staticmethod
-    def get_random_values():
-        settings = random.choice([(10000, 1000), (500, 10), (3000, 300)])
-        return get_values_around_middle(*settings)
-
-
-class TestDataGenerator:
-    def __init__(self, dbt_runner: DbtRunner):
-        self.dbt_runner = dbt_runner
-
-    def generate(self, test_specs: list[TestSpec]):
-        for i, test_spec in enumerate(test_specs):
-            print(f"Generating {i + 1}/{len(test_specs)} - {test_spec}")
-            test_spec.generate(self.dbt_runner)
-
-    def delete_generated_tests(self):
-        print("Deleting existing generated tests")
-        self.dbt_runner.run_operation("data_injection.delete_generated_tests")
