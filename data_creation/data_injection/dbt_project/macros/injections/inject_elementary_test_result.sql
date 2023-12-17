@@ -33,10 +33,10 @@
     } %}
     {% do elementary.insert_rows(test_results_relation, [result], true) %}
 
-    {% if test_results_rows %}
+    {% if test_result_rows %}
         {% set result_rows_relation = elementary.get_elementary_relation('test_result_rows') %}
         {% set db_result_rows = [] %}
-        {% for test_result_row in test_results_rows %}
+        {% for test_result_row in test_result_rows %}
             {% do db_result_rows.append({
                 'elementary_test_results_id': test_result_id,
                 'result_row': test_result_row | tojson,
