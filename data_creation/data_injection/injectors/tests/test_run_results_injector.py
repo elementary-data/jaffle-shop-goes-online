@@ -37,6 +37,15 @@ class AnomalyTestResult(TestResult):
     test_metrics: list[AnomalyTestMetric]
 
 
+class DimensionAnomalyTestMetric(AnomalyTestMetric):
+    dimension: str
+    dimension_value: str
+
+
+class DimensionAnomalyTestResult(AnomalyTestResult):
+    test_metrics: list[DimensionAnomalyTestMetric]
+
+
 class SourceFreshnessPeriod(BaseModel):
     period: str
     count: int

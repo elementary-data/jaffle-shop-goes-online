@@ -31,6 +31,9 @@ class TestSubTypes(Enum):
     FRESHNESS = "freshness"
     NULL_COUNT = "null_count"
 
+    # dimension anomaly
+    DIMENSION = "dimension"
+
     # automated test
     AUTOMATED = "automated"
 

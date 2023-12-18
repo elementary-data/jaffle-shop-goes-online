@@ -41,6 +41,17 @@ class AnomalyTestSpec(TestSpec):
             "Elementary test is an advance dbt test that is used to validate your data"
         )
 
+    def get_test_params(self) -> dict[str, Any]:
+        test_params: dict[str, Any] = {}
+        if self.timestamp_column:
+            test_params["timestamp_column"] = self.timestamp_column
+        if not self.is_automated:
+            test_params["time_bucket"] = {"period": self.bucket_period, "count": 1}
+        test_params["sensitivity"] = self.sensitivity
+        if self.day_of_week_seasonality:
+            test_params["seasonality"] = "day_of_week"
+        return test_params
+
     def get_result_description(self, last_metric: AnomalyTestMetric):
         metric_average = (last_metric.min_value + last_metric.max_value) / 2
         if self.test_name == "volume":
@@ -128,15 +139,6 @@ class AnomalyTestSpec(TestSpec):
         models_injector = ModelsInjector(dbt_runner)
         model_id = models_injector.get_model_id_from_name(self.model_name)
 
-        test_params: dict[str, Any] = {}
-        if self.timestamp_column:
-            test_params["timestamp_column"] = self.timestamp_column
-        if not self.is_automated:
-            test_params["time_bucket"] = {"period": self.bucket_period, "count": 1}
-        test_params["sensitivity"] = self.sensitivity
-        if self.day_of_week_seasonality:
-            test_params["seasonality"] = "day_of_week"
-
         injector = TestRunResultsInjector(dbt_runner)
 
         test = TestSchema(
@@ -146,7 +148,7 @@ class AnomalyTestSpec(TestSpec):
             test_column_name=self.test_column_name,
             test_type=self.test_type,
             test_sub_type=self.test_sub_type,
-            test_params=test_params,
+            test_params=self.get_test_params(),
             description=self.description,
             model_id=model_id,
             model_name=self.model_name,
