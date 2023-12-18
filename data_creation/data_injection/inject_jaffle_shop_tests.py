@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from typing import Optional
+from uuid import uuid4
 from elementary.clients.dbt.dbt_runner import DbtRunner
 
 from datetime import datetime, timedelta
@@ -9,6 +10,16 @@ from data_creation.data_injection.data_generator.specs.tests.anomaly_test_spec i
 )
 from data_creation.data_injection.data_generator.specs.tests.automated_test_spec import (
     AutomatedTestsSpec,
+)
+from data_creation.data_injection.data_generator.specs.tests.dbt_test_spec import (
+    DbtTestSpec,
+    TestStatuses,
+)
+from data_creation.data_injection.data_generator.specs.tests.dimension_anomaly_test_spec import (
+    DimensionAnomalyTestSpec,
+)
+from data_creation.data_injection.data_generator.specs.tests.schema_change_test_spec import (
+    SchemaChangeTestSpec,
 )
 
 from data_creation.data_injection.data_generator.test_data_generator import (
@@ -44,6 +55,86 @@ def inject_jaffle_shop_tests(
     generator.delete_generated_tests()
 
     test_specs = [
+        DbtTestSpec(
+            model_name="stg_orders",
+            test_name="not_null",
+            test_column_name="order_id",
+            status=TestStatuses.FAIL,
+            result_rows=[
+                dict(
+                    order_date=datetime.utcnow().isoformat(),
+                    order_id=None,
+                    status="shipped",
+                    customer_id=str(uuid4()),
+                ),
+                dict(
+                    order_date=datetime.utcnow().isoformat(),
+                    order_id=None,
+                    status="shipped",
+                    customer_id=str(uuid4()),
+                ),
+            ],
+        ),
+        DbtTestSpec(
+            model_name="orders",
+            test_name="not_null",
+            test_column_name="order_id",
+            status=TestStatuses.FAIL,
+            result_rows=[
+                dict(
+                    coupon_amount=100,
+                    git_card_amount=0,
+                    credit_card_amount=300,
+                    bank_transfer_amount=0,
+                    order_date=datetime.utcnow().isoformat(),
+                    amount=400,
+                    order_id=None,
+                    status="shipped",
+                    customer_id=str(uuid4()),
+                ),
+                dict(
+                    coupon_amount=150,
+                    git_card_amount=200,
+                    credit_card_amount=0,
+                    bank_transfer_amount=0,
+                    order_date=datetime.utcnow().isoformat(),
+                    amount=350,
+                    order_id=None,
+                    status="shipped",
+                    customer_id=str(uuid4()),
+                ),
+            ],
+        ),
+        DbtTestSpec(
+            model_name="order_items",
+            test_name="not_null",
+            test_column_name="order_id",
+            status=TestStatuses.FAIL,
+            result_rows=[
+                dict(
+                    coupon_amount=100,
+                    git_card_amount=0,
+                    credit_card_amount=300,
+                    bank_transfer_amount=0,
+                    order_date=datetime.utcnow().isoformat(),
+                    amount=400,
+                    order_id=None,
+                    status="shipped",
+                    customer_id=str(uuid4()),
+                ),
+                dict(
+                    coupon_amount=150,
+                    git_card_amount=200,
+                    credit_card_amount=0,
+                    bank_transfer_amount=0,
+                    order_date=datetime.utcnow().isoformat(),
+                    amount=350,
+                    order_id=None,
+                    status="shipped",
+                    customer_id=str(uuid4()),
+                ),
+            ],
+        ),
         AutomatedTestsSpec(
             exceptions={
                 ("customers", "volume"): dict(

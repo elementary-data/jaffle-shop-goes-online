@@ -1,5 +1,4 @@
 from enum import Enum
-import json
 from typing import List, Optional
 from elementary.clients.dbt.dbt_runner import DbtRunner
 from pydantic import BaseModel
