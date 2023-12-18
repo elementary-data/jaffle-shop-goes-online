@@ -55,6 +55,29 @@ def inject_jaffle_shop_tests(
     generator.delete_generated_tests()
 
     test_specs = [
+        DimensionAnomalyTestSpec(
+            model_name="agg_session",
+            test_name="dimension_anomalies",
+            is_automated=False,
+            metric_values=dict(
+                app=get_values_around_middle(40, 3, num_entries=72),
+                website=get_values_around_middle(40, 3, num_entries=72),
+            ),
+            timestamp_column=None,
+            dimension="platform",
+        ),
+        DimensionAnomalyTestSpec(
+            model_name="marketing_ads",
+            test_name="dimension_anomalies",
+            is_automated=False,
+            metric_values=dict(
+                google=get_values_around_middle(40, 3, num_entries=72),
+                facebook=get_values_around_middle(40, 3, num_entries=72),
+                instagram=get_values_around_middle(40, 3, num_entries=72),
+            ),
+            timestamp_column=None,
+            dimension="utm_source",
+        ),
         DbtTestSpec(
             model_name="stg_orders",
             test_name="not_null",
