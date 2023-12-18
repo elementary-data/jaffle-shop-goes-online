@@ -1,5 +1,4 @@
 from datetime import datetime
-from enum import Enum
 from typing import Optional
 
 from elementary.clients.dbt.dbt_runner import DbtRunner
@@ -7,6 +6,8 @@ from pydantic import BaseModel
 
 from data_creation.data_injection.injectors.tests.tests_injector import (
     TestSchema,
+    TestSubTypes,
+    TestTypes,
     TestsInjector,
 )
 
@@ -64,6 +65,25 @@ class SourceFreshnessResult(BaseModel):
         return (datetime.utcnow() - self.max_loaded_at).total_seconds()
 
 
+class SchemaChangeTestResult(BaseModel):
+    test_timestamp: datetime
+    column_name: str
+    test_sub_type: TestSubTypes
+    from_type: Optional[str] = None
+    to_type: Optional[str] = None
+
+    @property
+    def result_description(self) -> dict:
+        if self.test_sub_type == TestSubTypes.TYPE_CHANGED:
+            return f'The type of "{self.column_name}" was changed from {self.from_type} to {self.to_type}'
+        elif self.test_sub_type == TestSubTypes.COLUMN_ADDED:
+            return f'The column "{self.column_name}" was added to the schema'
+        elif self.test_sub_type == TestSubTypes.COLUMN_REMOVED:
+            return f'The column "{self.column_name}" was removed from the schema'
+        else:
+            return ""
+
+
 class TestRunResultsInjector(TestsInjector):
     def __init__(self, dbt_runner: DbtRunner) -> None:
         super().__init__(dbt_runner)
@@ -107,6 +127,45 @@ class TestRunResultsInjector(TestsInjector):
                 model_name=test.model_name,
                 test_result_rows=[metric.dict() for metric in test_result.test_metrics],
                 result_description=test_result.result_description,
+            ),
+        )
+
+    def inject_failed_schema_change_test_result(
+        self, test: TestSchema, test_result: SchemaChangeTestResult
+    ):
+        self.dbt_runner.run_operation(
+            macro_name="data_injection.inject_elementary_test_result",
+            macro_args=dict(
+                test_id=test.test_id,
+                test_name=test.test_name,
+                test_column_name=test_result.column_name,
+                test_type=TestTypes.SCHEMA_CHANGE.value,
+                test_sub_type=test_result.test_sub_type.value,
+                test_params=test.test_params,
+                test_timestamp=test_result.test_timestamp.isoformat(),
+                test_status="fail",
+                model_id=test.model_id,
+                model_name=test.model_name,
+                test_result_rows=[],
+                result_description=test_result.result_description,
+            ),
+        )
+
+    def inject_passed_schema_change_test_result(
+        self, test: TestSchema, test_timestamp: datetime
+    ):
+        self.dbt_runner.run_operation(
+            macro_name="data_injection.inject_elementary_test_result",
+            macro_args=dict(
+                test_id=test.test_id,
+                test_name=test.test_name,
+                test_type=TestTypes.SCHEMA_CHANGE.value,
+                test_sub_type=TestSubTypes.GENGERIC.value,
+                test_params=test.test_params,
+                test_timestamp=test_timestamp.isoformat(),
+                test_status="pass",
+                model_id=test.model_id,
+                model_name=test.model_name,
             ),
         )
 

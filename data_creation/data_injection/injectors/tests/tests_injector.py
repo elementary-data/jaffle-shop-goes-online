@@ -8,12 +8,15 @@ from data_creation.data_injection.injectors.base_injector import BaseInjector
 
 
 class TestTypes(Enum):
+    # At some places due to tech depth we use generic as test type
+    GENGERIC = "generic"
     ANOMALY_DETECTION = "anomaly_detection"
     SCHEMA_CHANGE = "schema_change"
     DBT_TEST = "dbt_test"
 
 
 class TestSubTypes(Enum):
+    # At some places due to tech depth we use generic as test sub type
     GENGERIC = "generic"
 
     # dbt test
@@ -22,6 +25,8 @@ class TestSubTypes(Enum):
 
     # schema change
     TYPE_CHANGED = "type_changed"
+    COLUMN_ADDED = "column_added"
+    COLUMN_REMOVED = "column_removed"
 
     # anomaly detection
     ROW_COUNT = "row_count"
@@ -42,8 +47,8 @@ class TestSchema(BaseModel):
     test_id: str
     test_name: str
     test_column_name: Optional[str]
-    test_type: TestTypes
-    test_sub_type: TestSubTypes
+    test_type: TestTypes = TestTypes.GENGERIC
+    test_sub_type: TestSubTypes = TestSubTypes.GENGERIC
     test_params: dict
     description: str
     model_id: str
