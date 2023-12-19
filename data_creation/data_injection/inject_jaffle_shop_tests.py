@@ -26,8 +26,10 @@ from data_creation.data_injection.data_generator.test_data_generator import (
     TestDataGenerator,
 )
 from data_creation.data_injection.injectors.tests.test_run_results_injector import (
+    SchemaChangeTestResult,
     SourceFreshnessPeriod,
 )
+from data_creation.data_injection.injectors.tests.tests_injector import TestSubTypes
 from data_creation.data_injection.utils import (
     get_values_around_middle,
     get_values_around_middle_anomalous,
@@ -55,8 +57,78 @@ def inject_jaffle_shop_tests(
     generator.delete_generated_tests()
 
     test_specs = [
+        SchemaChangeTestSpec(
+            model_name="stg_orders",
+            test_name="schema_change",
+            results=[
+                SchemaChangeTestResult(
+                    test_timestamp=datetime.utcnow(),
+                    column_name="order_date",
+                    test_sub_type=TestSubTypes.TYPE_CHANGED,
+                    from_type="TIMESTAMP",
+                    to_type="STRING",
+                )
+            ],
+            from_baseline=True,
+        ),
+        SchemaChangeTestSpec(
+            model_name="orders",
+            test_name="schema_change",
+            results=[
+                SchemaChangeTestResult(
+                    test_timestamp=datetime.utcnow(),
+                    column_name="order_date",
+                    test_sub_type=TestSubTypes.TYPE_CHANGED,
+                    from_type="TIMESTAMP",
+                    to_type="STRING",
+                )
+            ],
+            from_baseline=True,
+        ),
+        SchemaChangeTestSpec(
+            model_name="customer_conversions",
+            test_name="schema_change",
+            results=[
+                SchemaChangeTestResult(
+                    test_timestamp=datetime.utcnow(),
+                    column_name="converted_at",
+                    test_sub_type=TestSubTypes.TYPE_CHANGED,
+                    from_type="TIMESTAMP",
+                    to_type="STRING",
+                )
+            ],
+            from_baseline=True,
+        ),
+        SchemaChangeTestSpec(
+            model_name="attribution_touches",
+            test_name="schema_change",
+            results=[
+                SchemaChangeTestResult(
+                    test_timestamp=datetime.utcnow(),
+                    column_name="converted_at",
+                    test_sub_type=TestSubTypes.TYPE_CHANGED,
+                    from_type="TIMESTAMP",
+                    to_type="STRING",
+                )
+            ],
+            from_baseline=True,
+        ),
+        SchemaChangeTestSpec(
+            model_name="cpa_and_roas",
+            test_name="schema_change",
+            results=[
+                SchemaChangeTestResult(
+                    test_timestamp=datetime.utcnow(),
+                    column_name="date_month",
+                    test_sub_type=TestSubTypes.TYPE_CHANGED,
+                    from_type="TIMESTAMP",
+                    to_type="STRING",
+                )
+            ],
+            from_baseline=True,
+        ),
         DimensionAnomalyTestSpec(
-            model_name="agg_session",
+            model_name="agg_sessions",
             test_name="dimension_anomalies",
             is_automated=False,
             metric_values=dict(

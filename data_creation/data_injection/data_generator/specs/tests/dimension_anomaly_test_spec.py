@@ -49,11 +49,11 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
                 zip(dimension_metric_values, metric_timestamps)
             ):
                 if self.day_of_week_seasonality:
-                    relevant_metrics = list(reversed(self.metric_values[i:0:-7]))
+                    relevant_metrics = list(reversed(dimension_metric_values[i:0:-7]))
                     if i % 7 == 0:
-                        relevant_metrics.insert(0, self.metric_values[0])
+                        relevant_metrics.insert(0, dimension_metric_values[0])
                 else:
-                    relevant_metrics = self.metric_values[: (i + 1)]
+                    relevant_metrics = dimension_metric_values[: (i + 1)]
                 average = numpy.average(relevant_metrics)
                 stddev = numpy.std(relevant_metrics)
 
