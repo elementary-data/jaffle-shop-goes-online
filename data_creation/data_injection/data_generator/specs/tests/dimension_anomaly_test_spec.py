@@ -40,8 +40,10 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
         metric_average = (last_metric.min_value + last_metric.max_value) / 2
         return f"The last dimension value for dimension status - returned is {last_metric.value}. The average for this metric is {metric_average}."
 
-    def get_metrics(self):
+    # Dimension anomalies only save the anomalous metrics.
+    def get_anmalous_metrics(self):
         metrics = []
+        anomalous_metrics = []
 
         for dimension_value, dimension_metric_values in self.metric_values.items():
             metric_timestamps = self.get_metric_timestamps(dimension_metric_values)
@@ -76,9 +78,9 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
                         last_metric = metrics[-1]
                     metric.min_value = last_metric.min_value
                     metric.max_value = last_metric.max_value
-                    # Dimension anomalies only save the anomalous metrics
-                    metrics.append(metric)
-        return metrics
+                    anomalous_metrics.append(metric)
+                metrics.append(metric)
+        return anomalous_metrics
 
     def generate(self, dbt_runner: DbtRunner):
         models_injector = ModelsInjector(dbt_runner)
@@ -101,12 +103,14 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
 
         injector.inject_test(test)
 
-        metrics = self.get_metrics()
+        anomalous_metrics = self.get_anmalous_metrics()
         test_result = DimensionAnomalyTestResult(
             test_timestamp=datetime.utcnow(),
-            test_status="fail" if metrics[-1].is_anomalous else "pass",
-            test_metrics=metrics,
-            result_description=self.get_result_description(metrics[-1]),
+            test_status="fail" if anomalous_metrics else "pass",
+            test_metrics=anomalous_metrics,
+            result_description=self.get_result_description(anomalous_metrics[-1])
+            if anomalous_metrics
+            else "",
         )
 
         injector.inject_anomaly_test_result(test, test_result)
@@ -114,7 +118,7 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
         cur_timestamp = datetime.utcnow()
         for i in range(10):
             cur_timestamp = cur_timestamp - timedelta(minutes=random.randint(120, 180))
-            if metrics[-1].is_anomalous:
+            if anomalous_metrics and anomalous_metrics[-1].is_anomalous:
                 status = random.choice(["fail"] + ["pass"] * 3)
             else:
                 status = "pass"
