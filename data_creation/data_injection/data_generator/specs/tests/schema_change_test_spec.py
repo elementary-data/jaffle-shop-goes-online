@@ -21,7 +21,8 @@ class SchemaChangeTestSpec(BaseSpec):
     model_name: str
     test_name: str
     results: list[SchemaChangeTestResult]
-    test_type: TestTypes = TestTypes.SCHEMA_CHANGE
+    # Schema changes tests are currently of type generic due to tech dep we have.
+    test_type: TestTypes = TestTypes.GENGERIC
     from_baseline: bool = True
 
     @property

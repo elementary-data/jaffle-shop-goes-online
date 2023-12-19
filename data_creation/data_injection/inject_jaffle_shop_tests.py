@@ -132,8 +132,8 @@ def inject_jaffle_shop_tests(
             test_name="dimension_anomalies",
             is_automated=False,
             metric_values=dict(
-                app=get_values_around_middle(40, 3, num_entries=72),
-                website=get_values_around_middle(40, 3, num_entries=72),
+                app=get_values_around_middle_anomalous(40, 3),
+                website=get_values_around_middle_anomalous(75, 14),
             ),
             timestamp_column=None,
             dimension="platform",
@@ -143,9 +143,9 @@ def inject_jaffle_shop_tests(
             test_name="dimension_anomalies",
             is_automated=False,
             metric_values=dict(
-                google=get_values_around_middle(40, 3, num_entries=72),
-                facebook=get_values_around_middle(40, 3, num_entries=72),
-                instagram=get_values_around_middle(40, 3, num_entries=72),
+                google=get_values_around_middle_anomalous(20, 3),
+                facebook=get_values_around_middle_anomalous(40, 5),
+                instagram=get_values_around_middle_anomalous(85, 12),
             ),
             timestamp_column=None,
             dimension="utm_source",
