@@ -20,6 +20,7 @@
         'model_tags': model_tags,
         'model_owners': model_owners,
         'meta': tojson({"description": description, "generated_result": true}),
+        'description': description,
         'depends_on_macros': '[]',
         'depends_on_nodes': '[]',
         'generated_at': elementary.datetime_now_utc_as_string(),

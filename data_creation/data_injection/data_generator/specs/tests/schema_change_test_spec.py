@@ -60,7 +60,7 @@ class SchemaChangeTestSpec(BaseSpec):
             if is_failure:
                 prev_test_result = SchemaChangeTestResult(
                     test_timestamp=cur_timestamp,
-                    column_name="",
+                    column_name=self.results[0].column_name if self.results else "",
                     test_sub_type=TestSubTypes.TYPE_CHANGED,
                 )
                 injector.inject_failed_schema_change_test_result(test, prev_test_result)

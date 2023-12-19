@@ -39,6 +39,7 @@ class AnomalyTestResult(TestResult):
 
 
 class DimensionAnomalyTestMetric(AnomalyTestMetric):
+    average: float
     dimension: str
     dimension_value: str
 
@@ -133,6 +134,16 @@ class TestRunResultsInjector(TestsInjector):
     def inject_failed_schema_change_test_result(
         self, test: TestSchema, test_result: SchemaChangeTestResult
     ):
+        schema_change_test_result_row = dict(
+            database_name="ELEMENTARY_TESTS",
+            schema_name="JAFFLE_SHOP",
+            table_name=test.model_name,
+            column_name=test_result.column_name,
+            test_type=TestTypes.SCHEMA_CHANGE.value,
+            test_sub_type=test_result.test_sub_type.value,
+            test_results_description=test_result.result_description,
+        )
+
         self.dbt_runner.run_operation(
             macro_name="data_injection.inject_elementary_test_result",
             macro_args=dict(
@@ -146,7 +157,7 @@ class TestRunResultsInjector(TestsInjector):
                 test_status="fail",
                 model_id=test.model_id,
                 model_name=test.model_name,
-                test_result_rows=[],
+                test_result_rows=[schema_change_test_result_row],
                 result_description=test_result.result_description,
             ),
         )

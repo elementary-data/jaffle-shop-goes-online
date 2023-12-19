@@ -63,6 +63,7 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
                         average - self.sensitivity * stddev, self.min_values_bound
                     ),
                     max_value=average + self.sensitivity * stddev,
+                    average=average,
                     start_time=start_time.isoformat() if start_time else None,
                     end_time=end_time.isoformat(),
                     dimension=self.dimension,
@@ -86,7 +87,7 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
         injector = TestRunResultsInjector(dbt_runner)
 
         test = TestSchema(
-            test_id=f"{self.model_name}_{self.test_name}_{self.test_sub_type}"
+            test_id=f"{self.model_name}_{self.test_name}_{self.test_sub_type.value}"
             + (f"_{self.test_column_name}" if self.test_column_name else ""),
             test_name=self.test_name,
             test_column_name=self.test_column_name,
