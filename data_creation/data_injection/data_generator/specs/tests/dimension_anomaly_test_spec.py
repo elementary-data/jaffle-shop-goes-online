@@ -76,8 +76,8 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
                         last_metric = metrics[-1]
                     metric.min_value = last_metric.min_value
                     metric.max_value = last_metric.max_value
-
-                metrics.append(metric)
+                    # Dimension anomalies only save the anomalous metrics
+                    metrics.append(metric)
         return metrics
 
     def generate(self, dbt_runner: DbtRunner):
