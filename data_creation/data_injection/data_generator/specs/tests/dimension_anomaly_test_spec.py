@@ -41,10 +41,10 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
         return f"The last dimension value for dimension status - returned is {last_metric.value}. The average for this metric is {metric_average}."
 
     def get_metrics(self):
-        metric_timestamps = self.get_metric_timestamps()
         metrics = []
 
         for dimension_value, dimension_metric_values in self.metric_values.items():
+            metric_timestamps = self.get_metric_timestamps(dimension_metric_values)
             for i, (value, (start_time, end_time)) in enumerate(
                 zip(dimension_metric_values, metric_timestamps)
             ):

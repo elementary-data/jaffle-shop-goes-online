@@ -63,12 +63,12 @@ class AnomalyTestSpec(TestSpec):
             )
         return ""
 
-    def get_metric_timestamps(self):
+    def get_metric_timestamps(self, metric_values: list):
         if self.is_automated:
             # Not bucketed
             timestamps = []
             cur_timestamp = datetime.utcnow()
-            for i in range(len(self.metric_values)):
+            for i in range(len(metric_values)):
                 cur_timestamp = cur_timestamp - timedelta(
                     minutes=random.randint(3 * 60, 5 * 60)
                 )
@@ -77,22 +77,22 @@ class AnomalyTestSpec(TestSpec):
         else:
             if self.bucket_period == "day":
                 start_bucket = datetime.combine(
-                    date.today() - timedelta(len(self.metric_values)), time.min
+                    date.today() - timedelta(len(metric_values)), time.min
                 )
                 return [
                     (start_bucket + timedelta(i), start_bucket + timedelta(i + 1))
-                    for i in range(len(self.metric_values))
+                    for i in range(len(metric_values))
                 ]
             elif self.bucket_period == "hour":
                 start_bucket = datetime.utcnow().replace(
                     minute=0, second=0, microsecond=0
-                ) - timedelta(hours=len(self.metric_values) + 1)
+                ) - timedelta(hours=len(metric_values) + 1)
                 return [
                     (
                         start_bucket + timedelta(hours=i),
                         start_bucket + timedelta(hours=i + 1),
                     )
-                    for i in range(len(self.metric_values))
+                    for i in range(len(metric_values))
                 ]
             else:
                 raise ValueError(
@@ -100,7 +100,7 @@ class AnomalyTestSpec(TestSpec):
                 )
 
     def get_metrics(self):
-        metric_timestamps = self.get_metric_timestamps()
+        metric_timestamps = self.get_metric_timestamps(self.metric_values)
         metrics = []
 
         for i, (value, (start_time, end_time)) in enumerate(

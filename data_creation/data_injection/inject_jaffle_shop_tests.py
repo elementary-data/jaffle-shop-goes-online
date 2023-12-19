@@ -59,7 +59,7 @@ def inject_jaffle_shop_tests(
     test_specs = [
         SchemaChangeTestSpec(
             model_name="stg_orders",
-            test_name="schema_change",
+            test_name="schema_changes_from_baseline",
             results=[
                 SchemaChangeTestResult(
                     test_timestamp=datetime.utcnow(),
@@ -73,7 +73,7 @@ def inject_jaffle_shop_tests(
         ),
         SchemaChangeTestSpec(
             model_name="orders",
-            test_name="schema_change",
+            test_name="schema_changes_from_baseline",
             results=[
                 SchemaChangeTestResult(
                     test_timestamp=datetime.utcnow(),
@@ -87,7 +87,7 @@ def inject_jaffle_shop_tests(
         ),
         SchemaChangeTestSpec(
             model_name="customer_conversions",
-            test_name="schema_change",
+            test_name="schema_changes_from_baseline",
             results=[
                 SchemaChangeTestResult(
                     test_timestamp=datetime.utcnow(),
@@ -101,7 +101,7 @@ def inject_jaffle_shop_tests(
         ),
         SchemaChangeTestSpec(
             model_name="attribution_touches",
-            test_name="schema_change",
+            test_name="schema_changes_from_baseline",
             results=[
                 SchemaChangeTestResult(
                     test_timestamp=datetime.utcnow(),
@@ -115,7 +115,7 @@ def inject_jaffle_shop_tests(
         ),
         SchemaChangeTestSpec(
             model_name="cpa_and_roas",
-            test_name="schema_change",
+            test_name="schema_changes_from_baseline",
             results=[
                 SchemaChangeTestResult(
                     test_timestamp=datetime.utcnow(),
