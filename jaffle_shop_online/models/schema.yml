@@ -60,7 +60,7 @@ models:
     tests:
       - elementary.freshness_anomalies
       - elementary.dimension_anomalies:
-          dimensions: 
+          dimensions:
             - customer_id
           config:
             tags: ["stability"]
@@ -90,7 +90,8 @@ models:
               values:
                 ["placed", "shipped", "completed", "return_pending", "returned"]
           - dbt_expectations.expect_column_values_to_be_in_set:
-              value_set: ["placed", "shipped", "completed", "return_pending", "returned"]
+              value_set:
+                ["placed", "shipped", "completed", "return_pending", "returned"]
               quote_values: true
 
       - name: amount

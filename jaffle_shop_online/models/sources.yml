@@ -1,0 +1,7 @@
+version: 2
+
+sources:
+  - name: elementary
+    schema: jaffle_shop_elementary
+    tables:
+      - name: elementary_exposures
