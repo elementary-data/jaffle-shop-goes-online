@@ -482,7 +482,7 @@ def inject_jaffle_shop_exposures(
             full_path="JaffleShop/Finance/LTV",
             name="ltv forecast",
             type="dashboard",
-            label="LTV Forecast",
+            label="LTV Forecast Dashboard",
             description="This analysis shows the lifetime value forecast of a customer on the platform.",
             columns=[
                 Column(node_id="ltv_explore", name="date", target_name="date_month"),

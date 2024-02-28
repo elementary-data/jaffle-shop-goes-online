@@ -18,10 +18,10 @@ logger = logging.getLogger(__name__)
 def initial_incremental_demo(
     target: Optional[str] = None, days_back=30, profiles_dir: Optional[str] = None
 ):
-    # run_incremental_data_creation(
-    #     target=target, profiles_dir=profiles_dir, days_back=days_back
-    # )
-    # inject_jaffle_shop_tests(target=target, profiles_dir=profiles_dir)
+    run_incremental_data_creation(
+        target=target, profiles_dir=profiles_dir, days_back=days_back
+    )
+    inject_jaffle_shop_tests(target=target, profiles_dir=profiles_dir)
     inject_jaffle_shop_exposures(target=target, profiles_dir=profiles_dir)
 
 
