@@ -1,3 +1,4 @@
+from typing import Optional
 from elementary.clients.dbt.dbt_runner import DbtRunner
 from data_creation.data_injection.data_generator.specs.exposures.exposure_spec import (
     ExposureSpec,
@@ -7,14 +8,22 @@ from elementary.config.config import Config
 
 
 class ExposuresDataGenerator:
-    def __init__(self, dbt_runner: DbtRunner):
+    def __init__(
+        self,
+        dbt_runner: DbtRunner,
+        profiles_dir: Optional[str] = None,
+        target: Optional[str] = None,
+    ):
         self.dbt_runner = dbt_runner
+        self.profiles_dir = profiles_dir
+        self.target = target
         self.elementary_cli_dbt_runner = self._init_elementary_cli_dbt_runner()
 
     def _init_elementary_cli_dbt_runner(self) -> DbtRunner:
         elementary_config = Config(
             config_dir=Config.DEFAULT_CONFIG_DIR,
-            profile_target=self.dbt_runner.target,
+            profiles_dir=self.profiles_dir,
+            profile_target=self.target,
             dbt_quoting=None,
         )
         data_monitoring = DataMonitoring(config=elementary_config)

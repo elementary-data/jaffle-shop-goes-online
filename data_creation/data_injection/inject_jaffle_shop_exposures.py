@@ -29,7 +29,9 @@ def inject_jaffle_shop_exposures(
 
     start_time = datetime.now()
 
-    generator = ExposuresDataGenerator(dbt_runner)
+    generator = ExposuresDataGenerator(
+        dbt_runner, profiles_dir=profiles_dir, target=target
+    )
     generator.delete_generated_exposures()
     exposure_specs = [
         # Orders
@@ -324,33 +326,55 @@ def inject_jaffle_shop_exposures(
             label="MRR Dashboard",
             description="This analysis shows the monthly recurring revenue on the platform.",
             columns=[
-                Column(node_id="orders", name="date", target_name="order_date"),
-                Column(node_id="orders", name="total_mrr", target_name="order_date"),
-                Column(node_id="orders", name="total_mrr", target_name="order_id"),
-                Column(node_id="orders", name="total_mrr", target_name="amount"),
-                Column(node_id="orders", name="new_mrr", target_name="order_date"),
-                Column(node_id="orders", name="new_mrr", target_name="order_id"),
-                Column(node_id="orders", name="new_mrr", target_name="amount"),
+                Column(node_id="orders_explore", name="date", target_name="order_date"),
                 Column(
-                    node_id="orders", name="net_mrr_growth", target_name="order_date"
+                    node_id="orders_explore", name="total_mrr", target_name="order_date"
                 ),
-                Column(node_id="orders", name="net_mrr_growth", target_name="amount"),
                 Column(
-                    node_id="orders", name="average_revenue", target_name="order_date"
+                    node_id="orders_explore", name="total_mrr", target_name="order_id"
                 ),
-                Column(node_id="orders", name="average_revenue", target_name="amount"),
                 Column(
-                    node_id="orders",
+                    node_id="orders_explore", name="total_mrr", target_name="amount"
+                ),
+                Column(
+                    node_id="orders_explore", name="new_mrr", target_name="order_date"
+                ),
+                Column(
+                    node_id="orders_explore", name="new_mrr", target_name="order_id"
+                ),
+                Column(node_id="orders_explore", name="new_mrr", target_name="amount"),
+                Column(
+                    node_id="orders_explore",
+                    name="net_mrr_growth",
+                    target_name="order_date",
+                ),
+                Column(
+                    node_id="orders_explore",
+                    name="net_mrr_growth",
+                    target_name="amount",
+                ),
+                Column(
+                    node_id="orders_explore",
+                    name="average_revenue",
+                    target_name="order_date",
+                ),
+                Column(
+                    node_id="orders_explore",
+                    name="average_revenue",
+                    target_name="amount",
+                ),
+                Column(
+                    node_id="orders_explore",
                     name="average_revenue_per_user",
                     target_name="order_date",
                 ),
                 Column(
-                    node_id="orders",
+                    node_id="orders_explore",
                     name="average_revenue_per_user",
                     target_name="amount",
                 ),
                 Column(
-                    node_id="orders",
+                    node_id="orders_explore",
                     name="average_revenue_per_user",
                     target_name="customer_id",
                 ),
