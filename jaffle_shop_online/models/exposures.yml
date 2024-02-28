@@ -99,24 +99,6 @@ exposures:
       - ref('marketing_ads')
       - ref('ads_spend')
 
-  - name: cac
-    label: CAC
-    type: dashboard
-    url: https://bi.tool
-    tags: [cac, finance]
-    description: "This analysis shows the customer acquisition cost on the platform."
-    meta:
-      platform: Looker
-      path: JaffleShop/Finance
-    maturity: low
-    owner:
-      name: Itamar
-      email: itamar@jaffle.com
-    depends_on:
-      - ref('marketing_ads')
-      - ref('ads_spend')
-      - ref('customer_conversions')
-
   - name: ltv_forecast
     label: LTV Forecast
     type: dashboard

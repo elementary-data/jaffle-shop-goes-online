@@ -18,7 +18,7 @@ setup(
     install_requires=[
         "click>=7.0,<9",
         "dbt-core>=0.20,<2.0.0",
-        "elementary-data>=0.13.2",
+        "elementary-data>=0.14.0",
         "numpy==1.24.3",
     ],
     extras_require={

@@ -1,6 +1,9 @@
 import argparse
 import logging
 from typing import Optional
+from data_creation.data_injection.inject_jaffle_shop_exposures import (
+    inject_jaffle_shop_exposures,
+)
 
 from data_creation.data_injection.inject_jaffle_shop_tests import (
     inject_jaffle_shop_tests,
@@ -15,10 +18,11 @@ logger = logging.getLogger(__name__)
 def initial_incremental_demo(
     target: Optional[str] = None, days_back=30, profiles_dir: Optional[str] = None
 ):
-    run_incremental_data_creation(
-        target=target, profiles_dir=profiles_dir, days_back=days_back
-    )
-    inject_jaffle_shop_tests(target=target, profiles_dir=profiles_dir)
+    # run_incremental_data_creation(
+    #     target=target, profiles_dir=profiles_dir, days_back=days_back
+    # )
+    # inject_jaffle_shop_tests(target=target, profiles_dir=profiles_dir)
+    inject_jaffle_shop_exposures(target=target, profiles_dir=profiles_dir)
 
 
 def main():
