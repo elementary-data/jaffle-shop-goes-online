@@ -19,8 +19,8 @@ class AutomatedTestsSpec(BaseSpec):
                 exception = self.exceptions[test_key]
                 all_tests.append(self.generate_failed_test(node, exception))
 
-            # else:
-            #     all_tests.append(self.generate_passed_test(node))
+            else:
+                all_tests.append(self.generate_passed_test(node))
 
         for i, test in enumerate(all_tests):
             print(f"* Generating automated test {i + 1} / {len(all_tests)} - {test}")
