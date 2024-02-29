@@ -38,15 +38,6 @@ class AnomalyTestSpec(TestSpec):
                 "Column-level anomaly monitors (null_count, null_percent, zero_count, string_length, "
                 "variance, etc.) on the column according to its data type."
             )
-        elif (
-            self.test_type.value == "anomaly_detection"
-            and self.test_sub_type.value == "automated"
-            and self.test_name == "volume_anomalies"
-        ):
-            return (
-                "An automated volume test detects anomalies in the current total row count of a table. "
-                "The total row count of a table is monitored accurately over time by collecting metadata on table updates from the query history."
-            )
         return (
             "Elementary test is an advance dbt test that is used to validate your data"
         )
