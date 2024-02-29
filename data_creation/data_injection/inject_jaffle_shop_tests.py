@@ -8,8 +8,11 @@ from datetime import datetime, timedelta
 from data_creation.data_injection.data_generator.specs.tests.anomaly_test_spec import (
     AnomalyTestSpec,
 )
-from data_creation.data_injection.data_generator.specs.tests.automated_test_spec import (
-    AutomatedTestsSpec,
+from data_creation.data_injection.data_generator.specs.tests.automated_tests.automated_freshness_test_spec import (
+    AutomatedFreshnessTestsSpec,
+)
+from data_creation.data_injection.data_generator.specs.tests.automated_tests.automated_volume_test_spec import (
+    AutomatedVolumeTestsSpec,
 )
 from data_creation.data_injection.data_generator.specs.tests.dbt_test_spec import (
     DbtTestSpec,
@@ -130,18 +133,19 @@ def inject_jaffle_shop_tests(
         DimensionAnomalyTestSpec(
             model_name="agg_sessions",
             test_name="dimension_anomalies",
-            is_automated=False,
+            no_bucket=False,
             metric_values=dict(
                 app=get_values_around_middle_anomalous(40, 3),
                 website=get_values_around_middle_anomalous(75, 14),
             ),
             timestamp_column=None,
             dimension="platform",
+            sensitivity=3,
         ),
         DimensionAnomalyTestSpec(
             model_name="marketing_ads",
             test_name="dimension_anomalies",
-            is_automated=False,
+            no_bucket=False,
             metric_values=dict(
                 google=get_values_around_middle_anomalous(20, 3),
                 facebook=get_values_around_middle_anomalous(40, 5),
@@ -149,6 +153,7 @@ def inject_jaffle_shop_tests(
             ),
             timestamp_column=None,
             dimension="utm_source",
+            sensitivity=3,
         ),
         DbtTestSpec(
             model_name="stg_orders",
@@ -230,21 +235,25 @@ def inject_jaffle_shop_tests(
                 ),
             ],
         ),
-        AutomatedTestsSpec(
+        AutomatedVolumeTestsSpec(
             exceptions={
-                ("customers", "volume"): dict(
+                "customers": dict(
                     metric_values=get_values_around_middle_anomalous(70, 3),
                 ),
-                ("orders", "volume"): dict(
+                "orders": dict(
                     metric_values=get_values_around_middle_anomalous_weekly_seasonality(
-                        700, 30, 1100, is_spike=True, num_entries=95
+                        700, 30, 1100, is_spike=True
                     ),
                     day_of_week_seasonality=True,
                 ),
-                ("stg_payments", "volume"): dict(
+                "stg_payments": dict(
                     metric_values=get_values_around_middle_anomalous(100000, 10000),
                 ),
-                ("stg_google_ads", "freshness"): dict(
+            }
+        ),
+        AutomatedFreshnessTestsSpec(
+            exceptions={
+                "stg_google_ads": dict(
                     max_loaded_at=datetime.utcnow() - timedelta(hours=9),
                     status="fail",
                     warn_after=SourceFreshnessPeriod(period="hour", count=3),
@@ -255,46 +264,50 @@ def inject_jaffle_shop_tests(
         AnomalyTestSpec(
             model_name="orders",
             test_name="column_anomalies",
-            is_automated=False,
+            no_bucket=False,
             metric_values=get_values_around_middle_anomalous(20, 5, is_spike=True),
             timestamp_column=None,
             test_column_name="email",
             test_sub_type="missing_count",
+            sensitivity=3,
         ),
         AnomalyTestSpec(
             model_name="returned_orders",
             test_name="column_anomalies",
-            is_automated=False,
+            no_bucket=False,
             metric_values=get_values_around_middle(40, 3, num_entries=72),
             timestamp_column=None,
             test_column_name="order_category",
             test_sub_type="null_count",
             bucket_period="hour",
+            sensitivity=3,
         ),
         AnomalyTestSpec(
             model_name="ads_spend",
             test_name="column_anomalies",
-            is_automated=False,
+            no_bucket=False,
             metric_values=get_values_around_middle(40, 3, num_entries=72),
             timestamp_column=None,
             test_column_name="campaign_name",
             test_sub_type="null_count",
             bucket_period="day",
+            sensitivity=3,
         ),
         AnomalyTestSpec(
             model_name="marketing_ads",
             test_name="column_anomalies",
-            is_automated=False,
+            no_bucket=False,
             metric_values=get_values_around_middle(40, 3, num_entries=72),
             timestamp_column=None,
             test_column_name="impressions",
             test_sub_type="zero_count",
             bucket_period="day",
+            sensitivity=3,
         ),
         AnomalyTestSpec(
             model_name="cpa_and_roas",
             test_name="column_anomalies",
-            is_automated=False,
+            no_bucket=False,
             metric_values=get_values_around_middle_anomalous_weekly_seasonality(
                 700, 30, 1100, is_spike=True, num_entries=95
             ),
@@ -303,6 +316,7 @@ def inject_jaffle_shop_tests(
             test_sub_type="zero_count",
             bucket_period="hour",
             day_of_week_seasonality=True,
+            sensitivity=3,
         ),
     ]
     generator.generate(test_specs)
