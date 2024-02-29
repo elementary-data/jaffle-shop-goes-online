@@ -40,7 +40,7 @@ def inject_jaffle_shop_exposures(
             full_path="JaffleShop/Orders",
             name="orders explore",
             type="explore",
-            label="Orders Explore",
+            label="Orders",
             description="Explore of all the data needed for Orders dashboards.",
             columns=[
                 Column(node_name="orders", name="order_id"),
@@ -61,7 +61,7 @@ def inject_jaffle_shop_exposures(
             full_path="JaffleShop/Orders",
             name="lost orders explore",
             type="explore",
-            label="Lost Orders Explore",
+            label="Lost Orders",
             description="Explore of all the data needed for Lost Orders dashboards.",
             columns=[
                 Column(node_name="orders", name="order_id"),
@@ -82,7 +82,7 @@ def inject_jaffle_shop_exposures(
             full_path="JaffleShop/Orders",
             name="inventory dashboard",
             type="dashboard",
-            label="Inventory Dashboard",
+            label="Inventory",
             description="This analysis sums up our current inventory, missing inventory, and ordered inventory.",
             columns=[
                 Column(node_id="orders_explore", name="order_id"),
@@ -120,7 +120,7 @@ def inject_jaffle_shop_exposures(
             full_path="JaffleShop/Users",
             name="users explore",
             type="explore",
-            label="Users Explore",
+            label="Users",
             description="Explore of all the data needed for Users dashboards.",
             columns=[
                 Column(node_name="customers", name="signup_date"),
@@ -145,7 +145,7 @@ def inject_jaffle_shop_exposures(
             full_path="JaffleShop/Users",
             name="daily active users dashboard",
             type="dashboard",
-            label="Daily Active Users Dashboard",
+            label="Daily Active Users",
             description="This analysis shows the daily active users on the platform.",
             columns=[
                 Column(node_id="orders_explore", name="date", target_name="order_date"),
@@ -171,7 +171,7 @@ def inject_jaffle_shop_exposures(
             full_path="JaffleShop/Users",
             name="weekly active users dashboard",
             type="dashboard",
-            label="Weekly Active Users Dashboard",
+            label="Weekly Active Users",
             description="This analysis shows the weekly active users on the platform.",
             columns=[
                 Column(node_id="orders_explore", name="date", target_name="order_date"),
@@ -197,7 +197,7 @@ def inject_jaffle_shop_exposures(
             full_path="JaffleShop/Users",
             name="monthly signups dashboard",
             type="dashboard",
-            label="Monthly Signups Dashboard",
+            label="Monthly Signups",
             description="This analysis shows the monthly signups on the platform.",
             columns=[
                 Column(node_id="users_explore", name="date", target_name="signup_date"),
@@ -221,7 +221,7 @@ def inject_jaffle_shop_exposures(
             full_path="JaffleShop/Finance/CAC",
             name="cac explore",
             type="explore",
-            label="CAC Explore",
+            label="CAC",
             description="Explore of all the data needed for Finance CAC dashboard.",
             columns=[
                 Column(node_name="marketing_ads", name="ad_id"),
@@ -247,7 +247,7 @@ def inject_jaffle_shop_exposures(
             full_path="JaffleShop/Finance/CAC",
             name="cac dashboard",
             type="dashboard",
-            label="CAC Dashboard",
+            label="Customer Acquisition Cost",
             description="This analysis shows the customer acquisition cost on the platform.",
             columns=[
                 Column(node_id="cac_explore", name="total_spend", target_name="spend"),
@@ -323,7 +323,7 @@ def inject_jaffle_shop_exposures(
             full_path="JaffleShop/Finance/MRR",
             name="mrr dashboard",
             type="dashboard",
-            label="MRR Dashboard",
+            label="MRR",
             description="This analysis shows the monthly recurring revenue on the platform.",
             columns=[
                 Column(node_id="orders_explore", name="date", target_name="order_date"),
@@ -392,7 +392,7 @@ def inject_jaffle_shop_exposures(
             full_path="JaffleShop/Finance/Ads",
             name="ads spend explore",
             type="explore",
-            label="Ads Spend Explore",
+            label="Ads Spend",
             description="Explore of all the data needed for Finance Ads Spend dashboard.",
             columns=[
                 Column(node_name="ads_spend", name="spend"),
@@ -413,7 +413,7 @@ def inject_jaffle_shop_exposures(
             full_path="JaffleShop/Finance/Ads",
             name="marketing ads explore",
             type="explore",
-            label="Marketing Ads Explore",
+            label="Marketing Ads",
             description="Explore of all the data needed for Finance Marketing Ads dashboard.",
             columns=[
                 Column(node_name="marketing_ads", name="date"),
@@ -435,7 +435,7 @@ def inject_jaffle_shop_exposures(
             full_path="JaffleShop/Finance/Ads",
             name="ad spend roi dashboard",
             type="dashboard",
-            label="Ad Spend ROI Dashboard",
+            label="Ad Spend ROI",
             description="This analysis shows the ad spend ROI on the platform.",
             columns=[
                 Column(
@@ -483,7 +483,7 @@ def inject_jaffle_shop_exposures(
             full_path="JaffleShop/Finance/LTV",
             name="ltv explore",
             type="explore",
-            label="LTV Explore",
+            label="LTV",
             description="Explore of all the data needed for Finance LTV dashboard.",
             columns=[
                 Column(node_name="cpa_and_roas", name="attribution_points"),
@@ -506,7 +506,7 @@ def inject_jaffle_shop_exposures(
             full_path="JaffleShop/Finance/LTV",
             name="ltv forecast",
             type="dashboard",
-            label="LTV Forecast Dashboard",
+            label="LTV Forecast",
             description="This analysis shows the lifetime value forecast of a customer on the platform.",
             columns=[
                 Column(node_id="ltv_explore", name="date", target_name="date_month"),

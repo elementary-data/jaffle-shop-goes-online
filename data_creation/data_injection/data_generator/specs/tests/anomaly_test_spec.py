@@ -19,14 +19,15 @@ from elementary.clients.dbt.dbt_runner import DbtRunner
 
 
 class AnomalyTestSpec(TestSpec):
-    is_automated: bool
+    no_bucket: bool
     metric_values: list[float]
     timestamp_column: Optional[str] = None
-    sensitivity: int = 3
+    sensitivity: Optional[int] = None
     min_values_bound: int = 0
     bucket_period: str = "day"
     test_type: TestTypes = TestTypes.ANOMALY_DETECTION
     day_of_week_seasonality: bool = False
+    test_params: Optional[dict] = None
 
     @property
     def description(self):
@@ -37,17 +38,27 @@ class AnomalyTestSpec(TestSpec):
                 "Column-level anomaly monitors (null_count, null_percent, zero_count, string_length, "
                 "variance, etc.) on the column according to its data type."
             )
+        elif (
+            self.test_type.value == "anomaly_detection"
+            and self.test_sub_type.value == "automated"
+            and self.test_name == "volume_anomalies"
+        ):
+            return (
+                "An automated volume test detects anomalies in the current total row count of a table. "
+                "The total row count of a table is monitored accurately over time by collecting metadata on table updates from the query history."
+            )
         return (
             "Elementary test is an advance dbt test that is used to validate your data"
         )
 
     def get_test_params(self) -> dict[str, Any]:
-        test_params: dict[str, Any] = {}
+        test_params = dict(**self.test_params) if self.test_params else {}
         if self.timestamp_column:
             test_params["timestamp_column"] = self.timestamp_column
-        if not self.is_automated:
+        if not self.no_bucket:
             test_params["time_bucket"] = {"period": self.bucket_period, "count": 1}
-        test_params["sensitivity"] = self.sensitivity
+        if self.sensitivity:
+            test_params["sensitivity"] = self.sensitivity
         if self.day_of_week_seasonality:
             test_params["seasonality"] = "day_of_week"
         return test_params
@@ -64,14 +75,11 @@ class AnomalyTestSpec(TestSpec):
         return ""
 
     def get_metric_timestamps(self, metric_values: list):
-        if self.is_automated:
-            # Not bucketed
+        if self.no_bucket:
             timestamps = []
             cur_timestamp = datetime.utcnow()
             for i in range(len(metric_values)):
-                cur_timestamp = cur_timestamp - timedelta(
-                    minutes=random.randint(3 * 60, 5 * 60)
-                )
+                cur_timestamp = cur_timestamp - timedelta(days=1)
                 timestamps.append((None, cur_timestamp))
             return reversed(timestamps)
         else:
@@ -102,6 +110,7 @@ class AnomalyTestSpec(TestSpec):
     def get_metrics(self):
         metric_timestamps = self.get_metric_timestamps(self.metric_values)
         metrics = []
+        sensitivity = self.sensitivity or 3
 
         for i, (value, (start_time, end_time)) in enumerate(
             zip(self.metric_values, metric_timestamps)
@@ -117,10 +126,8 @@ class AnomalyTestSpec(TestSpec):
 
             metric = AnomalyTestMetric(
                 value=value,
-                min_value=max(
-                    average - self.sensitivity * stddev, self.min_values_bound
-                ),
-                max_value=average + self.sensitivity * stddev,
+                min_value=max(average - sensitivity * stddev, self.min_values_bound),
+                max_value=average + sensitivity * stddev,
                 start_time=start_time.isoformat() if start_time else None,
                 end_time=end_time.isoformat(),
             )
