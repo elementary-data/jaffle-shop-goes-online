@@ -41,7 +41,6 @@ class AutomatedVolumeAnomalyTestSpec(TestSpec):
     test_type: TestTypes = Field(TestTypes.ANOMALY_DETECTION, const=True)
     # test_sub_type must be "automated" to be recognized by the UI
     test_sub_type: TestSubTypes = Field(TestSubTypes.AUTOMATED, const=True)
-    no_bucket: bool = Field(True, const=True)
     test_params: Optional[dict] = None
     is_anomalous: bool = False
     growth_or_static: str = "growth"
