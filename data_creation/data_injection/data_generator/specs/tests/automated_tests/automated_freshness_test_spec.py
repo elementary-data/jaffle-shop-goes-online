@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import random
-from typing import Any, Optional
+from typing import Any, Optional, Tuple
 
 from pydantic import Field
 
@@ -10,8 +10,8 @@ from data_creation.data_injection.data_generator.specs.tests.automated_tests.aut
 from data_creation.data_injection.data_generator.specs.tests.test_spec import TestSpec
 from data_creation.data_injection.injectors.models.models_injector import ModelsInjector
 from data_creation.data_injection.injectors.tests.test_run_results_injector import (
-    AnomalyTestMetric,
-    AnomalyTestResult,
+    AutomatedAnomalyTestMetric,
+    AutomatedAnomalyTestResult,
     TestRunResultsInjector,
 )
 from data_creation.data_injection.injectors.tests.tests_injector import (
@@ -22,7 +22,7 @@ from data_creation.data_injection.injectors.tests.tests_injector import (
 from elementary.clients.dbt.dbt_runner import DbtRunner
 
 
-class AutomateFreshnessTestsSpec(AutomatedTestsSpec):
+class AutomatedFreshnessTestsSpec(AutomatedTestsSpec):
     def generate_failed_test(self, node: dict, exception: dict, *args, **kwargs):
         return AutomatedFreshnessAnomalyTestSpec(
             model_name=node["model_name"], is_anomalous=True, **exception
@@ -57,8 +57,8 @@ class AutomatedFreshnessAnomalyTestSpec(TestSpec):
             **test_params,
         )
 
-    def get_result_description(self, last_metric: AnomalyTestMetric):
-        if last_metric.is_anomalous:
+    def get_result_description(self, last_metric: AutomatedAnomalyTestMetric):
+        if last_metric.anomalous:
             return (
                 f"The maximum time between updates expected to be up to {round(last_metric.max_value / 60 / 60, 1)} hours. "
                 f"The time elapsed since the last update is {round(last_metric.value / 60 / 60, 1)}"
@@ -67,43 +67,43 @@ class AutomatedFreshnessAnomalyTestSpec(TestSpec):
             return "No anomaly detected"
 
     @staticmethod
-    def get_timestamps(num_entries=14) -> list[str]:
+    def get_timestamps(num_entries=14) -> list[Tuple[str]]:
         timestamps = []
         current_timestamp = datetime.utcnow()
         for i in range(num_entries):
             current_timestamp = current_timestamp - timedelta(days=1)
-            timestamps.append(current_timestamp.isoformat())
-        return reversed(timestamps)
+            timestamps.append(
+                (
+                    (current_timestamp - timedelta(days=1)).isoformat(),
+                    current_timestamp.isoformat(),
+                )
+            )
+        return list(reversed(timestamps))
 
-    def get_metrics(self) -> list[AnomalyTestMetric]:
+    def get_metrics(self) -> list[AutomatedAnomalyTestMetric]:
         num_entries = 14
-        starting_value = random.randint(1000, 3000) * random.choice([10, 100, 1000])
-        ending_value = round(starting_value * random.uniform(1.5, 1.9))
-        mean_growth = round((ending_value - starting_value) / num_entries)
-        space = round(mean_growth / num_entries)
 
         timestamps = self.get_timestamps(num_entries)
-        metrics: list[AnomalyTestMetric] = [
-            AnomalyTestMetric(
-                value=starting_value,
-                min_value=starting_value - space,
-                max_value=starting_value + space,
-                end_time=timestamps[0],
-            )
-        ]
+        metrics: list[AutomatedAnomalyTestMetric] = []
         for i in range(num_entries):
             value = round(random.uniform(22.5, 23.9) * 60 * 60)
             metrics.append(
-                AnomalyTestMetric(
+                AutomatedAnomalyTestMetric(
                     value=value,
                     min_value=0,
                     max_value=24 * 60 * 60,
-                    end_time=timestamps[i],
+                    start_time=timestamps[i][0],
+                    end_time=timestamps[i][1],
+                    bucket_start=timestamps[i][0],
+                    bucket_end=timestamps[i][1],
+                    metric_name="Table updates over time",
+                    is_anomalous=False,
                 )
             )
 
         if self.is_anomalous:
             metrics[-1].value = round(random.uniform(24.5, 27.0) * 60 * 60)
+            metrics[-1].is_anomalous = True
 
         return metrics
 
@@ -129,9 +129,9 @@ class AutomatedFreshnessAnomalyTestSpec(TestSpec):
         injector.inject_test(test)
 
         metrics = self.get_metrics()
-        test_result = AnomalyTestResult(
+        test_result = AutomatedAnomalyTestResult(
             test_timestamp=datetime.utcnow(),
-            test_status="fail" if metrics[-1].is_anomalous else "pass",
+            test_status="fail" if metrics[-1].anomalous else "pass",
             test_metrics=metrics,
             result_description=self.get_result_description(metrics[-1]),
         )
@@ -145,7 +145,7 @@ class AutomatedFreshnessAnomalyTestSpec(TestSpec):
                 status = random.choice(["fail"] + ["pass"] * 3)
             else:
                 status = "pass"
-            prev_test_result = AnomalyTestResult(
+            prev_test_result = AutomatedAnomalyTestResult(
                 test_timestamp=cur_timestamp,
                 test_status=status,
                 test_metrics=[],

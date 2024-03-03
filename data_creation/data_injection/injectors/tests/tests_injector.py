@@ -45,7 +45,7 @@ class TestSubTypes(Enum):
 class TestSchema(BaseModel):
     test_id: str
     test_name: str
-    test_column_name: Optional[str]
+    test_column_name: Optional[str] = None
     test_type: TestTypes = TestTypes.GENGERIC
     test_sub_type: TestSubTypes = TestSubTypes.GENGERIC
     test_params: dict

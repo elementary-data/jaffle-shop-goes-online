@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import random
-from typing import Any, Optional
+from typing import Any, Optional, Tuple
 
 from pydantic import Field
 
@@ -10,8 +10,8 @@ from data_creation.data_injection.data_generator.specs.tests.automated_tests.aut
 from data_creation.data_injection.data_generator.specs.tests.test_spec import TestSpec
 from data_creation.data_injection.injectors.models.models_injector import ModelsInjector
 from data_creation.data_injection.injectors.tests.test_run_results_injector import (
-    AnomalyTestMetric,
-    AnomalyTestResult,
+    AutomatedAnomalyTestMetric,
+    AutomatedAnomalyTestResult,
     TestRunResultsInjector,
 )
 from data_creation.data_injection.injectors.tests.tests_injector import (
@@ -61,8 +61,8 @@ class AutomatedVolumeAnomalyTestSpec(TestSpec):
             **test_params,
         )
 
-    def get_result_description(self, last_metric: AnomalyTestMetric):
-        if last_metric.is_anomalous:
+    def get_result_description(self, last_metric: AutomatedAnomalyTestMetric):
+        if last_metric.anomalous:
             return (
                 f"The total row count of this table is {last_metric.value}. "
                 f"The total row count was expected to be between {last_metric.min_value} and {last_metric.max_value}"
@@ -71,51 +71,74 @@ class AutomatedVolumeAnomalyTestSpec(TestSpec):
             return "No anomaly detected"
 
     @staticmethod
-    def get_timestamps(num_entries=14) -> list[str]:
+    def get_timestamps(num_entries=14) -> list[Tuple[str]]:
         timestamps = []
         current_timestamp = datetime.utcnow()
         for i in range(num_entries):
             current_timestamp = current_timestamp - timedelta(days=1)
-            timestamps.append(current_timestamp.isoformat())
-        return reversed(timestamps)
+            timestamps.append(
+                (
+                    (current_timestamp - timedelta(days=1)).isoformat(),
+                    current_timestamp.isoformat(),
+                )
+            )
+        return list(reversed(timestamps))
 
-    def get_growing_metrics(self) -> list[AnomalyTestMetric]:
+    def get_growing_metrics(self) -> list[AutomatedAnomalyTestMetric]:
         num_entries = 14
         starting_value = random.randint(1000, 3000) * random.choice([10, 100, 1000])
         ending_value = round(starting_value * random.uniform(1.5, 1.9))
         mean_growth = round((ending_value - starting_value) / num_entries)
-        space = round(mean_growth / num_entries)
+        space = round(mean_growth / num_entries * 3)
 
         timestamps = self.get_timestamps(num_entries)
-        metrics: list[AnomalyTestMetric] = [
-            AnomalyTestMetric(
+        metrics: list[AutomatedAnomalyTestMetric] = [
+            AutomatedAnomalyTestMetric(
                 value=starting_value,
-                min_value=starting_value - space,
-                max_value=starting_value + space,
-                end_time=timestamps[0],
+                min_value=starting_value - (mean_growth / random.randint(2, 3)),
+                max_value=starting_value + mean_growth,
+                start_time=timestamps[0][0],
+                end_time=timestamps[0][1],
+                bucket_start=timestamps[0][0],
+                bucket_end=timestamps[0][1],
+                metric_name="Total row count",
+                is_anomalous=False,
             )
         ]
+        last_growth = mean_growth
         for i in range(1, num_entries):
             last_metric = metrics[-1]
-            growth = random.randint(mean_growth - space, mean_growth + space)
+            growth = round(
+                random.randint(last_growth - space, last_growth + space) * 1.01
+            )
             value = last_metric.value + growth
-            min_value = round((last_metric.min_value + growth) * 0.98)
-            max_value = round((last_metric.max_value + growth) * 1.02)
+            min_value = round(
+                last_metric.min_value + round(growth * random.uniform(1.00, 1.01), 3)
+            )
+            max_value = round(
+                last_metric.max_value + round(growth * random.uniform(0.99, 1.00), 3)
+            )
             metrics.append(
-                AnomalyTestMetric(
+                AutomatedAnomalyTestMetric(
                     value=value,
                     min_value=min_value,
                     max_value=max_value,
-                    end_time=timestamps[i],
+                    start_time=timestamps[i][0],
+                    end_time=timestamps[i][1],
+                    bucket_start=timestamps[i][0],
+                    bucket_end=timestamps[i][1],
+                    metric_name="Total row count",
+                    is_anomalous=False,
                 )
             )
 
         if self.is_anomalous:
             metrics_with_anomalous = []
-            anomalous_metric = metrics[-4]
+            amount_of_anomalous_points = random.randint(1, 3)
+            anomalous_metric = metrics[-1 * (amount_of_anomalous_points + 1)]
             for metric in metrics:
                 metrics_with_anomalous.append(
-                    AnomalyTestMetric(
+                    AutomatedAnomalyTestMetric(
                         value=(
                             metric.value
                             if metric.value < anomalous_metric.value
@@ -123,28 +146,38 @@ class AutomatedVolumeAnomalyTestSpec(TestSpec):
                         ),
                         min_value=metric.min_value,
                         max_value=metric.max_value,
+                        start_time=metric.start_time,
                         end_time=metric.end_time,
+                        bucket_start=metric.bucket_start,
+                        bucket_end=metric.bucket_end,
+                        metric_name="Total row count",
+                        is_anomalous=True,
                     )
                 )
             metrics = metrics_with_anomalous
 
         return metrics
 
-    def get_static_metrics(self) -> list[AnomalyTestMetric]:
+    def get_static_metrics(self) -> list[AutomatedAnomalyTestMetric]:
         num_entries = 14
         value = random.randint(1000, 3000) * random.choice([10, 100, 1000])
         min_value = round(value * 0.95)
         max_value = round(value * 1.05)
         timestamps = self.get_timestamps(num_entries)
-        metrics: list[AnomalyTestMetric] = []
+        metrics: list[AutomatedAnomalyTestMetric] = []
 
         for i in range(num_entries):
             metrics.append(
-                AnomalyTestMetric(
+                AutomatedAnomalyTestMetric(
                     value=value,
                     min_value=min_value,
                     max_value=max_value,
-                    end_time=timestamps[i],
+                    start_time=timestamps[i][0],
+                    end_time=timestamps[i][1],
+                    bucket_start=timestamps[i][0],
+                    bucket_end=timestamps[i][1],
+                    metric_name="Total row count",
+                    is_anomalous=False,
                 )
             )
 
@@ -153,6 +186,9 @@ class AutomatedVolumeAnomalyTestSpec(TestSpec):
             metrics_with_anomalous[-1].value = round(
                 metrics_with_anomalous[-1].value * random.uniform(1.2, 1.5)
             )
+            metrics_with_anomalous[-1].is_anomalous = metrics_with_anomalous[
+                -1
+            ].anomalous
             metrics = metrics_with_anomalous
 
         return metrics
@@ -183,9 +219,9 @@ class AutomatedVolumeAnomalyTestSpec(TestSpec):
             if self.growth_or_static == "growth"
             else self.get_static_metrics()
         )
-        test_result = AnomalyTestResult(
+        test_result = AutomatedAnomalyTestResult(
             test_timestamp=datetime.utcnow(),
-            test_status="fail" if metrics[-1].is_anomalous else "pass",
+            test_status="fail" if metrics[-1].anomalous else "pass",
             test_metrics=metrics,
             result_description=self.get_result_description(metrics[-1]),
         )
@@ -195,11 +231,11 @@ class AutomatedVolumeAnomalyTestSpec(TestSpec):
         cur_timestamp = datetime.utcnow()
         for i in range(14):
             cur_timestamp = cur_timestamp - timedelta(days=1)
-            if metrics[-1].is_anomalous:
+            if metrics[-1].anomalous:
                 status = random.choice(["fail"] + ["pass"] * 3)
             else:
                 status = "pass"
-            prev_test_result = AnomalyTestResult(
+            prev_test_result = AutomatedAnomalyTestResult(
                 test_timestamp=cur_timestamp,
                 test_status=status,
                 test_metrics=[],
