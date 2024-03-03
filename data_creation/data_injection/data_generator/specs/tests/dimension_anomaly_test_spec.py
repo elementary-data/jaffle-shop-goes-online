@@ -71,7 +71,7 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
                     dimension=self.dimension,
                     dimension_value=dimension_value,
                 )
-                if metric.is_anomalous:
+                if metric.anomalous:
                     if self.day_of_week_seasonality:
                         last_metric = metrics[-7]
                     else:
@@ -108,9 +108,11 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
             test_timestamp=datetime.utcnow(),
             test_status="fail" if anomalous_metrics else "pass",
             test_metrics=anomalous_metrics,
-            result_description=self.get_result_description(anomalous_metrics[-1])
-            if anomalous_metrics
-            else "",
+            result_description=(
+                self.get_result_description(anomalous_metrics[-1])
+                if anomalous_metrics
+                else ""
+            ),
         )
 
         injector.inject_anomaly_test_result(test, test_result)
@@ -118,7 +120,7 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
         cur_timestamp = datetime.utcnow()
         for i in range(10):
             cur_timestamp = cur_timestamp - timedelta(minutes=random.randint(120, 180))
-            if anomalous_metrics and anomalous_metrics[-1].is_anomalous:
+            if anomalous_metrics and anomalous_metrics[-1].anomalous:
                 status = random.choice(["fail"] + ["pass"] * 3)
             else:
                 status = "pass"

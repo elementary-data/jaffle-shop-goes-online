@@ -4,7 +4,6 @@ from typing import Optional
 from uuid import uuid4
 from elementary.clients.dbt.dbt_runner import DbtRunner
 
-from datetime import datetime, timedelta
 from data_creation.data_injection.data_generator.specs.tests.anomaly_test_spec import (
     AnomalyTestSpec,
 )
@@ -30,7 +29,6 @@ from data_creation.data_injection.data_generator.test_data_generator import (
 )
 from data_creation.data_injection.injectors.tests.test_run_results_injector import (
     SchemaChangeTestResult,
-    SourceFreshnessPeriod,
 )
 from data_creation.data_injection.injectors.tests.tests_injector import TestSubTypes
 from data_creation.data_injection.utils import (
@@ -238,27 +236,19 @@ def inject_jaffle_shop_tests(
         AutomatedVolumeTestsSpec(
             exceptions={
                 "customers": dict(
-                    metric_values=get_values_around_middle_anomalous(70, 3),
+                    growth_or_static="growth",
                 ),
                 "orders": dict(
-                    metric_values=get_values_around_middle_anomalous_weekly_seasonality(
-                        700, 30, 1100, is_spike=True
-                    ),
-                    day_of_week_seasonality=True,
+                    growth_or_static="growth",
                 ),
                 "stg_payments": dict(
-                    metric_values=get_values_around_middle_anomalous(100000, 10000),
+                    growth_or_static="growth",
                 ),
             }
         ),
         AutomatedFreshnessTestsSpec(
             exceptions={
-                "stg_google_ads": dict(
-                    max_loaded_at=datetime.utcnow() - timedelta(hours=9),
-                    status="fail",
-                    warn_after=SourceFreshnessPeriod(period="hour", count=3),
-                    error_after=SourceFreshnessPeriod(period="hour", count=6),
-                ),
+                "stg_google_ads": dict(),
             }
         ),
         AnomalyTestSpec(

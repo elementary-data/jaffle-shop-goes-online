@@ -38,15 +38,6 @@ class AnomalyTestSpec(TestSpec):
                 "Column-level anomaly monitors (null_count, null_percent, zero_count, string_length, "
                 "variance, etc.) on the column according to its data type."
             )
-        elif (
-            self.test_type.value == "anomaly_detection"
-            and self.test_sub_type.value == "automated"
-            and self.test_name == "volume_anomalies"
-        ):
-            return (
-                "An automated volume test detects anomalies in the current total row count of a table. "
-                "The total row count of a table is monitored accurately over time by collecting metadata on table updates from the query history."
-            )
         return (
             "Elementary test is an advance dbt test that is used to validate your data"
         )
@@ -131,7 +122,7 @@ class AnomalyTestSpec(TestSpec):
                 start_time=start_time.isoformat() if start_time else None,
                 end_time=end_time.isoformat(),
             )
-            if metric.is_anomalous:
+            if metric.anomalous:
                 if self.day_of_week_seasonality:
                     last_metric = metrics[-7]
                 else:
@@ -166,7 +157,7 @@ class AnomalyTestSpec(TestSpec):
         metrics = self.get_metrics()
         test_result = AnomalyTestResult(
             test_timestamp=datetime.utcnow(),
-            test_status="fail" if metrics[-1].is_anomalous else "pass",
+            test_status="fail" if metrics[-1].anomalous else "pass",
             test_metrics=metrics,
             result_description=self.get_result_description(metrics[-1]),
         )
@@ -176,7 +167,7 @@ class AnomalyTestSpec(TestSpec):
         cur_timestamp = datetime.utcnow()
         for i in range(10):
             cur_timestamp = cur_timestamp - timedelta(minutes=random.randint(120, 180))
-            if metrics[-1].is_anomalous:
+            if metrics[-1].anomalous:
                 status = random.choice(["fail"] + ["pass"] * 3)
             else:
                 status = "pass"
