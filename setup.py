@@ -20,6 +20,7 @@ setup(
         "dbt-core>=0.20,<2.0.0",
         "elementary-data>=0.14.0",
         "numpy==1.24.3",
+        "pydantic==1.10.14",
     ],
     extras_require={
         "snowflake": ["dbt-snowflake>=0.20,<2.0.0"],
