@@ -96,7 +96,7 @@ class AutomatedVolumeAnomalyTestSpec(TestSpec):
             AutomatedAnomalyTestMetric(
                 value=starting_value,
                 min_value=starting_value - (mean_growth / random.randint(2, 3)),
-                max_value=starting_value + mean_growth,
+                max_value=starting_value + (mean_growth * 2),
                 start_time=timestamps[0][0],
                 end_time=timestamps[0][1],
                 bucket_start=timestamps[0][0],

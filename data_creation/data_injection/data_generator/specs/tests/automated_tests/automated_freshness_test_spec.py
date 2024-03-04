@@ -102,7 +102,7 @@ class AutomatedFreshnessAnomalyTestSpec(TestSpec):
             )
 
         if self.is_anomalous:
-            metrics[-1].value = round(random.uniform(24.5, 27.0) * 60 * 60)
+            metrics[-1].value = round(random.uniform(27, 29.5) * 60 * 60)
             metrics[-1].is_anomalous = True
 
         return metrics
