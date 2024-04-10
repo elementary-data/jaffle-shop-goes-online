@@ -35,7 +35,7 @@ jobs:
 
       - name: Install dbt
         run: >
-          pip install --pre
+          pip install
           "dbt-core"
           "dbt-${{ inputs.warehouse-type || 'snowflake' }}"
 
