@@ -60,7 +60,7 @@ class AnomalyTestSpec(TestSpec):
             return f"The last volume value is {last_metric.value}, the average for this metric is {metric_average}"
         elif self.test_name == "column_anomalies":
             return (
-                f"In column {self.test_column_name}, the last {self.test_sub_type} value is {last_metric.value}. "
+                f"In column {self.test_column_name}, the last {self.test_sub_type.value} value is {last_metric.value}. "
                 f"The average for this metric is {metric_average}."
             )
         return ""
