@@ -22,7 +22,7 @@ class SchemaChangeTestSpec(BaseSpec):
     test_name: str
     results: list[SchemaChangeTestResult]
     # Schema changes tests are currently of type generic due to tech dep we have.
-    test_type: TestTypes = TestTypes.GENGERIC
+    test_type: TestTypes = TestTypes.GENERIC
     from_baseline: bool = True
 
     @property

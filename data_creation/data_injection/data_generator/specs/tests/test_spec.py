@@ -7,4 +7,4 @@ class TestSpec(BaseSpec):
     model_name: str
     test_name: str
     test_column_name: Optional[str] = None
-    test_sub_type: TestSubTypes = TestSubTypes.GENGERIC
+    test_sub_type: TestSubTypes = TestSubTypes.GENERIC

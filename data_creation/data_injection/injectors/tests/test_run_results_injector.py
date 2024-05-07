@@ -182,7 +182,7 @@ class TestRunResultsInjector(TestsInjector):
                 test_id=test.test_id,
                 test_name=test.test_name,
                 test_type=TestTypes.SCHEMA_CHANGE.value,
-                test_sub_type=TestSubTypes.GENGERIC.value,
+                test_sub_type=TestSubTypes.GENERIC.value,
                 test_params=test.test_params,
                 test_timestamp=test_timestamp.isoformat(),
                 test_status="pass",
