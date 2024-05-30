@@ -234,24 +234,25 @@ def inject_jaffle_shop_tests(
                 ),
             ],
         ),
-        AutomatedVolumeTestsSpec(
-            exceptions={
-                "customers": dict(
-                    growth_or_static="growth",
-                ),
-                "orders": dict(
-                    growth_or_static="growth",
-                ),
-                "stg_payments": dict(
-                    growth_or_static="growth",
-                ),
-            }
-        ),
-        AutomatedFreshnessTestsSpec(
-            exceptions={
-                "stg_google_ads": dict(),
-            }
-        ),
+        # We use DAG to inject the AM tests directly to the cloud_schema.
+        # AutomatedVolumeTestsSpec(
+        #     exceptions={
+        #         "customers": dict(
+        #             growth_or_static="growth",
+        #         ),
+        #         "orders": dict(
+        #             growth_or_static="growth",
+        #         ),
+        #         "stg_payments": dict(
+        #             growth_or_static="growth",
+        #         ),
+        #     }
+        # ),
+        # AutomatedFreshnessTestsSpec(
+        #     exceptions={
+        #         "stg_google_ads": dict(),
+        #     }
+        # ),
         AnomalyTestSpec(
             model_name="orders",
             test_name="column_anomalies",
