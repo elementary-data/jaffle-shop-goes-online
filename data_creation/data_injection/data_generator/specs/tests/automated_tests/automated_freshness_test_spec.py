@@ -58,7 +58,7 @@ class AutomatedFreshnessAnomalyTestSpec(TestSpec):
         )
 
     def get_result_description(self, last_metric: AutomatedAnomalyTestMetric):
-        if last_metric.anomalous:
+        if last_metric.is_anomalous:
             return (
                 f"The maximum time between updates expected to be up to {round(last_metric.max_value / 60 / 60, 1)} hours. "
                 f"The time elapsed since the last update is {round(last_metric.value / 60 / 60, 1)}"
@@ -131,7 +131,7 @@ class AutomatedFreshnessAnomalyTestSpec(TestSpec):
         metrics = self.get_metrics()
         test_result = AutomatedAnomalyTestResult(
             test_timestamp=datetime.utcnow(),
-            test_status="fail" if metrics[-1].anomalous else "pass",
+            test_status="fail" if metrics[-1].is_anomalous else "pass",
             test_metrics=metrics,
             result_description=self.get_result_description(metrics[-1]),
         )

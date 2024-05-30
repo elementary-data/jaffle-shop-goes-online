@@ -62,7 +62,7 @@ class AutomatedVolumeAnomalyTestSpec(TestSpec):
         )
 
     def get_result_description(self, last_metric: AutomatedAnomalyTestMetric):
-        if last_metric.anomalous:
+        if last_metric.is_anomalous:
             return (
                 f"The total row count of this table is {last_metric.value}. "
                 f"The total row count was expected to be between {last_metric.min_value} and {last_metric.max_value}"
@@ -188,7 +188,7 @@ class AutomatedVolumeAnomalyTestSpec(TestSpec):
             )
             metrics_with_anomalous[-1].is_anomalous = metrics_with_anomalous[
                 -1
-            ].anomalous
+            ].is_anomalous
             metrics = metrics_with_anomalous
 
         return metrics
@@ -221,7 +221,7 @@ class AutomatedVolumeAnomalyTestSpec(TestSpec):
         )
         test_result = AutomatedAnomalyTestResult(
             test_timestamp=datetime.utcnow(),
-            test_status="fail" if metrics[-1].anomalous else "pass",
+            test_status="fail" if metrics[-1].is_anomalous else "pass",
             test_metrics=metrics,
             result_description=self.get_result_description(metrics[-1]),
         )
@@ -231,7 +231,7 @@ class AutomatedVolumeAnomalyTestSpec(TestSpec):
         cur_timestamp = datetime.utcnow()
         for i in range(14):
             cur_timestamp = cur_timestamp - timedelta(days=1)
-            if metrics[-1].anomalous:
+            if metrics[-1].is_anomalous:
                 status = random.choice(["fail"] + ["pass"] * 3)
             else:
                 status = "pass"
