@@ -27,3 +27,6 @@ clean-targets: # directories to be removed by `dbt clean`
 models:
   elementary:
     +schema: elementary
+
+flags:
+  require_explicit_package_overrides_for_builtin_materializations: false
