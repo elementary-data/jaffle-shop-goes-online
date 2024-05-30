@@ -68,7 +68,7 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
                     average=average,
                     start_time=start_time.isoformat() if start_time else None,
                     end_time=end_time.isoformat(),
-                    dimension=self.dimension,
+                    dimension=self.dimensions,
                     dimension_value=dimension_value,
                 )
                 if metric.is_anomalous:
