@@ -138,7 +138,7 @@ def inject_jaffle_shop_tests(
                 website=get_values_around_middle_anomalous(75, 14),
             ),
             timestamp_column=None,
-            dimension="platform",
+            dimensions="platform",
             sensitivity=3,
         ),
         DimensionAnomalyTestSpec(
@@ -151,7 +151,7 @@ def inject_jaffle_shop_tests(
                 instagram=get_values_around_middle_anomalous(85, 12),
             ),
             timestamp_column=None,
-            dimension="utm_source",
+            dimensions="utm_source",
             sensitivity=3,
         ),
         DbtTestSpec(

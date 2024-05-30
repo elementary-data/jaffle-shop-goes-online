@@ -22,7 +22,7 @@ from elementary.clients.dbt.dbt_runner import DbtRunner
 
 class DimensionAnomalyTestSpec(AnomalyTestSpec):
     test_sub_type: TestSubTypes = TestSubTypes.DIMENSION
-    dimension: str
+    dimensions: str
     metric_values: dict[str, list[float]]
 
     @property
@@ -33,7 +33,7 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
 
     def get_test_params(self) -> dict[str, Any]:
         test_params = super().get_test_params()
-        test_params["dimension"] = self.dimension
+        test_params["dimensions"] = self.dimensions
         return test_params
 
     def get_result_description(self, last_metric: DimensionAnomalyTestMetric):
