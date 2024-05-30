@@ -100,10 +100,7 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
             model_id=model_id,
             model_name=self.model_name,
         )
-        print("-----------------------------------------------------------------")
-        print(test)
-
-        # injector.inject_test(test)
+        injector.inject_test(test)
 
         anomalous_metrics = self.get_anmalous_metrics()
         test_result = DimensionAnomalyTestResult(
@@ -116,9 +113,6 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
                 else ""
             ),
         )
-        print("-----------------------------------------------------------------")
-        print(test_result)
-
         injector.inject_anomaly_test_result(test, test_result)
 
         cur_timestamp = datetime.utcnow()
@@ -134,6 +128,4 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
                 test_metrics=[],
                 result_description="",
             )
-            # injector.inject_anomaly_test_result(test, prev_test_result)
-            print("-----------------------------------------------------------------")
-            print(prev_test_result)
+            injector.inject_anomaly_test_result(test, prev_test_result)
