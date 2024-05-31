@@ -140,6 +140,7 @@ def inject_jaffle_shop_tests(
             ),
             timestamp_column=None,
             dimensions="platform",
+            detection_period=PeriodSchema(count=2, period="day"),
             sensitivity=3,
         ),
         DimensionAnomalyTestSpec(
@@ -153,6 +154,7 @@ def inject_jaffle_shop_tests(
             ),
             timestamp_column=None,
             dimensions="utm_source",
+            detection_period=PeriodSchema(count=2, period="day"),
             sensitivity=3,
         ),
         DbtTestSpec(
