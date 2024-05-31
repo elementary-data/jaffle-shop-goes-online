@@ -1,4 +1,5 @@
 from datetime import datetime
+import random
 from typing import Optional
 
 from elementary.clients.dbt.dbt_runner import DbtRunner
@@ -16,6 +17,7 @@ class TestResult(BaseModel):
     test_timestamp: datetime
     test_status: str
     result_description: str
+    execution_time: float
 
 
 class DbtTestResult(TestResult):
@@ -125,6 +127,7 @@ class TestRunResultsInjector(TestsInjector):
                     result_row for result_row in test_result.test_result_rows
                 ],
                 result_description=test_result.result_description,
+                execution_time=test_result.execution_time,
             ),
         )
 
@@ -146,6 +149,7 @@ class TestRunResultsInjector(TestsInjector):
                 model_name=test.model_name,
                 test_result_rows=[metric.dict() for metric in test_result.test_metrics],
                 result_description=test_result.result_description,
+                execution_time=test_result.execution_time,
             ),
         )
 
@@ -177,6 +181,7 @@ class TestRunResultsInjector(TestsInjector):
                 model_name=test.model_name,
                 test_result_rows=[schema_change_test_result_row],
                 result_description=test_result.result_description,
+                execution_time=random.uniform(1, 3),
             ),
         )
 
@@ -195,6 +200,7 @@ class TestRunResultsInjector(TestsInjector):
                 test_status="pass",
                 model_id=test.model_id,
                 model_name=test.model_name,
+                execution_time=random.uniform(1, 3),
             ),
         )
 

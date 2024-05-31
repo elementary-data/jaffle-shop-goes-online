@@ -8,3 +8,4 @@ class TestSpec(BaseSpec):
     test_name: str
     test_column_name: Optional[str] = None
     test_sub_type: TestSubTypes = TestSubTypes.GENERIC
+    max_execution_time: float

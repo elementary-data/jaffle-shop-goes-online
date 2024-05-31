@@ -60,15 +60,16 @@ class DbtTestSpec(TestSpec):
             model_id=model_id,
             model_name=self.model_name,
         )
-
         injector.inject_test(test)
+
+        execution_time = self.max_execution_time
         test_result = DbtTestResult(
             test_timestamp=datetime.utcnow(),
             test_status=self.status.value,
             test_result_rows=self.result_rows,
             result_description=self.result_description,
+            execution_time=execution_time,
         )
-
         injector.inject_dbt_test_result(test, test_result)
 
         cur_timestamp = datetime.utcnow()
@@ -77,10 +78,12 @@ class DbtTestSpec(TestSpec):
             status = random.choice(
                 [TestStatuses.FAIL.value] + [TestStatuses.PASS.value] * 3
             )
+            execution_time = execution_time * ((100 - random.uniform(1, 3)) / 100)
             prev_test_result = DbtTestResult(
                 test_timestamp=cur_timestamp,
                 test_status=status,
                 test_result_rows=[],
                 result_description="",
+                execution_time=execution_time,
             )
             injector.inject_dbt_test_result(test, prev_test_result)

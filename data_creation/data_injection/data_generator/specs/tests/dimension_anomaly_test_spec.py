@@ -102,6 +102,7 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
         )
         injector.inject_test(test)
 
+        execution_time = self.max_execution_time
         anomalous_metrics = self.get_anmalous_metrics()
         test_result = DimensionAnomalyTestResult(
             test_timestamp=datetime.utcnow(),
@@ -112,6 +113,7 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
                 if anomalous_metrics
                 else ""
             ),
+            execution_time=execution_time,
         )
         injector.inject_anomaly_test_result(test, test_result)
 
@@ -122,10 +124,12 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
                 status = random.choice(["fail"] + ["pass"] * 3)
             else:
                 status = "pass"
+            execution_time = execution_time * ((100 - random.uniform(1, 3)) / 100)
             prev_test_result = DimensionAnomalyTestResult(
                 test_timestamp=cur_timestamp,
                 test_status=status,
                 test_metrics=[],
                 result_description="",
+                execution_time=execution_time,
             )
             injector.inject_anomaly_test_result(test, prev_test_result)

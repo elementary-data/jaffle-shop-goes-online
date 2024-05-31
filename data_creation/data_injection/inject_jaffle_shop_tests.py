@@ -142,6 +142,7 @@ def inject_jaffle_shop_tests(
             dimensions="platform",
             detection_period=PeriodSchema(count=2, period="day"),
             sensitivity=3,
+            max_execution_time=5.6,
         ),
         DimensionAnomalyTestSpec(
             model_name="marketing_ads",
@@ -156,6 +157,7 @@ def inject_jaffle_shop_tests(
             dimensions="utm_source",
             detection_period=PeriodSchema(count=2, period="day"),
             sensitivity=3,
+            max_execution_time=8.1,
         ),
         DbtTestSpec(
             model_name="stg_orders",
@@ -176,6 +178,7 @@ def inject_jaffle_shop_tests(
                     customer_id=str(uuid4()),
                 ),
             ],
+            max_execution_time=12.6,
         ),
         DbtTestSpec(
             model_name="orders",
@@ -206,6 +209,7 @@ def inject_jaffle_shop_tests(
                     customer_id=str(uuid4()),
                 ),
             ],
+            max_execution_time=10.3,
         ),
         DbtTestSpec(
             model_name="order_items",
@@ -236,6 +240,7 @@ def inject_jaffle_shop_tests(
                     customer_id=str(uuid4()),
                 ),
             ],
+            max_execution_time=8.7,
         ),
         # We use DAG to inject the AM tests directly to the cloud_schema.
         # AutomatedVolumeTestsSpec(
@@ -266,6 +271,7 @@ def inject_jaffle_shop_tests(
             test_sub_type="missing_count",
             detection_period=PeriodSchema(count=2, period="day"),
             sensitivity=3,
+            max_execution_time=6.7,
         ),
         AnomalyTestSpec(
             model_name="returned_orders",
@@ -277,6 +283,7 @@ def inject_jaffle_shop_tests(
             test_sub_type="null_count",
             detection_period=PeriodSchema(count=2, period="hour"),
             sensitivity=3,
+            max_execution_time=5.9,
         ),
         AnomalyTestSpec(
             model_name="ads_spend",
@@ -288,6 +295,7 @@ def inject_jaffle_shop_tests(
             test_sub_type="null_count",
             detection_period=PeriodSchema(count=2, period="day"),
             sensitivity=3,
+            max_execution_time=6.1,
         ),
         AnomalyTestSpec(
             model_name="marketing_ads",
@@ -299,20 +307,22 @@ def inject_jaffle_shop_tests(
             test_sub_type="zero_count",
             detection_period=PeriodSchema(count=2, period="day"),
             sensitivity=3,
+            max_execution_time=7.3,
         ),
         AnomalyTestSpec(
             model_name="cpa_and_roas",
             test_name="column_anomalies",
             no_bucket=False,
             metric_values=get_values_around_middle_anomalous_weekly_seasonality(
-                700, 30, 1100, is_spike=True, num_entries=95
+                700, 30, 1100, is_spike=True, num_entries=72
             ),
             timestamp_column=None,
             test_column_name="revenue",
             test_sub_type="zero_count",
-            detection_period=PeriodSchema(count=2, period="hour"),
+            detection_period=PeriodSchema(count=2, period="day"),
             day_of_week_seasonality=True,
             sensitivity=3,
+            max_execution_time=4.7,
         ),
     ]
     generator.generate(test_specs)

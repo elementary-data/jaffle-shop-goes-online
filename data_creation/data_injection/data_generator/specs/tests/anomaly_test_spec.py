@@ -160,17 +160,17 @@ class AnomalyTestSpec(TestSpec):
             model_id=model_id,
             model_name=self.model_name,
         )
-
         injector.inject_test(test)
 
+        execution_time = self.max_execution_time
         metrics = self.get_metrics()
         test_result = AnomalyTestResult(
             test_timestamp=datetime.utcnow(),
             test_status="fail" if metrics[-1].is_anomalous else "pass",
             test_metrics=metrics,
             result_description=self.get_result_description(metrics[-1]),
+            execution_time=execution_time,
         )
-
         injector.inject_anomaly_test_result(test, test_result)
 
         cur_timestamp = datetime.utcnow()
@@ -180,10 +180,12 @@ class AnomalyTestSpec(TestSpec):
                 status = random.choice(["fail"] + ["pass"] * 3)
             else:
                 status = "pass"
+            execution_time = execution_time * ((100 - random.uniform(1, 3)) / 100)
             prev_test_result = AnomalyTestResult(
                 test_timestamp=cur_timestamp,
                 test_status=status,
                 test_metrics=[],
                 result_description="",
+                execution_time=execution_time,
             )
             injector.inject_anomaly_test_result(test, prev_test_result)
