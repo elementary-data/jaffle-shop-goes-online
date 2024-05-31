@@ -7,6 +7,7 @@ from elementary.clients.dbt.dbt_runner import DbtRunner
 
 from data_creation.data_injection.data_generator.specs.tests.anomaly_test_spec import (
     AnomalyTestSpec,
+    PeriodSchema,
 )
 from data_creation.data_injection.data_generator.specs.tests.automated_tests.automated_freshness_test_spec import (
     AutomatedFreshnessTestsSpec,
@@ -261,6 +262,7 @@ def inject_jaffle_shop_tests(
             timestamp_column=None,
             test_column_name="email",
             test_sub_type="missing_count",
+            detection_period=PeriodSchema(count=2, period="day"),
             sensitivity=3,
         ),
         AnomalyTestSpec(
@@ -271,7 +273,7 @@ def inject_jaffle_shop_tests(
             timestamp_column=None,
             test_column_name="order_category",
             test_sub_type="null_count",
-            bucket_period="hour",
+            detection_period=PeriodSchema(count=2, period="hour"),
             sensitivity=3,
         ),
         AnomalyTestSpec(
@@ -282,7 +284,7 @@ def inject_jaffle_shop_tests(
             timestamp_column=None,
             test_column_name="campaign_name",
             test_sub_type="null_count",
-            bucket_period="day",
+            detection_period=PeriodSchema(count=2, period="day"),
             sensitivity=3,
         ),
         AnomalyTestSpec(
@@ -293,7 +295,7 @@ def inject_jaffle_shop_tests(
             timestamp_column=None,
             test_column_name="impressions",
             test_sub_type="zero_count",
-            bucket_period="day",
+            detection_period=PeriodSchema(count=2, period="day"),
             sensitivity=3,
         ),
         AnomalyTestSpec(
@@ -306,7 +308,7 @@ def inject_jaffle_shop_tests(
             timestamp_column=None,
             test_column_name="revenue",
             test_sub_type="zero_count",
-            bucket_period="hour",
+            detection_period=PeriodSchema(count=2, period="hour"),
             day_of_week_seasonality=True,
             sensitivity=3,
         ),

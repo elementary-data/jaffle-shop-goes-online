@@ -3,6 +3,7 @@ import random
 from typing import Any, Optional
 
 import numpy
+from pydantic import BaseModel
 from data_creation.data_injection.data_generator.specs.tests.test_spec import TestSpec
 from data_creation.data_injection.injectors.models.models_injector import ModelsInjector
 from data_creation.data_injection.injectors.tests.test_run_results_injector import (
@@ -18,16 +19,22 @@ from data_creation.data_injection.injectors.tests.tests_injector import (
 from elementary.clients.dbt.dbt_runner import DbtRunner
 
 
+class PeriodSchema(BaseModel):
+    count: int
+    period: str
+
+
 class AnomalyTestSpec(TestSpec):
     no_bucket: bool
     metric_values: list[float]
     timestamp_column: Optional[str] = None
     sensitivity: Optional[int] = None
     min_values_bound: int = 0
-    bucket_period: str = "day"
     test_type: TestTypes = TestTypes.ANOMALY_DETECTION
     day_of_week_seasonality: bool = False
     test_params: Optional[dict] = None
+    detection_period: PeriodSchema
+    detection_delay: PeriodSchema = None
 
     @property
     def description(self):
@@ -47,7 +54,9 @@ class AnomalyTestSpec(TestSpec):
         if self.timestamp_column:
             test_params["timestamp_column"] = self.timestamp_column
         if not self.no_bucket:
-            test_params["time_bucket"] = {"period": self.bucket_period, "count": 1}
+            test_params["detection_period"] = self.detection_period.dict()
+            if self.detection_delay:
+                test_params["detection_delay"] = self.detection_delay.dict()
         if self.sensitivity:
             test_params["sensitivity"] = self.sensitivity
         if self.day_of_week_seasonality:
