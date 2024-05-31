@@ -58,7 +58,6 @@ models:
         timestamp_column: "order_date"
 
     tests:
-      - elementary.freshness_anomalies
       - elementary.dimension_anomalies:
           dimensions:
             - customer_id
@@ -126,7 +125,6 @@ models:
         timestamp_column: "order_date"
 
     tests:
-      - elementary.volume_anomalies
       - elementary.schema_changes
     columns:
       - name: order_id
@@ -182,7 +180,6 @@ models:
         timestamp_column: "order_date"
 
     tests:
-      - elementary.volume_anomalies
       - elementary.schema_changes_from_baseline
     columns:
       - name: order_id

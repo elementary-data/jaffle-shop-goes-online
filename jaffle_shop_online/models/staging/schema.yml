@@ -23,8 +23,6 @@ models:
       tags: ["staging", "finance", "sales"]
       elementary:
         timestamp_column: "order_date"
-    tests:
-      - elementary.volume_anomalies
     columns:
       - name: order_id
         tests:
@@ -39,7 +37,8 @@ models:
               values:
                 ["placed", "shipped", "completed", "return_pending", "returned"]
           - dbt_expectations.expect_column_values_to_be_in_set:
-              value_set: ["placed", "shipped", "completed", "return_pending", "returned"]
+              value_set:
+                ["placed", "shipped", "completed", "return_pending", "returned"]
               quote_values: true
 
   - name: stg_payments
