@@ -83,7 +83,7 @@ class AnomalyTestSpec(TestSpec):
                 timestamps.append((None, cur_timestamp))
             return reversed(timestamps)
         else:
-            if self.bucket_period == "day":
+            if self.detection_period.period == "day":
                 start_bucket = datetime.combine(
                     date.today() - timedelta(len(metric_values)), time.min
                 )
@@ -91,7 +91,7 @@ class AnomalyTestSpec(TestSpec):
                     (start_bucket + timedelta(i), start_bucket + timedelta(i + 1))
                     for i in range(len(metric_values))
                 ]
-            elif self.bucket_period == "hour":
+            elif self.detection_period.period == "hour":
                 start_bucket = datetime.utcnow().replace(
                     minute=0, second=0, microsecond=0
                 ) - timedelta(hours=len(metric_values) + 1)
@@ -104,7 +104,7 @@ class AnomalyTestSpec(TestSpec):
                 ]
             else:
                 raise ValueError(
-                    f"I don't know how to handle bucket size {self.bucket_period}"
+                    f"I don't know how to handle bucket size {self.detection_period.period}"
                 )
 
     def get_metrics(self):
