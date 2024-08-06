@@ -1,12 +1,12 @@
 from typing import Optional
-from elementary.clients.dbt.dbt_runner import DbtRunner
+from elementary.clients.dbt.api_dbt_runner import APIDbtRunner
 from data_creation.data_injection.injectors.base_injector import BaseInjector
 
 
 class ExposuresInjector(BaseInjector):
     def __init__(
         self,
-        dbt_runner: Optional[DbtRunner] = None,
+        dbt_runner: Optional[APIDbtRunner] = None,
         target: Optional[str] = None,
         profiles_dir: Optional[str] = None,
     ) -> None:

@@ -2,7 +2,7 @@ from datetime import datetime
 import random
 from typing import Optional
 
-from elementary.clients.dbt.dbt_runner import DbtRunner
+from elementary.clients.dbt.api_dbt_runner import APIDbtRunner
 from pydantic import BaseModel, root_validator
 
 from data_creation.data_injection.injectors.tests.tests_injector import (
@@ -106,7 +106,7 @@ class SchemaChangeTestResult(BaseModel):
 
 
 class TestRunResultsInjector(TestsInjector):
-    def __init__(self, dbt_runner: DbtRunner) -> None:
+    def __init__(self, dbt_runner: APIDbtRunner) -> None:
         super().__init__(dbt_runner)
 
     def inject_dbt_test_result(self, test: TestSchema, test_result: DbtTestResult):

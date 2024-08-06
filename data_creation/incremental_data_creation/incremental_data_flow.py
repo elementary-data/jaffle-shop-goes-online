@@ -7,7 +7,7 @@ import random
 from typing import Optional
 import uuid
 
-from elementary.clients.dbt.dbt_runner import DbtRunner
+from elementary.clients.dbt.api_dbt_runner import APIDbtRunner
 from data_creation.incremental_data_creation.incremental_training_data_generator import (
     generate_incremental_training_data,
 )
@@ -27,7 +27,7 @@ DBT_PROJECT_DIR = os.path.join(REPO_DIR, JAFFLE_SHOP_ONLINE_DIR_NAME)
 def run_incremental_data_creation(
     target: Optional[str] = None, profiles_dir: Optional[str] = None, days_back=30
 ):
-    dbt_runner = DbtRunner(
+    dbt_runner = APIDbtRunner(
         project_dir=DBT_PROJECT_DIR,
         profiles_dir=profiles_dir,
         target=target,

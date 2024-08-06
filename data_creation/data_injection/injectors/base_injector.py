@@ -2,7 +2,7 @@ import json
 import os
 from pathlib import Path
 from typing import Optional
-from elementary.clients.dbt.dbt_runner import DbtRunner
+from elementary.clients.dbt.api_dbt_runner import APIDbtRunner
 
 DATA_INJECTION_DB_PROJECT_DIR_NAME = "dbt_project"
 DATA_INJECTION_DIR = Path(os.path.dirname(__file__)).parent.absolute()
@@ -13,11 +13,11 @@ DBT_PROFILES_DIR = os.path.join(os.path.expanduser("~"), ".dbt")
 class BaseInjector:
     def __init__(
         self,
-        dbt_runner: Optional[DbtRunner] = None,
+        dbt_runner: Optional[APIDbtRunner] = None,
         target: Optional[str] = None,
         profiles_dir: Optional[str] = None,
     ) -> None:
-        self.dbt_runner = dbt_runner or DbtRunner(
+        self.dbt_runner = dbt_runner or APIDbtRunner(
             project_dir=DBT_PROJECT_DIR,
             profiles_dir=profiles_dir or DBT_PROFILES_DIR,
             target=target,

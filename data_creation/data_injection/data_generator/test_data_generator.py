@@ -1,9 +1,9 @@
-from elementary.clients.dbt.dbt_runner import DbtRunner
+from elementary.clients.dbt.api_dbt_runner import APIDbtRunner
 from data_creation.data_injection.data_generator.specs.tests.test_spec import TestSpec
 
 
 class TestDataGenerator:
-    def __init__(self, dbt_runner: DbtRunner):
+    def __init__(self, dbt_runner: APIDbtRunner):
         self.dbt_runner = dbt_runner
 
     def generate(self, test_specs: list[TestSpec]):

@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
-from elementary.clients.dbt.dbt_runner import DbtRunner
+from elementary.clients.dbt.api_dbt_runner import APIDbtRunner
 
 
 class BaseSpec(BaseModel):
-    def generate(self, dbt_runner: DbtRunner):
+    def generate(self, dbt_runner: APIDbtRunner):
         raise NotImplementedError()
