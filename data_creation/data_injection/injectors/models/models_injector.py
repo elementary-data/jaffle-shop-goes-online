@@ -17,6 +17,7 @@ class ModelsInjector(BaseInjector):
         model_ids_output = self.dbt_runner.run_operation(
             macro_name="data_injection.get_models_unique_ids",
             macro_args=dict(filter=select),
+            return_raw_edr_logs=True,
         )
         model_ids = json.loads(model_ids_output[0])
         return model_ids

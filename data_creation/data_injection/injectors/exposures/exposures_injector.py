@@ -16,4 +16,5 @@ class ExposuresInjector(BaseInjector):
         self.dbt_runner.run_operation(
             macro_name="data_injection.inject_exposures",
             macro_args=dict(exposures=exposures),
+            return_raw_edr_logs=True,
         )

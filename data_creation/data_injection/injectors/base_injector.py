@@ -27,6 +27,8 @@ class BaseInjector:
     def run_query(self, query: str):
         return json.loads(
             self.dbt_runner.run_operation(
-                "elementary.render_run_query", macro_args={"prerendered_query": query}
+                "elementary.render_run_query",
+                macro_args={"prerendered_query": query},
+                return_raw_edr_logs=True,
             )[0]
         )

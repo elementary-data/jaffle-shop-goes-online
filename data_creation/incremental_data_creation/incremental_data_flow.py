@@ -37,7 +37,9 @@ def run_incremental_data_creation(
     first_run = True
 
     logger.info("Clearing demo environment")
-    dbt_runner.run_operation(macro_name="jaffle_shop_online.clear_tests")
+    dbt_runner.run_operation(
+        macro_name="jaffle_shop_online.clear_tests", return_raw_edr_logs=True
+    )
     clear_data(validation=True, training=True)
 
     dbt_runner.seed(select="ads")

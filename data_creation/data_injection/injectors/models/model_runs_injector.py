@@ -52,6 +52,7 @@ class ModelRunsInjector(ModelsInjector):
                 run_status=model_run.status.value,
                 materialization=model_run.materialization.value,
             ),
+            return_raw_edr_logs=True,
         )
 
     def inject_model_runs(self, model_runs: List[ModelRunSchema]):

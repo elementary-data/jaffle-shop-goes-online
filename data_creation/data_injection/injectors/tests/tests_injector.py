@@ -74,6 +74,7 @@ class TestsInjector(BaseInjector):
                 description=test.description,
                 type=test.test_type.value,
             ),
+            return_raw_edr_logs=True,
         )
 
     def inject_tests(self, tests: List[TestSchema]):
@@ -82,5 +83,7 @@ class TestsInjector(BaseInjector):
 
     def delete_test_data(self, test_id: str):
         self.dbt_runner.run_operation(
-            "data_injection.delete_test_data", macro_args=dict(test_id=test_id)
+            "data_injection.delete_test_data",
+            macro_args=dict(test_id=test_id),
+            return_raw_edr_logs=True,
         )
