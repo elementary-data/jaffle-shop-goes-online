@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from typing import Optional
 from uuid import uuid4
-from elementary.clients.dbt.api_dbt_runner import APIDbtRunner
+from elementary.clients.dbt.subprocess_dbt_runner import SubprocessDbtRunner
 
 from data_creation.data_injection.data_generator.specs.tests.anomaly_test_spec import (
     AnomalyTestSpec,
@@ -49,7 +49,7 @@ INJECTION_DBT_PROJECT_DIR = os.path.join(
 def inject_jaffle_shop_tests(
     target: Optional[str] = None, profiles_dir: Optional[str] = None
 ):
-    dbt_runner = APIDbtRunner(
+    dbt_runner = SubprocessDbtRunner(
         project_dir=INJECTION_DBT_PROJECT_DIR, profiles_dir=profiles_dir, target=target
     )
     dbt_runner.deps()

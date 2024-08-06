@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import Enum
 from typing import List, Optional
-from elementary.clients.dbt.api_dbt_runner import APIDbtRunner
+from elementary.clients.dbt.subprocess_dbt_runner import SubprocessDbtRunner
 from pydantic import BaseModel
 
 from data_creation.data_injection.injectors.models.models_injector import ModelsInjector
@@ -36,7 +36,7 @@ class ModelRunSchema(BaseModel):
 class ModelRunsInjector(ModelsInjector):
     def __init__(
         self,
-        dbt_runner: Optional[APIDbtRunner] = None,
+        dbt_runner: Optional[SubprocessDbtRunner] = None,
         target: Optional[str] = None,
         profiles_dir: Optional[str] = None,
     ) -> None:

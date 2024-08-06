@@ -14,7 +14,7 @@ from data_creation.data_injection.injectors.tests.tests_injector import (
     TestTypes,
 )
 
-from elementary.clients.dbt.api_dbt_runner import APIDbtRunner
+from elementary.clients.dbt.subprocess_dbt_runner import SubprocessDbtRunner
 
 
 class SchemaChangeTestSpec(BaseSpec):
@@ -31,7 +31,7 @@ class SchemaChangeTestSpec(BaseSpec):
             return "Compares the table's schema against a baseline contract of columns defined in the table's configuration."
         return "Monitors schema changes on the table of deleted, added, type changed columns over time. The test will fail if the table's schema changed from the previous execution of the test."
 
-    def generate(self, dbt_runner: APIDbtRunner):
+    def generate(self, dbt_runner: SubprocessDbtRunner):
         models_injector = ModelsInjector(dbt_runner)
         model_id = models_injector.get_model_id_from_name(self.model_name)
 

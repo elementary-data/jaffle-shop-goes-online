@@ -19,7 +19,7 @@ from data_creation.data_injection.injectors.tests.tests_injector import (
     TestSubTypes,
     TestTypes,
 )
-from elementary.clients.dbt.api_dbt_runner import APIDbtRunner
+from elementary.clients.dbt.subprocess_dbt_runner import SubprocessDbtRunner
 
 
 class AutomatedVolumeTestsSpec(AutomatedTestsSpec):
@@ -193,7 +193,7 @@ class AutomatedVolumeAnomalyTestSpec(TestSpec):
 
         return metrics
 
-    def generate(self, dbt_runner: APIDbtRunner):
+    def generate(self, dbt_runner: SubprocessDbtRunner):
         models_injector = ModelsInjector(dbt_runner)
         model_id = models_injector.get_model_id_from_name(self.model_name)
 
