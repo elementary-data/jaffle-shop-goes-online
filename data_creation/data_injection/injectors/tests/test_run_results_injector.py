@@ -2,7 +2,7 @@ from datetime import datetime
 import random
 from typing import Optional
 
-from elementary.clients.dbt.subprocess_dbt_runner import SubprocessDbtRunner
+from elementary.clients.dbt.dbt_runner import DbtRunner
 from pydantic import BaseModel, root_validator
 
 from data_creation.data_injection.injectors.tests.tests_injector import (
@@ -106,7 +106,7 @@ class SchemaChangeTestResult(BaseModel):
 
 
 class TestRunResultsInjector(TestsInjector):
-    def __init__(self, dbt_runner: SubprocessDbtRunner) -> None:
+    def __init__(self, dbt_runner: DbtRunner) -> None:
         super().__init__(dbt_runner)
 
     def inject_dbt_test_result(self, test: TestSchema, test_result: DbtTestResult):
@@ -129,7 +129,6 @@ class TestRunResultsInjector(TestsInjector):
                 result_description=test_result.result_description,
                 execution_time=test_result.execution_time,
             ),
-            return_raw_edr_logs=True,
         )
 
     def inject_anomaly_test_result(
@@ -152,7 +151,6 @@ class TestRunResultsInjector(TestsInjector):
                 result_description=test_result.result_description,
                 execution_time=test_result.execution_time,
             ),
-            return_raw_edr_logs=True,
         )
 
     def inject_failed_schema_change_test_result(
@@ -185,7 +183,6 @@ class TestRunResultsInjector(TestsInjector):
                 result_description=test_result.result_description,
                 execution_time=random.uniform(1, 3),
             ),
-            return_raw_edr_logs=True,
         )
 
     def inject_passed_schema_change_test_result(
@@ -205,7 +202,6 @@ class TestRunResultsInjector(TestsInjector):
                 model_name=test.model_name,
                 execution_time=random.uniform(1, 3),
             ),
-            return_raw_edr_logs=True,
         )
 
     def inject_source_freshness_result(self, test_result: SourceFreshnessResult):
@@ -219,12 +215,10 @@ class TestRunResultsInjector(TestsInjector):
                 warn_after=test_result.warn_after.dict(),
                 error_after=test_result.error_after.dict(),
             ),
-            return_raw_edr_logs=True,
         )
 
     def delete_test_data(self, test_id: str):
         self.dbt_runner.run_operation(
             "data_injection.delete_test_data",
             macro_args=dict(test_id=test_id),
-            return_raw_edr_logs=True,
         )

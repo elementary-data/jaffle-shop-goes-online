@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from typing import Optional
-from elementary.clients.dbt.subprocess_dbt_runner import SubprocessDbtRunner
+from elementary.clients.dbt.dbt_runner import DbtRunner
 
 from datetime import datetime
 from data_creation.data_injection.data_generator.exposures_data_generator import (
@@ -22,7 +22,7 @@ INJECTION_DBT_PROJECT_DIR = os.path.join(
 def inject_jaffle_shop_exposures(
     target: Optional[str] = None, profiles_dir: Optional[str] = None
 ):
-    dbt_runner = SubprocessDbtRunner(
+    dbt_runner = DbtRunner(
         project_dir=INJECTION_DBT_PROJECT_DIR, profiles_dir=profiles_dir, target=target
     )
     dbt_runner.deps()

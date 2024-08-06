@@ -1,6 +1,6 @@
 from enum import Enum
 from typing import List, Optional
-from elementary.clients.dbt.subprocess_dbt_runner import SubprocessDbtRunner
+from elementary.clients.dbt.dbt_runner import DbtRunner
 from pydantic import BaseModel
 
 from data_creation.data_injection.injectors.base_injector import BaseInjector
@@ -57,7 +57,7 @@ class TestSchema(BaseModel):
 class TestsInjector(BaseInjector):
     def __init__(
         self,
-        dbt_runner: Optional[SubprocessDbtRunner] = None,
+        dbt_runner: Optional[DbtRunner] = None,
         target: Optional[str] = None,
         profiles_dir: Optional[str] = None,
     ) -> None:
@@ -74,7 +74,6 @@ class TestsInjector(BaseInjector):
                 description=test.description,
                 type=test.test_type.value,
             ),
-            return_raw_edr_logs=True,
         )
 
     def inject_tests(self, tests: List[TestSchema]):
@@ -85,5 +84,4 @@ class TestsInjector(BaseInjector):
         self.dbt_runner.run_operation(
             "data_injection.delete_test_data",
             macro_args=dict(test_id=test_id),
-            return_raw_edr_logs=True,
         )

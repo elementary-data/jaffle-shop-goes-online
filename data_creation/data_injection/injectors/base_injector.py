@@ -2,7 +2,7 @@ import json
 import os
 from pathlib import Path
 from typing import Optional
-from elementary.clients.dbt.subprocess_dbt_runner import SubprocessDbtRunner
+from elementary.clients.dbt.dbt_runner import DbtRunner
 
 DATA_INJECTION_DB_PROJECT_DIR_NAME = "dbt_project"
 DATA_INJECTION_DIR = Path(os.path.dirname(__file__)).parent.absolute()
@@ -13,11 +13,11 @@ DBT_PROFILES_DIR = os.path.join(os.path.expanduser("~"), ".dbt")
 class BaseInjector:
     def __init__(
         self,
-        dbt_runner: Optional[SubprocessDbtRunner] = None,
+        dbt_runner: Optional[DbtRunner] = None,
         target: Optional[str] = None,
         profiles_dir: Optional[str] = None,
     ) -> None:
-        self.dbt_runner = dbt_runner or SubprocessDbtRunner(
+        self.dbt_runner = dbt_runner or DbtRunner(
             project_dir=DBT_PROJECT_DIR,
             profiles_dir=profiles_dir or DBT_PROFILES_DIR,
             target=target,
@@ -29,6 +29,5 @@ class BaseInjector:
             self.dbt_runner.run_operation(
                 "elementary.render_run_query",
                 macro_args={"prerendered_query": query},
-                return_raw_edr_logs=True,
             )[0]
         )

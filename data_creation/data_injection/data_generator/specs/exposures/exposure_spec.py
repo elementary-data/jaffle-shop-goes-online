@@ -6,7 +6,7 @@ from data_creation.data_injection.injectors.exposures.exposures_injector import 
     ExposuresInjector,
 )
 
-from elementary.clients.dbt.subprocess_dbt_runner import SubprocessDbtRunner
+from elementary.clients.dbt.dbt_runner import DbtRunner
 
 from data_creation.data_injection.injectors.models.models_injector import ModelsInjector
 
@@ -33,7 +33,7 @@ class ExposureSpec(BaseSpec):
     meta: Dict[str, Any]
     raw_queries: Optional[List[str]] = None
 
-    def generate(self, dbt_runner: SubprocessDbtRunner):
+    def generate(self, dbt_runner: DbtRunner):
         models_injector = ModelsInjector(dbt_runner)
         all_models = models_injector.get_nodes()
 

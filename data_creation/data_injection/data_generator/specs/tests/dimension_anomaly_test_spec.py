@@ -17,7 +17,7 @@ from data_creation.data_injection.injectors.tests.tests_injector import (
     TestSubTypes,
 )
 
-from elementary.clients.dbt.subprocess_dbt_runner import SubprocessDbtRunner
+from elementary.clients.dbt.dbt_runner import DbtRunner
 
 
 class DimensionAnomalyTestSpec(AnomalyTestSpec):
@@ -82,7 +82,7 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
                 metrics.append(metric)
         return anomalous_metrics
 
-    def generate(self, dbt_runner: SubprocessDbtRunner):
+    def generate(self, dbt_runner: DbtRunner):
         models_injector = ModelsInjector(dbt_runner)
         model_id = models_injector.get_model_id_from_name(self.model_name)
 

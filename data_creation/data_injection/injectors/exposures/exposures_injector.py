@@ -1,12 +1,12 @@
 from typing import Optional
-from elementary.clients.dbt.subprocess_dbt_runner import SubprocessDbtRunner
+from elementary.clients.dbt.dbt_runner import DbtRunner
 from data_creation.data_injection.injectors.base_injector import BaseInjector
 
 
 class ExposuresInjector(BaseInjector):
     def __init__(
         self,
-        dbt_runner: Optional[SubprocessDbtRunner] = None,
+        dbt_runner: Optional[DbtRunner] = None,
         target: Optional[str] = None,
         profiles_dir: Optional[str] = None,
     ) -> None:
@@ -16,5 +16,4 @@ class ExposuresInjector(BaseInjector):
         self.dbt_runner.run_operation(
             macro_name="data_injection.inject_exposures",
             macro_args=dict(exposures=exposures),
-            return_raw_edr_logs=True,
         )

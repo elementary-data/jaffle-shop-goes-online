@@ -7,7 +7,7 @@ import random
 from typing import Optional
 import uuid
 
-from elementary.clients.dbt.subprocess_dbt_runner import SubprocessDbtRunner
+from elementary.clients.dbt.dbt_runner import DbtRunner
 from data_creation.incremental_data_creation.incremental_training_data_generator import (
     generate_incremental_training_data,
 )
@@ -27,7 +27,7 @@ DBT_PROJECT_DIR = os.path.join(REPO_DIR, JAFFLE_SHOP_ONLINE_DIR_NAME)
 def run_incremental_data_creation(
     target: Optional[str] = None, profiles_dir: Optional[str] = None, days_back=30
 ):
-    dbt_runner = SubprocessDbtRunner(
+    dbt_runner = DbtRunner(
         project_dir=DBT_PROJECT_DIR,
         profiles_dir=profiles_dir,
         target=target,
@@ -37,9 +37,7 @@ def run_incremental_data_creation(
     first_run = True
 
     logger.info("Clearing demo environment")
-    dbt_runner.run_operation(
-        macro_name="jaffle_shop_online.clear_tests", return_raw_edr_logs=True
-    )
+    dbt_runner.run_operation(macro_name="jaffle_shop_online.clear_tests")
     clear_data(validation=True, training=True)
 
     dbt_runner.seed(select="ads")

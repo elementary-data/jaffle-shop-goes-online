@@ -1,6 +1,6 @@
 from data_creation.data_injection.data_generator.specs.base_spec import BaseSpec
 
-from elementary.clients.dbt.subprocess_dbt_runner import SubprocessDbtRunner
+from elementary.clients.dbt.dbt_runner import DbtRunner
 
 from data_creation.data_injection.injectors.models.models_injector import ModelsInjector
 
@@ -8,7 +8,7 @@ from data_creation.data_injection.injectors.models.models_injector import Models
 class AutomatedTestsSpec(BaseSpec):
     exceptions: dict[str, dict]
 
-    def generate(self, dbt_runner: SubprocessDbtRunner):
+    def generate(self, dbt_runner: DbtRunner):
         models_injector = ModelsInjector(dbt_runner)
         all_nodes = models_injector.get_nodes()
 
