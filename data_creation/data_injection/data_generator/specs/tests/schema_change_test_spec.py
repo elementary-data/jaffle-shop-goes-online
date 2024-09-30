@@ -1,6 +1,8 @@
-from datetime import datetime, timedelta
 import random
+from datetime import datetime, timedelta
 from typing import Any
+
+from elementary.clients.dbt.dbt_runner import DbtRunner
 
 from data_creation.data_injection.data_generator.specs.base_spec import BaseSpec
 from data_creation.data_injection.injectors.models.models_injector import ModelsInjector
@@ -13,8 +15,6 @@ from data_creation.data_injection.injectors.tests.tests_injector import (
     TestSubTypes,
     TestTypes,
 )
-
-from elementary.clients.dbt.dbt_runner import DbtRunner
 
 
 class SchemaChangeTestSpec(BaseSpec):
@@ -50,8 +50,11 @@ class SchemaChangeTestSpec(BaseSpec):
         )
         injector.inject_test(test)
 
+        from_type = to_type = None
         for result in self.results:
             injector.inject_failed_schema_change_test_result(test, result)
+            from_type = result.from_type
+            to_type = result.to_type
 
         cur_timestamp = datetime.utcnow()
         for i in range(10):
@@ -63,6 +66,8 @@ class SchemaChangeTestSpec(BaseSpec):
                     test_timestamp=cur_timestamp,
                     column_name=self.results[0].column_name if self.results else "",
                     test_sub_type=TestSubTypes.TYPE_CHANGED,
+                    from_type=from_type,
+                    to_type=to_type,
                 )
                 injector.inject_failed_schema_change_test_result(test, prev_test_result)
             else:

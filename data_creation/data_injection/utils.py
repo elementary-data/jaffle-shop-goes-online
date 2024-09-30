@@ -16,6 +16,17 @@ def get_values_around_middle_anomalous(middle, space, is_spike=False, num_entrie
     return values
 
 
+def get_values_around_middle_weekly_seasonality(
+    middle, space, weekly_middle, num_entries=14 * 7 + 3
+):
+    return [
+        random.randint(weekly_middle - space, weekly_middle + space)
+        if i % 7 <= 1
+        else random.randint(middle - space, middle + space)
+        for i in range(num_entries)
+    ]
+
+
 def get_values_around_middle_anomalous_weekly_seasonality(
     middle, space, weekly_middle, is_spike=False, num_entries=14 * 7 + 3
 ):

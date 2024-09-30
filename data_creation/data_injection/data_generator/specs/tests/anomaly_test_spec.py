@@ -1,9 +1,11 @@
-from datetime import date, datetime, time, timedelta
 import random
+from datetime import date, datetime, time, timedelta
 from typing import Any, Optional
 
 import numpy
+from elementary.clients.dbt.dbt_runner import DbtRunner
 from pydantic import BaseModel
+
 from data_creation.data_injection.data_generator.specs.tests.test_spec import TestSpec
 from data_creation.data_injection.injectors.models.models_injector import ModelsInjector
 from data_creation.data_injection.injectors.tests.test_run_results_injector import (
@@ -16,8 +18,6 @@ from data_creation.data_injection.injectors.tests.tests_injector import (
     TestTypes,
 )
 
-from elementary.clients.dbt.dbt_runner import DbtRunner
-
 
 class PeriodSchema(BaseModel):
     count: int
@@ -27,6 +27,8 @@ class PeriodSchema(BaseModel):
 class AnomalyTestSpec(TestSpec):
     no_bucket: bool
     metric_values: list[float]
+    historic_success_metric_values: list[float] = []
+    historic_failure_metric_values: list[float] = []
     timestamp_column: Optional[str] = None
     sensitivity: Optional[int] = None
     min_values_bound: int = 0
@@ -107,20 +109,20 @@ class AnomalyTestSpec(TestSpec):
                     f"I don't know how to handle bucket size {self.detection_period.period}"
                 )
 
-    def get_metrics(self):
-        metric_timestamps = self.get_metric_timestamps(self.metric_values)
+    def get_metrics(self, metric_values: list[float]):
+        metric_timestamps = self.get_metric_timestamps(metric_values)
         metrics = []
         sensitivity = self.sensitivity or 3
 
         for i, (value, (start_time, end_time)) in enumerate(
-            zip(self.metric_values, metric_timestamps)
+            zip(metric_values, metric_timestamps)
         ):
             if self.day_of_week_seasonality:
-                relevant_metrics = list(reversed(self.metric_values[i:0:-7]))
+                relevant_metrics = list(reversed(metric_values[i:0:-7]))
                 if i % 7 == 0:
-                    relevant_metrics.insert(0, self.metric_values[0])
+                    relevant_metrics.insert(0, metric_values[0])
             else:
-                relevant_metrics = self.metric_values[: (i + 1)]
+                relevant_metrics = metric_values[: (i + 1)]
             average = numpy.average(relevant_metrics)
             stddev = numpy.std(relevant_metrics)
 
@@ -130,6 +132,7 @@ class AnomalyTestSpec(TestSpec):
                 max_value=average + sensitivity * stddev,
                 start_time=start_time.isoformat() if start_time else None,
                 end_time=end_time.isoformat(),
+                metric_name=self.test_sub_type.value,
             )
             if metric.is_anomalous:
                 if self.day_of_week_seasonality:
@@ -163,7 +166,7 @@ class AnomalyTestSpec(TestSpec):
         injector.inject_test(test)
 
         execution_time = self.max_execution_time
-        metrics = self.get_metrics()
+        metrics = self.get_metrics(self.metric_values)
         test_result = AnomalyTestResult(
             test_timestamp=datetime.utcnow(),
             test_status="fail" if metrics[-1].is_anomalous else "pass",
@@ -180,11 +183,16 @@ class AnomalyTestSpec(TestSpec):
                 status = random.choice(["fail"] + ["pass"] * 3)
             else:
                 status = "pass"
+            metric_values = (
+                self.historic_success_metric_values
+                if status == "pass"
+                else self.historic_failure_metric_values
+            )
             execution_time = execution_time * ((100 - random.uniform(1, 3)) / 100)
             prev_test_result = AnomalyTestResult(
                 test_timestamp=cur_timestamp,
                 test_status=status,
-                test_metrics=[],
+                test_metrics=self.get_metrics(metric_values),
                 result_description="",
                 execution_time=execution_time,
             )
