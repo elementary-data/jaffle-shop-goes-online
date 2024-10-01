@@ -1,5 +1,5 @@
-from datetime import datetime
 import random
+from datetime import datetime
 from typing import Optional
 
 from elementary.clients.dbt.dbt_runner import DbtRunner
@@ -7,9 +7,9 @@ from pydantic import BaseModel, root_validator
 
 from data_creation.data_injection.injectors.tests.tests_injector import (
     TestSchema,
+    TestsInjector,
     TestSubTypes,
     TestTypes,
-    TestsInjector,
 )
 
 
@@ -28,6 +28,7 @@ class AnomalyTestMetric(BaseModel):
     value: float
     min_value: float
     max_value: float
+    metric_name: str
     start_time: Optional[str] = None
     end_time: str
     is_anomalous: Optional[bool] = None

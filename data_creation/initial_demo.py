@@ -1,10 +1,10 @@
 import argparse
 import logging
 from typing import Optional
+
 from data_creation.data_injection.inject_jaffle_shop_exposures import (
     inject_jaffle_shop_exposures,
 )
-
 from data_creation.data_injection.inject_jaffle_shop_tests import (
     inject_jaffle_shop_tests,
 )

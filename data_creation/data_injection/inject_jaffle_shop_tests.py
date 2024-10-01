@@ -1,8 +1,9 @@
-from datetime import datetime
 import os
+from datetime import datetime
 from pathlib import Path
 from typing import Optional
 from uuid import uuid4
+
 from elementary.clients.dbt.dbt_runner import DbtRunner
 
 from data_creation.data_injection.data_generator.specs.tests.anomaly_test_spec import (
@@ -25,7 +26,6 @@ from data_creation.data_injection.data_generator.specs.tests.dimension_anomaly_t
 from data_creation.data_injection.data_generator.specs.tests.schema_change_test_spec import (
     SchemaChangeTestSpec,
 )
-
 from data_creation.data_injection.data_generator.test_data_generator import (
     TestDataGenerator,
 )
@@ -37,8 +37,8 @@ from data_creation.data_injection.utils import (
     get_values_around_middle,
     get_values_around_middle_anomalous,
     get_values_around_middle_anomalous_weekly_seasonality,
+    get_values_around_middle_weekly_seasonality,
 )
-
 
 REPO_DIR = Path(os.path.dirname(__file__)).parent.parent.absolute()
 INJECTION_DBT_PROJECT_DIR = os.path.join(
@@ -266,6 +266,10 @@ def inject_jaffle_shop_tests(
             test_name="column_anomalies",
             no_bucket=False,
             metric_values=get_values_around_middle_anomalous(20, 5, is_spike=True),
+            historic_success_metric_values=get_values_around_middle(20, 5),
+            historic_failure_metric_values=get_values_around_middle_anomalous(
+                20, 5, is_spike=True
+            ),
             timestamp_column=None,
             test_column_name="email",
             test_sub_type="missing_count",
@@ -278,6 +282,12 @@ def inject_jaffle_shop_tests(
             test_name="column_anomalies",
             no_bucket=False,
             metric_values=get_values_around_middle(40, 3, num_entries=72),
+            historic_success_metric_values=get_values_around_middle(
+                40, 3, num_entries=72
+            ),
+            historic_failure_metric_values=get_values_around_middle_anomalous(
+                40, 3, num_entries=72, is_spike=True
+            ),
             timestamp_column=None,
             test_column_name="order_category",
             test_sub_type="null_count",
@@ -290,6 +300,12 @@ def inject_jaffle_shop_tests(
             test_name="column_anomalies",
             no_bucket=False,
             metric_values=get_values_around_middle(40, 3, num_entries=72),
+            historic_success_metric_values=get_values_around_middle(
+                40, 3, num_entries=72
+            ),
+            historic_failure_metric_values=get_values_around_middle_anomalous(
+                40, 3, num_entries=72, is_spike=True
+            ),
             timestamp_column=None,
             test_column_name="campaign_name",
             test_sub_type="null_count",
@@ -302,6 +318,12 @@ def inject_jaffle_shop_tests(
             test_name="column_anomalies",
             no_bucket=False,
             metric_values=get_values_around_middle(40, 3, num_entries=72),
+            historic_success_metric_values=get_values_around_middle(
+                40, 3, num_entries=72
+            ),
+            historic_failure_metric_values=get_values_around_middle_anomalous(
+                40, 3, num_entries=72, is_spike=True
+            ),
             timestamp_column=None,
             test_column_name="impressions",
             test_sub_type="zero_count",
@@ -314,6 +336,12 @@ def inject_jaffle_shop_tests(
             test_name="column_anomalies",
             no_bucket=False,
             metric_values=get_values_around_middle_anomalous_weekly_seasonality(
+                700, 30, 1100, is_spike=True, num_entries=72
+            ),
+            historic_success_metric_values=get_values_around_middle_weekly_seasonality(
+                700, 30, 1100, num_entries=72
+            ),
+            historic_failure_metric_values=get_values_around_middle_anomalous_weekly_seasonality(
                 700, 30, 1100, is_spike=True, num_entries=72
             ),
             timestamp_column=None,

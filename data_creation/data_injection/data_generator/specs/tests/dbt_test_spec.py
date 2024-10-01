@@ -1,9 +1,11 @@
+import random
 from datetime import datetime, timedelta
 from enum import Enum
-import random
 from typing import Any, Optional
 
+from elementary.clients.dbt.dbt_runner import DbtRunner
 from pydantic import validator
+
 from data_creation.data_injection.data_generator.specs.tests.test_spec import TestSpec
 from data_creation.data_injection.injectors.models.models_injector import ModelsInjector
 from data_creation.data_injection.injectors.tests.test_run_results_injector import (
@@ -14,8 +16,6 @@ from data_creation.data_injection.injectors.tests.tests_injector import (
     TestSchema,
     TestTypes,
 )
-
-from elementary.clients.dbt.dbt_runner import DbtRunner
 
 
 class TestStatuses(Enum):
@@ -78,11 +78,12 @@ class DbtTestSpec(TestSpec):
             status = random.choice(
                 [TestStatuses.FAIL.value] + [TestStatuses.PASS.value] * 3
             )
+            result_rows = self.result_rows if status == TestStatuses.FAIL.value else []
             execution_time = execution_time * ((100 - random.uniform(1, 3)) / 100)
             prev_test_result = DbtTestResult(
                 test_timestamp=cur_timestamp,
                 test_status=status,
-                test_result_rows=[],
+                test_result_rows=result_rows,
                 result_description="",
                 execution_time=execution_time,
             )

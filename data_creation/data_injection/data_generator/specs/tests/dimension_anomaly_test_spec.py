@@ -1,8 +1,10 @@
-from datetime import datetime, timedelta
 import random
+from datetime import datetime, timedelta
 from typing import Any
 
 import numpy
+from elementary.clients.dbt.dbt_runner import DbtRunner
+
 from data_creation.data_injection.data_generator.specs.tests.anomaly_test_spec import (
     AnomalyTestSpec,
 )
@@ -16,8 +18,6 @@ from data_creation.data_injection.injectors.tests.tests_injector import (
     TestSchema,
     TestSubTypes,
 )
-
-from elementary.clients.dbt.dbt_runner import DbtRunner
 
 
 class DimensionAnomalyTestSpec(AnomalyTestSpec):
@@ -65,6 +65,7 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
                         average - self.sensitivity * stddev, self.min_values_bound
                     ),
                     max_value=average + self.sensitivity * stddev,
+                    metric_name="row_count",
                     average=average,
                     start_time=start_time.isoformat() if start_time else None,
                     end_time=end_time.isoformat(),
@@ -128,7 +129,7 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
             prev_test_result = DimensionAnomalyTestResult(
                 test_timestamp=cur_timestamp,
                 test_status=status,
-                test_metrics=[],
+                test_metrics=[] if status == "pass" else anomalous_metrics,
                 result_description="",
                 execution_time=execution_time,
             )
