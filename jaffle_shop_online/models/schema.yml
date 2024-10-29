@@ -9,6 +9,19 @@ models:
       tags: ["PII"]
       elementary:
         timestamp_column: "signup_date"
+
+    tests:
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          column_A: first_order_date
+          column_B: signup_date
+          or_equal: true
+          row_condition: id is not null  # Optional
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          column_A: most_recent_order
+          column_B: signup_date
+          or_equal: true
+          row_condition: id is not null  # Optional
+
     columns:
       - name: customer_id
         description: This is a unique identifier for a customer
@@ -18,6 +31,8 @@ models:
                 severity: warn
               to: ref('stg_signups')
               field: customer_id
+          - unique
+          - not_null
 
       - name: first_name
         description: Customer's first name. PII.
@@ -33,9 +48,17 @@ models:
 
       - name: number_of_orders
         description: Count of the number of orders a customer has placed
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
 
       - name: customer_lifetime_value
         description: Total value (AUD) of a customer's orders
+        tests:
+          - elementary.column_anomalies:
+              column_anomalies:
+                - sum
 
       - name: customer_email
         description: Customer's email. PII.
@@ -44,6 +67,10 @@ models:
           - elementary.column_anomalies:
               column_anomalies:
                 - missing_count
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+              is_raw: true
+              flags: i
 
       - name: signup_date
         description: Date (UTC) of a customer's signup to the online shop.
