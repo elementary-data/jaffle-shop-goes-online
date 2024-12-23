@@ -5,7 +5,7 @@ models:
     meta:
       owner: "Idan"
     config:
-      tags: ["staging", "PII"]
+      tags: ["staging", "pii"]
     columns:
       - name: customer_id
         tests:
@@ -63,7 +63,7 @@ models:
     meta:
       owner: "Idan"
     config:
-      tags: ["staging", "PII"]
+      tags: ["staging", "pii"]
       elementary:
         timestamp_column: "signup_date"
     columns:
