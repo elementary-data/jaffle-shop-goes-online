@@ -216,6 +216,7 @@ def inject_jaffle_shop_tests(
             test_name="not_null",
             test_column_name="order_id",
             status=TestStatuses.FAIL,
+            description="The order_id column in the order_items table should not contain null values",
             result_rows=[
                 dict(
                     coupon_amount=100,

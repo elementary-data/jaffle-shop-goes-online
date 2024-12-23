@@ -6,7 +6,7 @@ models:
     meta:
       owner: "Maayan"
     config:
-      tags: ["PII"]
+      tags: ["pii"]
       elementary:
         timestamp_column: "signup_date"
     columns:
