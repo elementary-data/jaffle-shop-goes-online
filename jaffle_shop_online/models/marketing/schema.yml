@@ -6,7 +6,7 @@ models:
     meta:
       owner: "Ella"
     config:
-      tags: ["marketing", "finance"]
+      tags: ["marketing", "finance", "finance-data-product"]
       elementary:
         timestamp_column: "date_day"
     columns:
@@ -35,7 +35,7 @@ models:
     meta:
       owner: "Ella"
     config:
-      tags: ["marketing", "pii"]
+      tags: ["marketing", "pii", "finance-data-product"]
       elementary:
         timestamp_column: "converted_at"
     columns:
@@ -120,7 +120,7 @@ models:
     meta:
       owner: "Ella"
     config:
-      tags: ["marketing", "finance"]
+      tags: ["marketing", "finance", "finance-data-product"]
       elementary:
         timestamp_column: "date_month"
     columns:
