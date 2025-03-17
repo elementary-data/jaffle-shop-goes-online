@@ -16,6 +16,7 @@ models:
           - relationships:
               config:
                 severity: warn
+                owner: ["@data-ops"]
               to: ref('stg_signups')
               field: customer_id
 
@@ -40,8 +41,12 @@ models:
       - name: customer_email
         description: Customer's email. PII.
         tests:
-          - unique
+          - unique:
+              config:
+                owner: ["@data-ops"]
           - elementary.column_anomalies:
+              config:
+                owner: ["@data-ops"]
               column_anomalies:
                 - missing_count
 
@@ -62,6 +67,7 @@ models:
           dimensions:
             - customer_id
           config:
+            owner: ["@data-ops"]
             tags: ["stability"]
     columns:
       - name: order_id
@@ -73,6 +79,7 @@ models:
           - relationships:
               config:
                 severity: warn
+                owner: ["@data-ops"]
               to: ref('customers')
               field: customer_id
 
@@ -86,12 +93,16 @@ models:
               config:
                 tags: ["customer_success"]
                 severity: warn
+                owner: ["@data-ops"]
               values:
                 ["placed", "shipped", "completed", "return_pending", "returned"]
           - dbt_expectations.expect_column_values_to_be_in_set:
               value_set:
                 ["placed", "shipped", "completed", "return_pending", "returned"]
               quote_values: true
+              config:
+                severity: warn
+                owner: ["@data-ops"]
 
       - name: amount
         description: Total amount (AUD) of the order
@@ -99,6 +110,7 @@ models:
           - elementary.column_anomalies:
               config:
                 severity: warn
+                owner: ["@data-ops"]
               column_anomalies:
                 - zero_count
                 - zero_percent
@@ -125,7 +137,9 @@ models:
         timestamp_column: "order_date"
 
     tests:
-      - elementary.schema_changes
+      - elementary.schema_changes:
+          config:
+            owner: ["@finance-team"]
     columns:
       - name: order_id
         description: This is a unique identifier for an order
@@ -136,6 +150,7 @@ models:
           - relationships:
               config:
                 severity: warn
+                owner: ["@customer-team"]
               to: ref('customers')
               field: customer_id
 
@@ -148,12 +163,15 @@ models:
           - accepted_values:
               config:
                 severity: warn
+                owner: ["@customer-team"]
               values: ["return_pending", "returned"]
 
       - name: amount
         description: Total amount (AUD) of the order
         tests:
           - elementary.column_anomalies:
+              config:
+                owner: ["@finance-team"]
               column_anomalies:
                 - zero_count
                 - zero_percent
@@ -192,6 +210,7 @@ models:
           - relationships:
               config:
                 severity: warn
+                owner: ["@customer-team"]
               to: ref('customers')
               field: customer_id
 
@@ -204,6 +223,7 @@ models:
           - accepted_values:
               config:
                 severity: warn
+                owner: ["@finance-team"]
               values: ["shipped", "return_pending"]
 
       - name: amount
@@ -212,6 +232,7 @@ models:
           - elementary.column_anomalies:
               config:
                 severity: warn
+                owner: ["@finance-team"]
               column_anomalies:
                 - zero_count
                 - zero_percent
