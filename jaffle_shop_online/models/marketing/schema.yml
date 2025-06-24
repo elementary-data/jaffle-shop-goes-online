@@ -152,9 +152,6 @@ models:
               detection_period:
                 count: 2
                 period: month
-              time_bucket:
-                count: 1
-                period: day
               timestamp_column: date_month
               training_period:
                 count: 12
