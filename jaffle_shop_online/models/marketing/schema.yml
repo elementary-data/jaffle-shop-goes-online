@@ -143,6 +143,22 @@ models:
       - name: total_spend
         data_type: number
         description: "Total spend amount (USD)"
+        data_tests:
+          - elementary.column_anomalies:
+              anomaly_direction: both
+              anomaly_sensitivity: 3
+              column_anomalies:
+              - null_count
+              detection_period:
+                count: 2
+                period: month
+              time_bucket:
+                count: 1
+                period: day
+              timestamp_column: date_month
+              training_period:
+                count: 12
+                period: month
 
       - name: cost_per_acquisition
         data_type: number
