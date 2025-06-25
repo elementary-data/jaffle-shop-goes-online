@@ -272,7 +272,7 @@ def inject_jaffle_shop_tests(
                 20, 5, is_spike=True
             ),
             timestamp_column=None,
-            test_column_name="email",
+            test_column_name="gift_card_amount",
             test_sub_type="missing_count",
             detection_period=PeriodSchema(count=2, period="day"),
             sensitivity=3,
@@ -290,7 +290,7 @@ def inject_jaffle_shop_tests(
                 40, 3, num_entries=72, is_spike=True
             ),
             timestamp_column=None,
-            test_column_name="order_category",
+            test_column_name="amount",
             test_sub_type="null_count",
             detection_period=PeriodSchema(count=2, period="hour"),
             sensitivity=3,
@@ -308,7 +308,7 @@ def inject_jaffle_shop_tests(
                 40, 3, num_entries=72, is_spike=True
             ),
             timestamp_column=None,
-            test_column_name="campaign_name",
+            test_column_name="spend",
             test_sub_type="null_count",
             detection_period=PeriodSchema(count=2, period="day"),
             sensitivity=3,
@@ -326,7 +326,7 @@ def inject_jaffle_shop_tests(
                 40, 3, num_entries=72, is_spike=True
             ),
             timestamp_column=None,
-            test_column_name="impressions",
+            test_column_name="cost",
             test_sub_type="zero_count",
             detection_period=PeriodSchema(count=2, period="day"),
             sensitivity=3,
@@ -346,7 +346,7 @@ def inject_jaffle_shop_tests(
                 700, 30, 1100, is_spike=True, num_entries=72
             ),
             timestamp_column=None,
-            test_column_name="revenue",
+            test_column_name="total_spend",
             test_sub_type="zero_count",
             detection_period=PeriodSchema(count=2, period="day"),
             day_of_week_seasonality=True,
