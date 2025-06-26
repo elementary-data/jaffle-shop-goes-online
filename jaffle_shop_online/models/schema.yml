@@ -2,16 +2,13 @@ version: 2
 
 models:
   - name: customers
-    description: This table has basic information about a customer, as well as some
-      derived facts based on a customer's orders
+    description: This table has basic information about a customer, as well as some derived facts based on a customer's orders
     meta:
       owner: "Maayan"
     config:
+      tags: ["pii"]
       elementary:
         timestamp_column: "signup_date"
-      tags:
-        - customer-data
-        - pii
     columns:
       - name: customer_id
         description: This is a unique identifier for a customer
@@ -57,8 +54,7 @@ models:
         description: Date (UTC) of a customer's signup to the online shop.
 
   - name: orders
-    description: This table has basic information about orders, as well as some derived
-      facts based on payments
+    description: This table has basic information about orders, as well as some derived facts based on payments
     meta:
       owner: "Or"
     config:
@@ -98,9 +94,11 @@ models:
                 tags: ["customer_success"]
                 severity: warn
                 owner: ["@data-ops"]
-              values: ["placed", "shipped", "completed", "return_pending", "returned"]
+              values:
+                ["placed", "shipped", "completed", "return_pending", "returned"]
           - dbt_expectations.expect_column_values_to_be_in_set:
-              value_set: ["placed", "shipped", "completed", "return_pending", "returned"]
+              value_set:
+                ["placed", "shipped", "completed", "return_pending", "returned"]
               quote_values: true
               config:
                 severity: warn
