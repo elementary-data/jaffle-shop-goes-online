@@ -4,9 +4,9 @@
     )
 }}
 
-with customer as (
+with sessions as (
     select *
-    from {{ ref("customers") }}
+    from {{ ref("sessions") }}
 ),
 
 orders as (
@@ -14,19 +14,52 @@ orders as (
     from {{ ref("orders") }}
 ),
 
-customer_orders as (
-        select
+session_order_pairs as (
+    select 
+        sessions.customer_id,
+        sessions.started_at as session_date,
+        sessions.utm_source,
+        sessions.utm_medium,
+        orders.order_date,
+        orders.amount,
+        orders.order_id,
+        datediff('day', sessions.started_at, orders.order_date) as days_to_order,
+        datediff('hour', sessions.started_at, orders.order_date) as hours_to_order,
+        -- Pick the closest (most recent) eligible session for each order
+        row_number() over (
+            partition by orders.order_id 
+            order by sessions.started_at desc
+        ) as session_rank
+    from sessions
+    inner join orders 
+        on sessions.customer_id = orders.customer_id 
+        and orders.order_date >= sessions.started_at
+        and datediff('day', sessions.started_at, orders.order_date) <= {{ var('conversion_window_days', 7) }}
+),
+
+conversions as (
+    select 
         customer_id,
-        min(order_date) as first_order,
-        max(order_date) as most_recent_order,
-        count(order_id) as number_of_orders,
-        sum(amount) as revenue
-    from orders
-    group by customer_id
+        session_date,
+        utm_source,
+        utm_medium,
+        order_date as converted_at,
+        amount as revenue,
+        order_id,
+        days_to_order,
+        hours_to_order
+    from session_order_pairs 
+    where session_rank = 1
 )
 
 select
-    customer.customer_id,
-    customer_orders.first_order as converted_at,
-    case when customer_orders.revenue is not null then customer_orders.revenue else 0 end as revenue 
-from customer left join customer_orders on customer.customer_id = customer_orders.customer_id
+    customer_id,
+    converted_at,
+    revenue,
+    session_date,
+    utm_source,
+    utm_medium,
+    order_id,
+    days_to_order,
+    hours_to_order
+from conversions

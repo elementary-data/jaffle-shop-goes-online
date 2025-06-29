@@ -8,9 +8,9 @@ models:
     config:
       tags: ["marketing", "finance", "finance-data-product"]
       elementary:
-        timestamp_column: "date_day"
+        timestamp_column: "day"
     columns:
-      - name: date_day
+      - name: day
         data_type: date
         description: "Day (UTC) of the ad spend"
 
@@ -116,17 +116,17 @@ models:
         description: ""
 
   - name: cpa_and_roas
-    description: "This table contains the cost per acquisition and return on ad spend, by source, and per month"
+    description: "This table contains the cost per acquisition and return on ad spend, by source, and per day"
     meta:
       owner: "Noa"
     config:
       tags: ["marketing", "finance", "finance-data-product"]
       elementary:
-        timestamp_column: "date_month"
+        timestamp_column: "day"
     columns:
-      - name: date_month
-        data_type: timestamp_ntz
-        description: "Month (UTC)"
+      - name: day
+        data_type: date
+        description: "Day (UTC)"
 
       - name: utm_source
         data_type: varchar
@@ -151,6 +151,26 @@ models:
       - name: return_on_advertising_spend
         data_type: number
         description: "The ROI of the ad spend, calculated as attribution_revenue / total_spend"
+        data_tests:
+          - elementary.column_anomalies:
+              anomaly_direction: both
+              anomaly_sensitivity: 1
+              column_anomalies:
+                - sum
+                - average
+                - min
+                - max
+                - variance
+              detection_period:
+                count: 2
+                period: day
+              timestamp_column: day
+              training_period:
+                count: 14
+                period: day
+              time_bucket:
+                period: day
+                count: 1
 
   - name: marketing_ads
     description: "This table contains information on the ad spend, by source, medium and campaign"
