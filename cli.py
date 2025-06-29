@@ -18,8 +18,12 @@ def cli():
 
 @cli.command()
 @click.option("--days-back", default=30, help="Amount of days of tests", type=int)
-def initial_incremental_demo_flow(days_back):
-    initial_incremental_demo(days_back=days_back)
+@click.option("--target", help="Target environment", type=str)
+@click.option("--profiles-dir", help="Profiles directory", type=str)
+def initial_incremental_demo_flow(days_back, target, profiles_dir):
+    initial_incremental_demo(
+        days_back=days_back, target=target, profiles_dir=profiles_dir
+    )
 
 
 @cli.command()
