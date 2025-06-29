@@ -122,7 +122,7 @@ def inject_jaffle_shop_tests(
             results=[
                 SchemaChangeTestResult(
                     test_timestamp=datetime.utcnow(),
-                    column_name="date_month",
+                    column_name="day",
                     test_sub_type=TestSubTypes.TYPE_CHANGED,
                     from_type="TIMESTAMP",
                     to_type="STRING",
