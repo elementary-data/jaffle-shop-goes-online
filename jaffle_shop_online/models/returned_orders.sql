@@ -6,7 +6,7 @@
 
 with orders as (
     select *
-    from {{ ref('total_orders') }}
+    from {{ ref('orders') }}
 )
 
 select *
