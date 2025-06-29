@@ -11,7 +11,7 @@ with sessions as (
 
 orders as (
     select *
-    from {{ ref("orders") }}
+    from {{ ref("total_orders") }}
 ),
 
 session_order_pairs as (
