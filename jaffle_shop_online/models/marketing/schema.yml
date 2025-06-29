@@ -151,6 +151,22 @@ models:
       - name: return_on_advertising_spend
         data_type: number
         description: "The ROI of the ad spend, calculated as attribution_revenue / total_spend"
+        data_tests:
+          - elementary.column_anomalies:
+              anomaly_direction: both
+              anomaly_sensitivity: 2
+              column_anomalies:
+                - average
+              detection_period:
+                count: 2
+                period: day
+              timestamp_column: date_month
+              training_period:
+                count: 30
+                period: day
+              time_bucket:
+                period: day
+                count: 1
 
   - name: marketing_ads
     description: "This table contains information on the ad spend, by source, medium and campaign"

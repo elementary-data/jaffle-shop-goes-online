@@ -20,7 +20,7 @@ attribution as (
 ad_spend_aggregated as (
 
     select
-        date_trunc('month', date_day) as date_month,
+        date_trunc('day', date_day) as day,
         utm_source,
 
         sum(spend) as total_spend
@@ -34,7 +34,7 @@ ad_spend_aggregated as (
 attribution_aggregated as (
 
     select
-        date_trunc('month', converted_at) as date_month,
+        date_trunc('day', converted_at) as day,
         utm_source,
 
         sum(linear_points) as attribution_points,
@@ -50,15 +50,15 @@ joined as (
 
     select
         *,
-        1.0 * nullif(total_spend, 0) / attribution_points as cost_per_acquisition,
-        1.0 * attribution_revenue / nullif(total_spend, 0) as return_on_advertising_spend
+        100.0 * nullif(total_spend, 0) / attribution_points as cost_per_acquisition,
+        100.0 * attribution_revenue / nullif(total_spend, 0) as return_on_advertising_spend
 
     from attribution_aggregated
 
     full outer join ad_spend_aggregated
-    using (date_month, utm_source)
+    using (day, utm_source)
 
 )
 
 select * from joined
-order by date_month, utm_source
+order by day, utm_source
