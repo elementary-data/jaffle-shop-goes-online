@@ -15,7 +15,6 @@ orders as (
 ),
 
 session_order_pairs as (
-    -- For each session, find the next order from that customer
     select 
         sessions.customer_id,
         sessions.started_at as session_date,
@@ -26,15 +25,16 @@ session_order_pairs as (
         orders.order_id,
         datediff('day', sessions.started_at, orders.order_date) as days_to_order,
         datediff('hour', sessions.started_at, orders.order_date) as hours_to_order,
+        -- Pick the closest (most recent) eligible session for each order
         row_number() over (
-            partition by sessions.customer_id, sessions.started_at 
-            order by orders.order_date
-        ) as order_rank
+            partition by orders.order_id 
+            order by sessions.started_at desc
+        ) as session_rank
     from sessions
     inner join orders 
         on sessions.customer_id = orders.customer_id 
-        and orders.order_date >= sessions.started_at  -- Order must be after session
-        and datediff('day', sessions.started_at, orders.order_date) <= 7  -- Within 1 week max (generous for jaffle shop)
+        and orders.order_date >= sessions.started_at
+        and datediff('day', sessions.started_at, orders.order_date) <= {{ var('conversion_window_days', 7) }}
 ),
 
 conversions as (
@@ -49,8 +49,7 @@ conversions as (
         days_to_order,
         hours_to_order
     from session_order_pairs 
-    where order_rank = 1
-    and days_to_order <= 2  -- Realistic timeframe: max 2 days for jaffle shop decision
+    where session_rank = 1
 )
 
 select
