@@ -18,8 +18,8 @@ NEW_JAFFLE_VALIDATION_DATA_DIRECORTY_RELATIVE_PATH = (
 )
 
 CUSTOMERS_COUNT = 2000
-ORDERS_COUNT = 10000
-TIME_SPAN_IN_DAYS = 35
+ORDERS_COUNT = 15000  # Increased orders for higher conversion rate
+TIME_SPAN_IN_DAYS = 60
 LOWEST_PAYMENT_IN_HUNDRENDS = 0
 HIGHEST_PAYMENT_IN_HUNDRENDS = 28
 MAX_PAYMENTS_PER_ORDER = 2
@@ -71,15 +71,70 @@ def generate_orders_data():
     all_order_statuses = list(set([row[3] for row in data]))
     new_orders = []
     for order_id in range(1, ORDERS_COUNT + 1):
+        # Generate random timestamp within the time span, including recent days
+        # Use weighted distribution to ensure more recent orders (for better ROAS visibility)
+        days_back_weights = []
+        for i in range(TIME_SPAN_IN_DAYS + 1):
+            if i <= 7:  # Last 7 days get higher weight
+                days_back_weights.append(3)
+            elif i <= 30:  # Last 30 days get medium weight
+                days_back_weights.append(2)
+            else:  # Older days get lower weight
+                days_back_weights.append(1)
+
+        days_back = random.choices(
+            range(TIME_SPAN_IN_DAYS + 1), weights=days_back_weights
+        )[0]
+        base_datetime = datetime.now() - timedelta(days=days_back)
+
+        hour = random.choices(
+            range(24),
+            weights=[
+                1,
+                1,
+                1,
+                1,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                8,
+                7,
+                6,
+                5,
+                4,
+                3,
+                2,
+                2,
+                1,
+                1,
+                1,
+            ],
+        )[0]
+        minute = random.randint(0, 59)
+        second = random.randint(0, 59)
+
+        order_timestamp = base_datetime.replace(hour=hour, minute=minute, second=second)
+
+        # Use weighted customer selection to ensure more customers get orders
+        # 80% of orders go to first 80% of customers (more distributed)
+        if random.random() < 0.8:
+            customer_id = random.randint(1, int(CUSTOMERS_COUNT * 0.8))
+        else:
+            customer_id = random.randint(1, CUSTOMERS_COUNT)
+
         new_orders.append(
             [
                 order_id,  # ORDER ID
-                random.randint(1, CUSTOMERS_COUNT),  # CUSTOMER ID
-                (
-                    datetime.now() - timedelta(random.randint(2, TIME_SPAN_IN_DAYS))
-                ).strftime(
-                    "%Y-%m-%d"
-                ),  # ORDER DATE
+                customer_id,  # CUSTOMER ID (now weighted)
+                order_timestamp.strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                ),  # ORDER DATE (now timestamp)
                 all_order_statuses[
                     random.randint(0, len(all_order_statuses) - 1)
                 ],  # ORDER STATUS
@@ -149,14 +204,16 @@ def generate_signups_data():
 
     customer_min_order_time_map = defaultdict(
         lambda: (
-            datetime.now() - timedelta(random.randint(2, TIME_SPAN_IN_DAYS))
-        ).strftime("%Y-%m-%d")
+            datetime.now() - timedelta(random.randint(0, TIME_SPAN_IN_DAYS))
+        ).strftime("%Y-%m-%d %H:%M:%S")
     )
     for order in orders_data:
         customer_min_order_time_map[order[1]] = min(
-            datetime.strptime(customer_min_order_time_map[order[1]], "%Y-%m-%d"),
-            datetime.strptime(order[2], "%Y-%m-%d"),
-        ).strftime("%Y-%m-%d")
+            datetime.strptime(
+                customer_min_order_time_map[order[1]], "%Y-%m-%d %H:%M:%S"
+            ),
+            datetime.strptime(order[2], "%Y-%m-%d %H:%M:%S"),
+        ).strftime("%Y-%m-%d %H:%M:%S")
 
     new_signups = []
     for customer in customers_data:
@@ -164,9 +221,11 @@ def generate_signups_data():
             [
                 customer[0],  # SIGNUP ID
                 customer[0],  # CUSTOMER ID
-                f"{customer[1]}{customer[2].lower()}{customer[0]}@example.com"
-                if random.randint(0, 30)
-                else "",  # USER EMAIL
+                (
+                    f"{customer[1]}{customer[2].lower()}{customer[0]}@example.com"
+                    if random.randint(0, 30)
+                    else ""
+                ),  # USER EMAIL
                 hashlib.sha256(datetime.now().isoformat().encode()).hexdigest(),
                 customer_min_order_time_map[customer[0]],
             ]
