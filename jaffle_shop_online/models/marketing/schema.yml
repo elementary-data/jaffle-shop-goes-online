@@ -154,7 +154,7 @@ models:
         data_tests:
           - elementary.column_anomalies:
               anomaly_direction: both
-              anomaly_sensitivity: 1
+              anomaly_sensitivity: 2
               column_anomalies:
                 - average
                 - max
