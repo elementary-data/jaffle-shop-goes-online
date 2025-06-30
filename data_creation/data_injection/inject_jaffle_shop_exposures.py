@@ -228,7 +228,7 @@ def inject_jaffle_shop_exposures(
                 Column(node_name="marketing_ads", name="date"),
                 Column(node_name="marketing_ads", name="cost"),
                 Column(node_name="ads_spend", name="spend"),
-                Column(node_name="ads_spend", name="date_day"),
+                Column(node_name="ads_spend", name="day"),
                 Column(node_name="ads_spend", name="utm_medium"),
                 Column(node_name="ads_spend", name="utm_source"),
                 Column(node_name="ads_spend", name="utm_campain"),
@@ -396,7 +396,7 @@ def inject_jaffle_shop_exposures(
             description="Explore of all the data needed for Finance Ads Spend dashboard.",
             columns=[
                 Column(node_name="ads_spend", name="spend"),
-                Column(node_name="ads_spend", name="date_day"),
+                Column(node_name="ads_spend", name="day"),
                 Column(node_name="ads_spend", name="utm_medium"),
                 Column(node_name="ads_spend", name="utm_source"),
                 Column(node_name="ads_spend", name="utm_campain"),
@@ -452,7 +452,7 @@ def inject_jaffle_shop_exposures(
                 Column(
                     node_id="ads_spend_explore",
                     name="total_ads_spend",
-                    target_name="date_day",
+                    target_name="day",
                 ),
                 Column(
                     node_id="ads_spend_explore",
@@ -491,7 +491,7 @@ def inject_jaffle_shop_exposures(
                 Column(node_name="cpa_and_roas", name="attribution_revenue"),
                 Column(node_name="cpa_and_roas", name="utm_source"),
                 Column(node_name="cpa_and_roas", name="total_spend"),
-                Column(node_name="cpa_and_roas", name="date_month"),
+                Column(node_name="cpa_and_roas", name="day"),
                 Column(node_name="cpa_and_roas", name="return_on_advertising_spend"),
             ],
             owner_name="Erik",
@@ -509,11 +509,11 @@ def inject_jaffle_shop_exposures(
             label="LTV Forecast",
             description="This analysis shows the lifetime value forecast of a customer on the platform.",
             columns=[
-                Column(node_id="ltv_explore", name="date", target_name="date_month"),
+                Column(node_id="ltv_explore", name="date", target_name="day"),
                 Column(
                     node_id="ltv_explore",
                     name="total_revenue",
-                    target_name="date_month",
+                    target_name="day",
                 ),
                 Column(
                     node_id="ltv_explore",
@@ -523,7 +523,7 @@ def inject_jaffle_shop_exposures(
                 Column(
                     node_id="ltv_explore",
                     name="average_revenue",
-                    target_name="date_month",
+                    target_name="day",
                 ),
                 Column(
                     node_id="ltv_explore",
@@ -533,7 +533,7 @@ def inject_jaffle_shop_exposures(
                 Column(
                     node_id="ltv_explore",
                     name="total_acquisition_cost",
-                    target_name="date_month",
+                    target_name="day",
                 ),
                 Column(
                     node_id="ltv_explore",
@@ -573,7 +573,7 @@ def inject_jaffle_shop_exposures(
                 Column(
                     node_id="ltv_explore",
                     name="roas",
-                    target_name="date_month",
+                    target_name="day",
                 ),
             ],
             owner_name="Erik",
