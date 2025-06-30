@@ -54,3 +54,9 @@ jobs:
 
       - name: Run initial demo
         run: python cli.py initial-incremental-demo-flow --days-back 30 --target ${{ inputs.warehouse-type || 'snowflake' }} --profiles-dir ${{ env.PROFILE_DIR }}
+
+      - name: Upload generated seed CSVs
+        uses: actions/upload-artifact@v3
+        with:
+          name: generated-seed-csvs
+          path: jaffle_shop_online/seeds
