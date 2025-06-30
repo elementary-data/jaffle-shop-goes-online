@@ -248,3 +248,75 @@ models:
 
       - name: gift_card_amount
         description: Amount of the order (AUD) paid for by gift card
+
+  - name: order_items
+    description: "Junction table between orders and products, containing the individual line items per order."
+    meta:
+      owner: "Maayan"
+    config:
+      tags: ["sales"]
+    columns:
+      - name: order_id
+        description: "Unique identifier for an order"
+      - name: sku
+        description: "Unique stock-keeping unit for the item"
+      - name: quantity
+        description: "Quantity of the sku purchased in the order"
+      - name: sale_price
+        description: "Sale price of a single unit (AUD)"
+
+  - name: historical_orders
+    description: "Orders loaded from the historical batch datasets (prior to the current day). Amount fields are stored in cents."
+    meta:
+      owner: "Or"
+    config:
+      tags: ["finance", "sales"]
+      elementary:
+        timestamp_column: "order_date"
+    columns:
+      - name: order_id
+        description: "Unique identifier for an order"
+      - name: customer_id
+        description: "Foreign key to the customers table"
+      - name: order_date
+        description: "Date (UTC) the order was placed"
+      - name: status
+        description: '{{ doc("orders_status") }}'
+      - name: amount
+        description: "Total order amount (in cents)"
+      - name: credit_card_amount
+        description: "Portion of the order paid with credit card (in cents)"
+      - name: coupon_amount
+        description: "Portion of the order paid with coupon (in cents)"
+      - name: bank_transfer_amount
+        description: "Portion of the order paid with bank transfer (in cents)"
+      - name: gift_card_amount
+        description: "Portion of the order paid with gift card (in cents)"
+
+  - name: real_time_orders
+    description: "Orders ingested from the real-time pipeline for the current day. Monetary fields have already been converted to dollars via the cents_to_dollars macro."
+    meta:
+      owner: "Or"
+    config:
+      tags: ["finance", "sales", "real_time"]
+      elementary:
+        timestamp_column: "order_date"
+    columns:
+      - name: order_id
+        description: "Unique identifier for an order"
+      - name: customer_id
+        description: "Foreign key to the customers table"
+      - name: order_date
+        description: "Date (UTC) the order was placed"
+      - name: status
+        description: '{{ doc("orders_status") }}'
+      - name: amount
+        description: "Total order amount (AUD) – already converted to dollars"
+      - name: credit_card_amount
+        description: "Portion of the order paid with credit card (AUD)"
+      - name: coupon_amount
+        description: "Portion of the order paid with coupon (AUD)"
+      - name: bank_transfer_amount
+        description: "Portion of the order paid with bank transfer (AUD)"
+      - name: gift_card_amount
+        description: "Portion of the order paid with gift card (AUD)"
