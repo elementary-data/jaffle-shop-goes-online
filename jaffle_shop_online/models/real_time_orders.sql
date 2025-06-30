@@ -35,9 +35,7 @@ final as (
         op.total_amount    as amount_cents
     from orders o
     left join order_payments op on o.order_id = op.order_id
-),
-
-latest_day as (select date(max(order_date)) as max_day from final)
+)
 
 select 
     order_id,
@@ -49,5 +47,7 @@ select
     {{ cents_to_dollars('coupon_amount') }} as coupon_amount,
     {{ cents_to_dollars('credit_card_amount') }} as credit_card_amount,
     {{ cents_to_dollars('gift_card_amount') }} as gift_card_amount
-from final, latest_day
-where date(order_date) = max_day 
+from final
+where date(order_date) = (
+    select date(max(order_date)) from final
+) 

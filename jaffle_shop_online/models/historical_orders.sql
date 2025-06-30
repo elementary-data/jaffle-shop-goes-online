@@ -35,10 +35,11 @@ final as (
         op.total_amount    as amount
     from orders o
     left join order_payments op on o.order_id = op.order_id
-),
-
-latest_day as (select date(max(order_date)) as max_day from final)
+)
 
 select *
-from final, latest_day
-where date(order_date) < max_day 
+from final
+where date(order_date) < (
+    select date(max(order_date))
+    from final
+) 
