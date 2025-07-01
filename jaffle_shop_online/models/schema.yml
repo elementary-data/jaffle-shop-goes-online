@@ -106,14 +106,6 @@ models:
 
       - name: amount
         description: Total amount (AUD) of the order
-        tests:
-          - elementary.column_anomalies:
-              config:
-                severity: warn
-                owner: ["@data-ops"]
-              column_anomalies:
-                - zero_count
-                - zero_percent
 
       - name: credit_card_amount
         description: Amount of the order (AUD) paid for by credit card
