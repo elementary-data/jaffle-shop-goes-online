@@ -54,8 +54,8 @@ jobs:
           sed -i '3s/version: [0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$/revision: ${{ env.DBT_PACKAGE_DEMO_BRANCH_NAME }}/' ./jaffle_shop_online/packages.yml
           dbt deps --project-dir "./jaffle_shop_online"
 
-      - name: Generate marketing data
-        run: python cli.py generate-new-data --data-to-generate marketing
+      - name: Generate ads data only (sessions will be generated in demo flow)
+        run: python cli.py generate-new-data --data-to-generate ads
 
       - name: Run initial demo
         run: python cli.py initial-incremental-demo-flow --days-back ${{ inputs.days-back || 8 }} --target ${{ inputs.warehouse-type || 'snowflake' }} --profiles-dir ${{ env.PROFILE_DIR }}

@@ -9,6 +9,9 @@ from data_creation.incremental_data_creation.validation_data_generator import (
 from data_creation.incremental_data_creation.marketing_data_generator import (
     generate_marketing_data,
 )
+from data_creation.incremental_data_creation.ads_data_generator import (
+    generate_ads_data,
+)
 
 
 @click.group()
@@ -30,8 +33,8 @@ def initial_incremental_demo_flow(days_back, target, profiles_dir):
 @click.option(
     "--data-to-generate",
     default="all",
-    help="Which data to generate - training / validation / marketing / all",
-    type=click.Choice(["training", "validation", "marketing", "all"]),
+    help="Which data to generate - training / validation / marketing / ads / all",
+    type=click.Choice(["training", "validation", "marketing", "ads", "all"]),
 )
 def generate_new_data(data_to_generate):
     if data_to_generate == "training":
@@ -40,6 +43,8 @@ def generate_new_data(data_to_generate):
         generate_validation_data()
     elif data_to_generate == "marketing":
         generate_marketing_data()
+    elif data_to_generate == "ads":
+        generate_ads_data()
     else:
         generate_training_data()
         generate_validation_data()
