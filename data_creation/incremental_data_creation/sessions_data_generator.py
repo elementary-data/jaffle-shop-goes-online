@@ -21,20 +21,32 @@ CONVERSION_ATTRIBUTION_DAYS = (
 )
 
 
-def generate_sessions_data():
+def generate_sessions_data(data_source="training"):
     """Generate session data for both website and app platforms"""
-    generate_website_sessions_data()
-    generate_app_sessions_data()
+    generate_website_sessions_data(data_source)
+    generate_app_sessions_data(data_source)
 
 
-def get_customer_order_data():
+def get_customer_order_data(data_source="training"):
     """Get customer first order dates for attribution timing"""
-    customers_path = os.path.join(
-        CURRENT_DIRECTORY_PATH, TRAINING_DATA_PATH, "raw_customers_training.csv"
-    )
-    orders_path = os.path.join(
-        CURRENT_DIRECTORY_PATH, TRAINING_DATA_PATH, "raw_orders_training.csv"
-    )
+    if data_source == "training":
+        customers_path = os.path.join(
+            CURRENT_DIRECTORY_PATH, TRAINING_DATA_PATH, "raw_customers_training.csv"
+        )
+        orders_path = os.path.join(
+            CURRENT_DIRECTORY_PATH, TRAINING_DATA_PATH, "raw_orders_training.csv"
+        )
+    else:  # validation
+        customers_path = os.path.join(
+            CURRENT_DIRECTORY_PATH,
+            "../../jaffle_shop_online/seeds/validation",
+            "raw_customers_validation.csv",
+        )
+        orders_path = os.path.join(
+            CURRENT_DIRECTORY_PATH,
+            "../../jaffle_shop_online/seeds/validation",
+            "raw_orders_validation.csv",
+        )
 
     # Read customer data
     customers_headers, customers_data = split_csv_to_headers_and_data(customers_path)
@@ -61,7 +73,7 @@ def get_customer_order_data():
     return customer_ids, customer_first_orders
 
 
-def generate_website_sessions_data():
+def generate_website_sessions_data(data_source="training"):
     """Generate website session data"""
     sessions_data = []
     headers = [
@@ -73,7 +85,7 @@ def generate_website_sessions_data():
         "ad_id",
     ]
 
-    customer_ids, customer_first_orders = get_customer_order_data()
+    customer_ids, customer_first_orders = get_customer_order_data(data_source)
     all_ad_ids = get_all_ad_ids()
 
     session_counter = 1
@@ -144,7 +156,7 @@ def generate_website_sessions_data():
     print(f"Generated {len(sessions_data)} website session records")
 
 
-def generate_app_sessions_data():
+def generate_app_sessions_data(data_source="training"):
     """Generate app session data"""
     sessions_data = []
     headers = [
@@ -156,7 +168,7 @@ def generate_app_sessions_data():
         "ad_id",
     ]
 
-    customer_ids, customer_first_orders = get_customer_order_data()
+    customer_ids, customer_first_orders = get_customer_order_data(data_source)
     all_ad_ids = get_all_ad_ids()
 
     session_counter = 1

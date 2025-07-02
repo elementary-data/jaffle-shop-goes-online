@@ -1,0 +1,68 @@
+version: 2
+
+seeds:
+  - name: stg_app_sessions
+    description: "App session data for marketing attribution analysis"
+    config:
+      column_types:
+        session_id: varchar
+        customer_id: integer
+        started_at: timestamp_ntz
+        ended_at: timestamp_ntz
+        utm_source: varchar
+        ad_id: varchar
+    columns:
+      - name: session_id
+        description: "Unique identifier for a session"
+        data_type: varchar
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        description: "Unique identifier for a customer"
+        data_type: integer
+      - name: started_at
+        description: "Time (UTC) when the session started"
+        data_type: timestamp_ntz
+      - name: ended_at
+        description: "Time (UTC) when the session ended"
+        data_type: timestamp_ntz
+      - name: utm_source
+        description: "Source where the ad was displayed"
+        data_type: varchar
+      - name: ad_id
+        description: "Unique identifier for an ad"
+        data_type: varchar
+
+  - name: stg_website_sessions
+    description: "Website session data for marketing attribution analysis"
+    config:
+      column_types:
+        session_id: varchar
+        customer_id: integer
+        started_at: timestamp_ntz
+        ended_at: timestamp_ntz
+        utm_source: varchar
+        ad_id: varchar
+    columns:
+      - name: session_id
+        description: "Unique identifier for a session"
+        data_type: varchar
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        description: "Unique identifier for a customer"
+        data_type: integer
+      - name: started_at
+        description: "Time (UTC) when the session started"
+        data_type: timestamp_ntz
+      - name: ended_at
+        description: "Time (UTC) when the session ended"
+        data_type: timestamp_ntz
+      - name: utm_source
+        description: "Source where the ad was displayed"
+        data_type: varchar
+      - name: ad_id
+        description: "Unique identifier for an ad"
+        data_type: varchar 

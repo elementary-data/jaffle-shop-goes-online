@@ -21,7 +21,7 @@ env:
   PROFILE_DIR: ${{ github.workspace }}/jaffle_shop_online
 
 jobs:
-  test:
+  generate-demo-data:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
