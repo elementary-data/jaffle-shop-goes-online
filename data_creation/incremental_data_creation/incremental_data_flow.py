@@ -15,6 +15,9 @@ from data_creation.incremental_data_creation.incremental_training_data_generator
 from data_creation.incremental_data_creation.incremental_validation_data_generator import (
     generate_incremental_validation_data,
 )
+from data_creation.incremental_data_creation.sessions_data_generator import (
+    generate_sessions_data,
+)
 from utils.csv import clear_csv
 
 logger = logging.getLogger(__name__)
@@ -104,6 +107,12 @@ def run_incremental_data_creation(
             )
 
         first_run = False
+
+    # Regenerate sessions data after all training data is finalized
+    # This ensures sessions are properly timed relative to the final order data
+    logger.info("Regenerating sessions data to align with finalized training data...")
+    generate_sessions_data()
+    dbt_runner.seed(select="sessions")
 
     clear_data(validation=True)
     generate_incremental_validation_data(

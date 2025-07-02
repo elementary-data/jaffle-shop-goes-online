@@ -39,4 +39,4 @@ flags:
   require_explicit_package_overrides_for_builtin_materializations: false
 
 vars:
-  conversion_window_days: 7
+  conversion_window_days: 1
