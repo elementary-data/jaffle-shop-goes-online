@@ -69,10 +69,10 @@ joined as (
             else null
         end as cost_per_acquisition,
         
-        -- ROAS: only calculate when we have both spend and revenue
+        -- ROAS as percentage: multiply by 100 to show as percentage
         case 
             when coalesce(spend_agg.total_spend, 0) > 0 and coalesce(attr_agg.attribution_revenue, 0) > 0 
-            then 1.0 * attr_agg.attribution_revenue / spend_agg.total_spend
+            then 100.0 * attr_agg.attribution_revenue / spend_agg.total_spend
             else null
         end as return_on_advertising_spend
 
