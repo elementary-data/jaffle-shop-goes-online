@@ -40,7 +40,7 @@ ad_spend_aggregated as (
 attribution_aggregated as (
 
     select
-        sess.started_at::date as day,
+        attr.converted_at::date as day,
         sess.utm_source,
 
         sum(linear_points) as attribution_points,
