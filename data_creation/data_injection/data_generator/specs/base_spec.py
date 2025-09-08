@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 
-from elementary.clients.dbt.dbt_runner import DbtRunner
+from elementary.clients.dbt.command_line_dbt_runner import (
+    CommandLineDbtRunner as DbtRunner,
+)
 
 
 class BaseSpec(BaseModel):

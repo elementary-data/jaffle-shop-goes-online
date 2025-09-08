@@ -3,7 +3,9 @@ from datetime import datetime, timedelta
 from enum import Enum
 from typing import Any, Optional
 
-from elementary.clients.dbt.dbt_runner import DbtRunner
+from elementary.clients.dbt.command_line_dbt_runner import (
+    CommandLineDbtRunner as DbtRunner,
+)
 from pydantic import validator
 
 from data_creation.data_injection.data_generator.specs.tests.test_spec import TestSpec

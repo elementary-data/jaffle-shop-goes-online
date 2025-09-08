@@ -1,5 +1,7 @@
 from typing import Optional
-from elementary.clients.dbt.dbt_runner import DbtRunner
+from elementary.clients.dbt.command_line_dbt_runner import (
+    CommandLineDbtRunner as DbtRunner,
+)
 from data_creation.data_injection.data_generator.specs.exposures.exposure_spec import (
     ExposureSpec,
 )

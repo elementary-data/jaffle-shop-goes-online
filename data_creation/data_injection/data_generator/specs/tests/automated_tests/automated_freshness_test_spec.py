@@ -19,7 +19,9 @@ from data_creation.data_injection.injectors.tests.tests_injector import (
     TestSubTypes,
     TestTypes,
 )
-from elementary.clients.dbt.dbt_runner import DbtRunner
+from elementary.clients.dbt.command_line_dbt_runner import (
+    CommandLineDbtRunner as DbtRunner,
+)
 
 
 class AutomatedFreshnessTestsSpec(AutomatedTestsSpec):

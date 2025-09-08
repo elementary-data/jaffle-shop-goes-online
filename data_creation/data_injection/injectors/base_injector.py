@@ -2,7 +2,9 @@ import json
 import os
 from pathlib import Path
 from typing import Optional
-from elementary.clients.dbt.dbt_runner import DbtRunner
+from elementary.clients.dbt.command_line_dbt_runner import (
+    CommandLineDbtRunner as DbtRunner,
+)
 
 DATA_INJECTION_DB_PROJECT_DIR_NAME = "dbt_project"
 DATA_INJECTION_DIR = Path(os.path.dirname(__file__)).parent.absolute()

@@ -2,7 +2,9 @@ import random
 from datetime import datetime
 from typing import Optional
 
-from elementary.clients.dbt.dbt_runner import DbtRunner
+from elementary.clients.dbt.command_line_dbt_runner import (
+    CommandLineDbtRunner as DbtRunner,
+)
 from pydantic import BaseModel, root_validator
 
 from data_creation.data_injection.injectors.tests.tests_injector import (

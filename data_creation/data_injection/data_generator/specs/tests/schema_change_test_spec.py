@@ -2,7 +2,9 @@ import random
 from datetime import datetime, timedelta
 from typing import Any
 
-from elementary.clients.dbt.dbt_runner import DbtRunner
+from elementary.clients.dbt.command_line_dbt_runner import (
+    CommandLineDbtRunner as DbtRunner,
+)
 
 from data_creation.data_injection.data_generator.specs.base_spec import BaseSpec
 from data_creation.data_injection.injectors.models.models_injector import ModelsInjector
