@@ -56,6 +56,16 @@ def inject_jaffle_shop_tests(
     )
     dbt_runner.deps()
 
+    # Ensure Elementary metadata tables are populated before injecting tests
+    print("Initializing Elementary metadata...")
+    jaffle_runner = DbtRunner(
+        project_dir=os.path.join(REPO_DIR, "jaffle_shop_online"),
+        profiles_dir=profiles_dir,
+        target=target,
+    )
+    # Run Elementary models to collect metadata about existing models
+    jaffle_runner.run(select="elementary")
+
     start_time = datetime.now()
 
     generator = TestDataGenerator(dbt_runner)
