@@ -47,7 +47,7 @@ def run_incremental_data_creation(
 
     dbt_runner.seed(select="ads")
     # Initial sessions seeding with training data (validation doesn't exist yet)
-    generate_sessions_data("training")
+    generate_sessions_data()
     dbt_runner.seed(select="sessions")
 
     logger.info(f"Running incremental demo for {days_back} days back")
@@ -86,7 +86,7 @@ def run_incremental_data_creation(
             logger.info(
                 f"Regenerating sessions for day {run_index} based on current order data..."
             )
-            generate_sessions_data("training")
+            generate_sessions_data()
             dbt_runner.seed(select="sessions")
 
             dbt_runner.run(
@@ -106,7 +106,7 @@ def run_incremental_data_creation(
             logger.info(
                 f"Regenerating sessions for day {run_index} based on current order data..."
             )
-            generate_sessions_data("training")
+            generate_sessions_data()
             dbt_runner.seed(select="sessions")
 
             dbt_runner.run(
@@ -136,7 +136,7 @@ def run_incremental_data_creation(
 
     # Regenerate sessions to include validation customers
     logger.info("Regenerating sessions to include validation customers...")
-    generate_sessions_data("validation")
+    generate_sessions_data()
     dbt_runner.seed(select="sessions")
 
     dbt_runner.run(
