@@ -7,8 +7,8 @@ import random
 from typing import Optional
 import uuid
 
-from elementary.clients.dbt.command_line_dbt_runner import (
-    CommandLineDbtRunner as DbtRunner,
+from elementary.clients.dbt.subprocess_dbt_runner import (
+    SubprocessDbtRunner as DbtRunner,
 )
 from data_creation.incremental_data_creation.incremental_training_data_generator import (
     generate_incremental_training_data,

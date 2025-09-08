@@ -4,8 +4,8 @@ from data_creation.data_injection.injectors.tests.test_run_results_injector impo
 )
 from data_creation.data_injection.data_generator.specs.base_spec import BaseSpec
 
-from elementary.clients.dbt.command_line_dbt_runner import (
-    CommandLineDbtRunner as DbtRunner,
+from elementary.clients.dbt.subprocess_dbt_runner import (
+    SubprocessDbtRunner as DbtRunner,
 )
 
 

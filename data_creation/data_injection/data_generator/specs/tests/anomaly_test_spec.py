@@ -3,8 +3,8 @@ from datetime import date, datetime, time, timedelta
 from typing import Any, Optional
 
 import numpy
-from elementary.clients.dbt.command_line_dbt_runner import (
-    CommandLineDbtRunner as DbtRunner,
+from elementary.clients.dbt.subprocess_dbt_runner import (
+    SubprocessDbtRunner as DbtRunner,
 )
 from pydantic import BaseModel
 

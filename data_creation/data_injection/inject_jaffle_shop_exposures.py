@@ -1,8 +1,8 @@
 import os
 from pathlib import Path
 from typing import Optional
-from elementary.clients.dbt.command_line_dbt_runner import (
-    CommandLineDbtRunner as DbtRunner,
+from elementary.clients.dbt.subprocess_dbt_runner import (
+    SubprocessDbtRunner as DbtRunner,
 )
 
 from datetime import datetime

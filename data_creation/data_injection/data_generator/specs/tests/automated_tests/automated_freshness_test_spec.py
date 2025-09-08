@@ -19,8 +19,8 @@ from data_creation.data_injection.injectors.tests.tests_injector import (
     TestSubTypes,
     TestTypes,
 )
-from elementary.clients.dbt.command_line_dbt_runner import (
-    CommandLineDbtRunner as DbtRunner,
+from elementary.clients.dbt.subprocess_dbt_runner import (
+    SubprocessDbtRunner as DbtRunner,
 )
 
 

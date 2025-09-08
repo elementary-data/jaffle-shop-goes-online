@@ -1,8 +1,8 @@
 from datetime import datetime
 from enum import Enum
 from typing import List, Optional
-from elementary.clients.dbt.command_line_dbt_runner import (
-    CommandLineDbtRunner as DbtRunner,
+from elementary.clients.dbt.subprocess_dbt_runner import (
+    SubprocessDbtRunner as DbtRunner,
 )
 from pydantic import BaseModel
 
