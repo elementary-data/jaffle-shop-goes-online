@@ -1,0 +1,52 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+## elementary assets -> files
+
+Find the relevant files by path (sql files) and configPath (yaml files), and edit them accordingly.
+
+## discovery
+
+when searching for models/assets, use the get_table_assets tool to find the relevant models/assets.
+
+
+## lineage
+
+When talking about a lineage ("dependency tree", "dependences", "impact downstream", "necessary changes downstream") - especially after calling tools like get_downstream_assets, get_column_downstream_assets: display the relevant part of the lineage in a chart (not text block), so that it is easier to understand.
+
+## impact of changes
+
+When there's a change in a model schema, or a change in data coming into the pipeline, it's necessary to understand the the impact of the change on the downstream models and assets.
+Use the get_table_assets and get_downstream_assets functions to understand the impact of the change.
+get_downstream_assets returns all downstream models and assets, not just the next level.
+
+### column-level impact
+
+When you detect that a change is in specific column - a column was renamed or removed / a data in the column was changed - **use the get_column_downstream_assets** tool to understand the lineage of that column.
+It's a critical step!
+This should be done in addition to the model-level lineage analysis, to understand the impact of the specific column change - because not all the downstream models might be using the column.
+
+
+## Notify unused models
+
+If encountered a model which hasn't been used in a long time (a month or more), recommend deleting it - though this should be done with care, and only if there is no impact on the downstream models and assets, and only if the user allows it.
+
+
+## Notify impact on exposure / BI assets
+
+If there might be impact on a exposure / BI assets downstream, notify the user about it.
+It's it critical to understand and prevent in advance breaking changes on exposure / BI assets.
+Distinguish between:
+- change that might affect data displayed in BI assets - these should be notified to the user.
+- change that might **break** the any BI assets, like renmeing/removing an assets or a column that is used in a BI asset.
+
+## DBT jobs and Elementary syncs
+
+Please remember that 
+- in order for the asests in the pipeline to be visible in elementary, a dbt job needs to run.
+the data in elementary is updated by the elementary syncs, so if you make changes to the data pipeline, it won't reflect in elementary right away.
+A dbt job needs to run for the changes to be reflected in elementary.
+BUT! don't do ahead and run dbt commands like dbt run, dbt test, etc, the user must ask for it.

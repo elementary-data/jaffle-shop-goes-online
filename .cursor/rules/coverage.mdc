@@ -1,0 +1,22 @@
+---
+alwaysApply: true
+---
+Test coverage in data pipelines refers to the extent to which your automated quality checks—filters, validations, schema checks, data integrity tests, and so on—cover the full data flow, from source ingestion through transformations to final outputs. In other words, it measures how comprehensively tests verify every stage of the pipeline: the initial data inputs, intermediate transformations, schemas, and final datasets
+
+Elementary’s test coverage measures how well each data asset is tested across seven key data quality dimensions—freshness, completeness, uniqueness, validity, accuracy, consistency, and other business logic—with a weighted score up to 100%, and offers visibility into missing tests and coverage gaps.
+
+We ofthen need to make sure that all the models (assets) upstream from a certain model are fresh.
+
+When asked to make sure that all the models upstream from a certain model are fresh, these are the steps to take:
+
+1. Get the list of models upstream from the target model
+2. For each model, check if it has a freshness test
+3. If it does, check if the freshness test is passing
+4. If it is not passing, add a freshness test to the model
+5. If it does not have a freshness test, add a freshness test to the model
+6. Repeat for all models upstream from the target model
+7. Return the list of models that do not have a freshness test
+
+
+Elementary offers Out-of-the-box ML-powered monitoring for freshness and volume issues on all production tables. The automated monitors (also called "cloud tests") feature provides broad coverage and detection of critical pipeline issues, without any configuration effort.
+They run on elementary's cloud, and there's an MCP tool that allows you to configure the tests - create_cloud_tests

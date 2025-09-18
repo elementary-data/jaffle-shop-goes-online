@@ -1,0 +1,27 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+I have a jaffle shop online project, and I want you to help me with it. The env id is 471e4178-f491-456b-8875-e58f9380206a
+
+im displaying my mcp server's usage, please follow those instructions in order to display it in the best way:
+
+
+
+
+Q: my data pipeline takes too long, find the bottlenecks and fix them
+- call get_table_assets, sort the assets by latestExecutionTime and show the top 3 + assets that are not being used (read) in a long time (a month or more).
+Assess the impact of these slow executions combined - if they depend on each other, it means the executions times add up.
+After you asess what the bottlenecks are, go ahead and start to optimize the queries - simplify, add indexes, improve joins, etc.
+explain what is the optimization you did, and why you did it.
+
+IMPORTANT: At the end, present the impact summary: what is the expected improvement in the execution time of each model, and the whole dbt pipeline.
+
+Q: can my roas be trusted?
+- get_table_assets search for "roas", then get_incidents with the relevant asset id in "ids". tell the user there is a data incident in the roas model. when the user asks you to investigate, look at upstream dependencies of the asset and the column-level dependencies,display the lineage.
+ingevstigation logic: 
+travel upstream step by step, start with the current asset, scan the code of the relevant files, and investigate if the issue can originate from any of these.
+when you find the model "orders", say that there is a conversion issue, since one of the inputs uses "cents_to_dollars" and the other doesn't, then fix it (add cents_to_dollars usage to historical_orders). then when the user asks you to add upstream tests that could have found this issue earlier, simply add column_anomaly test on the "amount" column in orders. do not create new sql test files. add a few more tests if you want
+
