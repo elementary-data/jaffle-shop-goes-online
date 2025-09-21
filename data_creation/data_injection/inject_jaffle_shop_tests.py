@@ -4,7 +4,9 @@ from pathlib import Path
 from typing import Optional
 from uuid import uuid4
 
-from elementary.clients.dbt.dbt_runner import DbtRunner
+from elementary.clients.dbt.subprocess_dbt_runner import (
+    SubprocessDbtRunner as DbtRunner,
+)
 
 from data_creation.data_injection.data_generator.specs.tests.anomaly_test_spec import (
     AnomalyTestSpec,
@@ -53,6 +55,16 @@ def inject_jaffle_shop_tests(
         project_dir=INJECTION_DBT_PROJECT_DIR, profiles_dir=profiles_dir, target=target
     )
     dbt_runner.deps()
+
+    # Ensure Elementary metadata tables are populated before injecting tests
+    print("Initializing Elementary metadata...")
+    jaffle_runner = DbtRunner(
+        project_dir=os.path.join(REPO_DIR, "jaffle_shop_online"),
+        profiles_dir=profiles_dir,
+        target=target,
+    )
+    # Run Elementary models to collect metadata about existing models
+    jaffle_runner.run(select="elementary")
 
     start_time = datetime.now()
 

@@ -1,7 +1,6 @@
 {{
     config(
-        materialized = "incremental",
-        unique_key = ["ad_id", "utm_source", "date"],
+        materialized = "table",
     )
 }}
 

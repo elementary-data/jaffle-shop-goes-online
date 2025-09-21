@@ -154,7 +154,7 @@ models:
         data_tests:
           - elementary.column_anomalies:
               anomaly_direction: both
-              anomaly_sensitivity: 2
+              anomaly_sensitivity: 1.5
               column_anomalies:
                 - average
               detection_period:
@@ -162,7 +162,7 @@ models:
                 period: day
               timestamp_column: day
               training_period:
-                count: 14
+                count: 30
                 period: day
               time_bucket:
                 period: day
