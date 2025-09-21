@@ -89,7 +89,7 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
                 metrics.append(metric)
 
             if is_dimension_value_anomalous:
-                metrics_of_anomalous_dimension_values.append(dimension_value_metrics)
+                metrics_of_anomalous_dimension_values.extend(dimension_value_metrics)
 
         return metrics_of_anomalous_dimension_values
 
