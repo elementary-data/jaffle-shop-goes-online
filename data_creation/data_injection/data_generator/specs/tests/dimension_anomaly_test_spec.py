@@ -116,13 +116,14 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
 
         execution_time = self.max_execution_time
         anomalous_metrics = self.get_anmalous_metrics()
+        is_anomalous_metrics = [metric for metric in anomalous_metrics if metric.is_anomalous]
         test_result = DimensionAnomalyTestResult(
             test_timestamp=datetime.utcnow(),
             test_status="fail" if anomalous_metrics else "pass",
             test_metrics=anomalous_metrics,
             result_description=(
-                self.get_result_description(anomalous_metrics[-1])
-                if anomalous_metrics
+                self.get_result_description(is_anomalous_metrics[-1])
+                if is_anomalous_metrics
                 else ""
             ),
             execution_time=execution_time,
@@ -132,7 +133,7 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
         cur_timestamp = datetime.utcnow()
         for i in range(10):
             cur_timestamp = cur_timestamp - timedelta(minutes=random.randint(120, 180))
-            if anomalous_metrics and anomalous_metrics[-1].is_anomalous:
+            if is_anomalous_metrics and is_anomalous_metrics[-1].is_anomalous:
                 status = random.choice(["fail"] + ["pass"] * 3)
             else:
                 status = "pass"
