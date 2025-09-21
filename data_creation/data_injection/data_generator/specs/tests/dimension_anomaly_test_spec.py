@@ -40,13 +40,16 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
         metric_average = (last_metric.min_value + last_metric.max_value) / 2
         return f"The last dimension value for dimension status - returned is {last_metric.value}. The average for this metric is {metric_average}."
 
-    # Dimension anomalies only save the anomalous metrics.
+    # the package returns all the metrics of the anomalous dimension values 
     def get_anmalous_metrics(self):
         metrics = []
         anomalous_metrics = []
+        metrics_of_anomalous_dimension_values = []
 
         for dimension_value, dimension_metric_values in self.metric_values.items():
             metric_timestamps = self.get_metric_timestamps(dimension_metric_values)
+            is_dimension_value_anomalous = False
+            dimension_value_metrics = []
             for i, (value, (start_time, end_time)) in enumerate(
                 zip(dimension_metric_values, metric_timestamps)
             ):
@@ -72,7 +75,9 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
                     dimension=self.dimensions,
                     dimension_value=dimension_value,
                 )
+                dimension_value_metrics.append(metric)
                 if metric.is_anomalous:
+                    is_dimension_value_anomalous = True
                     if self.day_of_week_seasonality:
                         last_metric = metrics[-7]
                     else:
@@ -80,8 +85,14 @@ class DimensionAnomalyTestSpec(AnomalyTestSpec):
                     metric.min_value = last_metric.min_value
                     metric.max_value = last_metric.max_value
                     anomalous_metrics.append(metric)
+                dimension_value_metrics.append(metric)
                 metrics.append(metric)
-        return anomalous_metrics
+
+            if is_dimension_value_anomalous:
+                metrics_of_anomalous_dimension_values.append(dimension_value_metrics)
+
+        return metrics_of_anomalous_dimension_values
+
 
     def generate(self, dbt_runner: DbtRunner):
         models_injector = ModelsInjector(dbt_runner)
