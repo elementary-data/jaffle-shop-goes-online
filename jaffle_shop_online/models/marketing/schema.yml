@@ -4,7 +4,7 @@ models:
   - name: ads_spend
     description: "This table contains the daily ad spend, by source, medium and campaign"
     meta:
-      owner: "Or"
+      owner: "@marketing-team"
     config:
       tags: ["marketing", "finance", "finance-data-product"]
       elementary:
@@ -33,7 +33,7 @@ models:
   - name: attribution_touches
     description: "This is a table that contains all the touch points, by session, with the utm_source, utm_medium and utm_campaign"
     meta:
-      owner: "Or"
+      owner: "@marketing-team"
     config:
       tags: ["marketing", "pii", "finance-data-product"]
       elementary:
@@ -118,7 +118,7 @@ models:
   - name: cpa_and_roas
     description: "This table contains the cost per acquisition and return on ad spend, by source, and per day"
     meta:
-      owner: "Or"
+      owner: "@finance-team"
     config:
       tags: ["marketing", "finance", "finance-data-product"]
       elementary:
@@ -171,7 +171,7 @@ models:
   - name: marketing_ads
     description: "This table contains information on the ad spend, by source, medium and campaign"
     meta:
-      owner: "Or"
+      owner: "@marketing-team"
     config:
       tags: ["marketing", "finance"]
       elementary:
@@ -204,7 +204,7 @@ models:
   - name: agg_sessions
     description: "This table contains aggregated information on the sessions"
     meta:
-      owner: "Or"
+      owner: "@marketing-team"
     config:
         tags: ["marketing"]
         elementary:
@@ -241,7 +241,7 @@ models:
   - name: customer_conversions
     description: "This table contains information on the conversions of all the customers"
     meta:
-      owner: "Or"
+      owner: "@marketing-team"
     config:
         tags: ["marketing", "finance", "pii"]
         elementary:
@@ -262,7 +262,7 @@ models:
   - name: sessions
     description: "This table contains information on the sessions of all the customers and the utm_source, utm_medium and utm_campaign of the session"
     meta:
-      owner: "Or"
+      owner: "@marketing-team"
     config:
         tags: ["marketing", "pii"]
         elementary:
