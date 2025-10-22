@@ -1,0 +1,27 @@
+# This workflow runs the Cursor Agent on a user-provided prompt.
+# To use this workflow, you need to set a repository secret named CURSOR_API_KEY.
+# You can get your API key from your Cursor settings.
+name: Run Cursor Agent
+
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: 'The prompt for the Cursor Agent to execute.'
+        required: true
+        default: 'Refactor the code to improve readability.'
+
+jobs:
+  run-cursor-agent:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Cursor Agent
+        run: curl -sSL https://cursor.com/install-agent.sh | sh
+
+      - name: Run Cursor Agent
+        run: cursor-agent "${{ github.event.inputs.prompt }}"
+        env:
+          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
