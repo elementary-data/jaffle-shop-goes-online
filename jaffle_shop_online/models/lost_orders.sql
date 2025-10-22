@@ -22,7 +22,6 @@ select
   amount,
   credit_card_amount,
   coupon_amount,
-  bank_transfer_amount,
-  gift_card_amount
+  bank_transfer_amount
 from orders
 where status = 'return_pending' or status = 'shipped'

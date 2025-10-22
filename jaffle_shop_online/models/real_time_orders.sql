@@ -2,7 +2,7 @@
   config(materialized='view')
 }}
 
-{% set payment_methods = ['credit_card', 'coupon', 'bank_transfer', 'gift_card'] %}
+{% set payment_methods = ['credit_card', 'coupon', 'bank_transfer'] %}
 
 with orders as (
     select * from {{ ref('stg_orders') }}
@@ -45,8 +45,7 @@ select
     {{ cents_to_dollars('amount_cents') }} as amount,
     {{ cents_to_dollars('bank_transfer_amount') }} as bank_transfer_amount,
     {{ cents_to_dollars('coupon_amount') }} as coupon_amount,
-    {{ cents_to_dollars('credit_card_amount') }} as credit_card_amount,
-    {{ cents_to_dollars('gift_card_amount') }} as gift_card_amount
+    {{ cents_to_dollars('credit_card_amount') }} as credit_card_amount
 from final
 where date(order_date) = (
     select date(max(order_date)) from final
