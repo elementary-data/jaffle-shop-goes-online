@@ -22,9 +22,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Cursor Agent
-        run: |
-          curl -sSL -o install-agent.sh https://cursor.com/install-agent.sh
-          sh ./install-agent.sh
+        run: curl https://cursor.com/install -fsS | bash
 
       - name: Run Cursor Agent
         run: cursor-agent "${{ github.event.inputs.prompt || 'Describe the project in three sentences.' }}"
