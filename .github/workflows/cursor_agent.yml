@@ -4,12 +4,15 @@
 name: Run Cursor Agent
 
 on:
+  push:
+    branches:
+      - cursor-agent-action
   workflow_dispatch:
     inputs:
       prompt:
         description: 'The prompt for the Cursor Agent to execute.'
         required: true
-        default: 'Refactor the code to improve readability.'
+        default: 'Describe the project in three sentences.'
 
 jobs:
   run-cursor-agent:
@@ -19,9 +22,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Cursor Agent
-        run: curl -sSL https://cursor.com/install-agent.sh | sh
+        run: curl https://cursor.com/install -fsS | bash
 
       - name: Run Cursor Agent
-        run: cursor-agent "${{ github.event.inputs.prompt }}"
+        run: cursor-agent "${{ github.event.inputs.prompt || 'Describe the project in three sentences.' }}"
         env:
           CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
