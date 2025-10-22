@@ -6,7 +6,7 @@ name: Run Cursor Agent
 on:
   push:
     branches:
-      - main
+      - cursor-agent-action
   workflow_dispatch:
     inputs:
       prompt:
