@@ -1,7 +1,9 @@
 import os
 from pathlib import Path
 from typing import Optional
-from elementary.clients.dbt.dbt_runner import DbtRunner
+from elementary.clients.dbt.subprocess_dbt_runner import (
+    SubprocessDbtRunner as DbtRunner,
+)
 
 from datetime import datetime
 from data_creation.data_injection.data_generator.exposures_data_generator import (

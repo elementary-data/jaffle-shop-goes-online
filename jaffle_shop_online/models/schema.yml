@@ -4,7 +4,7 @@ models:
   - name: customers
     description: This table has basic information about a customer, as well as some derived facts based on a customer's orders
     meta:
-      owner: "Maayan"
+      owner: "@customer-team"
     config:
       tags: ["pii"]
       elementary:
@@ -56,7 +56,7 @@ models:
   - name: orders
     description: This table has basic information about orders, as well as some derived facts based on payments
     meta:
-      owner: "Or"
+      owner: "@sales-team"
     config:
       tags: ["finance", "sales"]
       elementary:
@@ -122,7 +122,7 @@ models:
   - name: returned_orders
     description: This table contains all of the returned orders
     meta:
-      owner: "Or"
+      owner: "@sales-team"
     config:
       tags: ["finance"]
       elementary:
@@ -183,7 +183,7 @@ models:
   - name: lost_orders
     description: This table contains all of the lost orders
     meta:
-      owner: "Or"
+      owner: "@sales-team"
     config:
       tags: ["finance"]
       elementary:
@@ -244,7 +244,7 @@ models:
   - name: order_items
     description: "Junction table between orders and products, containing the individual line items per order."
     meta:
-      owner: "Maayan"
+      owner: "@sales-team"
     config:
       tags: ["sales"]
     columns:
@@ -260,7 +260,7 @@ models:
   - name: historical_orders
     description: "Orders loaded from the historical batch datasets (prior to the current day). Amount fields are stored in cents."
     meta:
-      owner: "Or"
+      owner: "@finance-team"
     config:
       tags: ["finance", "sales"]
       elementary:
@@ -288,7 +288,7 @@ models:
   - name: real_time_orders
     description: "Orders ingested from the real-time pipeline for the current day. Monetary fields have already been converted to dollars via the cents_to_dollars macro."
     meta:
-      owner: "Or"
+      owner: "@finance-team"
     config:
       tags: ["finance", "sales", "real_time"]
       elementary:
