@@ -83,5 +83,8 @@ jobs:
       - name: Run Cursor Agent
         env:
           CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+          CURSOR_SKIP_MCP_APPROVAL: "true"
+          CURSOR_AUTO_APPROVE_MCP: "true"
+          CI: "true"
         # run: cursor-agent "${{ github.event.inputs.prompt || 'Describe the project in three sentences.' }}"
-        run: cursor-agent mcp list
+        run: cursor-agent --non-interactive mcp list || cursor-agent mcp list
