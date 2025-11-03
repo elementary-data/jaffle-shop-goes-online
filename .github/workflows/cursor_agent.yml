@@ -37,12 +37,14 @@ jobs:
                 "command": "npx",
                 "args": [
                   "-y",
-                  "--headless",
                   "mcp-remote@latest",
                   "https://demo.api.elementary-data.com/mcp/",
                   "--header",
                   "Authorization: ${ELEMENTARY_BEARER_TOKEN}"
-                ]
+                ],
+                "env": {
+                  "NODE_ENV": "production"
+                }
               }
             }
           }
@@ -105,9 +107,14 @@ jobs:
           cat ~/.cursor/projects/"$WORKSPACE_NAME"/mcp-approvals.json
 
       - name: Verify MCP config
+        env:
+          ELEMENTARY_BEARER_TOKEN: ${{ secrets.ELEMENTARY_BEARER_TOKEN }}
         run: |
           echo "Contents of ~/.cursor/mcp.json:"
           cat ~/.cursor/mcp.json
+          echo "---"
+          echo "Checking bearer token is set (first 20 chars):"
+          echo "${ELEMENTARY_BEARER_TOKEN:0:20}..."
           echo "---"
           echo "Contents of ~/.cursor/cli-config.json:"
           cat ~/.cursor/cli-config.json
@@ -121,6 +128,7 @@ jobs:
       - name: Run Cursor Agent
         env:
           CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+          ELEMENTARY_BEARER_TOKEN: ${{ secrets.ELEMENTARY_BEARER_TOKEN }}
         run: |
           cursor-agent mcp login elementary-remote
           cursor-agent list-tools elementary-remote
