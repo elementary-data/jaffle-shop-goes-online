@@ -85,8 +85,9 @@ jobs:
           mv "$CURSOR_INDEX.backup" "$CURSOR_INDEX"
           
           # Determine workspace path for mcp-approvals.json
-          WORKSPACE_PATH=$(echo "$GITHUB_WORKSPACE" | sed 's/\//-/g' | sed 's/^-//')
-          WORKSPACE_NAME="home-runner-work-${WORKSPACE_PATH}"
+          # GitHub workspace is /home/runner/work/repo-owner/repo-name
+          # We need to convert to home-runner-work-repo-owner-repo-name
+          WORKSPACE_NAME=$(echo "$GITHUB_WORKSPACE" | sed 's/\//-/g' | sed 's/^-//')
           echo "Workspace name: $WORKSPACE_NAME"
           
           # Create project-specific approvals directory
