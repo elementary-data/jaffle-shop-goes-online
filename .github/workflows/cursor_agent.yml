@@ -29,22 +29,23 @@ jobs:
         env:
           ELEMENTARY_BEARER_TOKEN: ${{ secrets.ELEMENTARY_BEARER_TOKEN }}
         run: |
+          mkdir -p ~/.cursor
           cat > ~/.cursor/mcp.json <<EOF
-          {
-            "mcpServers": {
-              "elementary-remote": {
-                "command": "npx",
-                "args": [
-                  "-y",
-                  "mcp-remote@latest",
-                  "https://demo.api.elementary-data.com/mcp/",
-                  "--header",
-                  "Authorization: $ELEMENTARY_BEARER_TOKEN"
-                ]
+            {
+              "mcpServers": {
+                "elementary-remote": {
+                  "command": "npx",
+                  "args": [
+                    "-y",
+                    "mcp-remote@latest",
+                    "https://demo.api.elementary-data.com/mcp/",
+                    "--header",
+                    "Authorization: $ELEMENTARY_BEARER_TOKEN"
+                  ]
+                }
               }
             }
-          }
-          EOF
+            EOF
 
       - name: Run Cursor Agent
         env:
