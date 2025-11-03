@@ -24,7 +24,29 @@ jobs:
       - name: Install Cursor Agent
         run: curl https://cursor.com/install -fsS | bash
 
+      - name: create cursor config file
+        env:
+          ELEMENTARY_BEARER_TOKEN: ${{ secrets.ELEMENTARY_BEARER_TOKEN }}
+        run: |
+          cat > ~/.mcp.json <<EOF
+          {
+            "mcpServers": {
+              "elementary-remote": {
+                "command": "npx",
+                "args": [
+                  "-y",
+                  "mcp-remote@latest",
+                  "https://demo.api.elementary-data.com/mcp/",
+                  "--header",
+                  "Authorization: $ELEMENTARY_BEARER_TOKEN"
+                ]
+              }
+            }
+          }
+          EOF
+
       - name: Run Cursor Agent
-        run: cursor-agent "${{ github.event.inputs.prompt || 'Describe the project in three sentences.' }}"
         env:
           CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+        # run: cursor-agent "${{ github.event.inputs.prompt || 'Describe the project in three sentences.' }}"
+        run: cursor-agent mcp list
