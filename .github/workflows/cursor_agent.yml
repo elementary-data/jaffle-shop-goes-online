@@ -120,4 +120,4 @@ jobs:
       - name: Run Cursor Agent
         env:
           CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
-        run: cursor-agent --print --approve-mcps mcp list
+        run: cursor-agent mcp list
