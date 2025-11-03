@@ -37,6 +37,7 @@ jobs:
                 "command": "npx",
                 "args": [
                   "-y",
+                  "--headless",
                   "mcp-remote@latest",
                   "https://demo.api.elementary-data.com/mcp/",
                   "--header",
@@ -84,4 +85,4 @@ jobs:
         env:
           CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
         # run: cursor-agent --print --approve-mcps -p "${{ github.event.inputs.prompt || 'Describe the project in three sentences.' }}"
-        run: cursor-agent --headless --approve-mcps mcp list
+        run: cursor-agent --approve-mcps mcp list
