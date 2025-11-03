@@ -123,4 +123,4 @@ jobs:
           CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
         run: |
           cursor-agent mcp login elementary-remote
-          cursor-agent "use the elementary-remote mcp server to generate a list of bi assets"
+          cursor-agent -p --prompt "use the elementary-remote mcp server to generate a list of bi assets"
