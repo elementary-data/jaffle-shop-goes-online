@@ -63,8 +63,8 @@ jobs:
           echo "Contents of ~/.cursor/mcp.json:"
           cat ~/.cursor/mcp.json
           echo "---"
-          echo "Contents of ~/.cursor/mcp_approvals.json:"
-          cat ~/.cursor/mcp_approvals.json
+          echo "Contents of ~/.cursor/cli-config.json:"
+          cat ~/.cursor/cli-config.json
           echo "---"
           ls -la ~/.cursor/
 
