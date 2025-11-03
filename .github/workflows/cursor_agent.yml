@@ -37,6 +37,7 @@ jobs:
                 "command": "npx",
                 "args": [
                   "-y",
+                  "--headless",
                   "mcp-remote@latest",
                   "https://demo.api.elementary-data.com/mcp/",
                   "--header",
@@ -120,4 +121,4 @@ jobs:
       - name: Run Cursor Agent
         env:
           CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
-        run: cursor-agent agent "use the elementary-remote mcp server to generate a list of bi assets"
+        run: cursor-agent "use the elementary-remote mcp server to generate a list of bi assets"
