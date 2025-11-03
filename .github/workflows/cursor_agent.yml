@@ -46,10 +46,16 @@ jobs:
             }
           }
           EOF
-          cat > ~/.cursor/mcp_approvals.json <<EOF
+          cat << EOF > ~/.cursor/cli-config.json
           {
-            "approvedServers": ["elementary-remote"]
+            "permissions": {
+              "allow": [
+                "*"
+              ],
+              "deny": []
+            }
           }
+
           EOF
 
       - name: Verify MCP config
