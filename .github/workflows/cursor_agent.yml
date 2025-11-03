@@ -57,13 +57,50 @@ jobs:
           }
 
           EOF
+
+      - name: Extract approval key and create approvals file
+        env:
+          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+        run: |
+          # Find cursor-agent index.js
+          CURSOR_INDEX=$(find ~/.local/share/cursor-agent/versions -name "index.js" | head -1)
+          echo "Found cursor-agent at: $CURSOR_INDEX"
           
-          # Create project-specific MCP approvals
-          cat << EOF > ~/.cursor/mcp-approvals.json
+          # Backup original
+          cp "$CURSOR_INDEX" "$CURSOR_INDEX.backup"
+          
+          # Add console.log to dump approval key
+          sed -i 's/const approvalKey = generateApprovalKey(serverName, server, this.cwd);/const approvalKey = generateApprovalKey(serverName, server, this.cwd);\n        console.log("APPROVAL_KEY:", approvalKey);/g' "$CURSOR_INDEX"
+          
+          # Run mcp list to get the approval key
+          echo "Running mcp list to extract approval key..."
+          APPROVAL_OUTPUT=$(cursor-agent mcp list 2>&1 || true)
+          echo "$APPROVAL_OUTPUT"
+          
+          # Extract the approval key from output
+          APPROVAL_KEY=$(echo "$APPROVAL_OUTPUT" | grep "APPROVAL_KEY:" | sed 's/.*APPROVAL_KEY: //' | tr -d ' ')
+          echo "Extracted approval key: $APPROVAL_KEY"
+          
+          # Restore original index.js
+          mv "$CURSOR_INDEX.backup" "$CURSOR_INDEX"
+          
+          # Determine workspace path for mcp-approvals.json
+          WORKSPACE_PATH=$(echo "$GITHUB_WORKSPACE" | sed 's/\//-/g' | sed 's/^-//')
+          WORKSPACE_NAME="home-runner-work-${WORKSPACE_PATH}"
+          echo "Workspace name: $WORKSPACE_NAME"
+          
+          # Create project-specific approvals directory
+          mkdir -p ~/.cursor/projects/"$WORKSPACE_NAME"
+          
+          # Create mcp-approvals.json with the extracted key
+          cat > ~/.cursor/projects/"$WORKSPACE_NAME"/mcp-approvals.json <<EOF
           [
-            "elementary-remote"
+            "$APPROVAL_KEY"
           ]
           EOF
+          
+          echo "Created mcp-approvals.json with approval key"
+          cat ~/.cursor/projects/"$WORKSPACE_NAME"/mcp-approvals.json
 
       - name: Verify MCP config
         run: |
@@ -73,12 +110,11 @@ jobs:
           echo "Contents of ~/.cursor/cli-config.json:"
           cat ~/.cursor/cli-config.json
           echo "---"
-          echo "Contents of mcp-approvals.json:"
-          cat ~/.cursor/mcp-approvals.json
-          echo "---"
-          ls -la ~/.cursor/
-          echo "---"
+          echo "Project directories:"
           ls -la ~/.cursor/projects/ || echo "No projects directory"
+          echo "---"
+          echo "Project-specific mcp-approvals.json files:"
+          find ~/.cursor/projects -name "mcp-approvals.json" -exec sh -c 'echo "File: {}"; cat {}; echo ""' \;
 
       - name: Run Cursor Agent
         env:
