@@ -143,5 +143,5 @@ jobs:
           DEBUG: "*"
           CURSOR_DEBUG: "1"
         run: |
-          cursor-agent "Try to list all bi assets using the elementary-remote mcp server. Really describe step by step what you want to do and display any error messages or warnings.that you get. all the extra context will be helpful to understand why we are able to connect to the mcp server but not able to list the bi assets."
+          cursor-agent "Try to list all bi assets using the elementary-remote mcp server. Really describe step by step what you want to do and display any error messages or warnings.that you get. all the extra context will be helpful to understand why we are able to connect to the mcp server but not able to list the bi assets. The env_id is `471e4178-f491-456b-8875-e58f9380206a` if you need it"
 
