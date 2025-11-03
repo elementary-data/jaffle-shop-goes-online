@@ -143,5 +143,5 @@ jobs:
           DEBUG: "*"
           CURSOR_DEBUG: "1"
         run: |
-          cursor-agent --verbose --print --approve-mcps -p "Using the Elementary MCP server, list all bi assets"
+          cursor-agent "Using the Elementary MCP server, list all bi assets"
 
