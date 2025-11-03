@@ -29,7 +29,7 @@ jobs:
         env:
           ELEMENTARY_BEARER_TOKEN: ${{ secrets.ELEMENTARY_BEARER_TOKEN }}
         run: |
-          cat > ~/.mcp.json <<EOF
+          cat > ~/.cursor/mcp.json <<EOF
           {
             "mcpServers": {
               "elementary-remote": {
