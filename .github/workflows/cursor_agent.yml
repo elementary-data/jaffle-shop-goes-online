@@ -57,6 +57,13 @@ jobs:
           }
 
           EOF
+          
+          # Create project-specific MCP approvals
+          cat << EOF > ~/.cursor/mcp-approvals.json
+          [
+            "elementary-remote"
+          ]
+          EOF
 
       - name: Verify MCP config
         run: |
@@ -66,7 +73,12 @@ jobs:
           echo "Contents of ~/.cursor/cli-config.json:"
           cat ~/.cursor/cli-config.json
           echo "---"
+          echo "Contents of mcp-approvals.json:"
+          cat ~/.cursor/mcp-approvals.json
+          echo "---"
           ls -la ~/.cursor/
+          echo "---"
+          ls -la ~/.cursor/projects/ || echo "No projects directory"
 
       - name: Run Cursor Agent
         env:
