@@ -47,6 +47,13 @@ jobs:
           }
           EOF
 
+      - name: Verify MCP config
+        run: |
+          echo "Contents of ~/.cursor/mcp.json:"
+          cat ~/.cursor/mcp.json
+          echo "---"
+          ls -la ~/.cursor/
+
       - name: Run Cursor Agent
         env:
           CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
