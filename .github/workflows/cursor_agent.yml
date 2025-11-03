@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - cursor-agent-action
+      - trying-elementary-mcp
   workflow_dispatch:
     inputs:
       prompt:
