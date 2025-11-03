@@ -41,10 +41,7 @@ jobs:
                   "https://demo.api.elementary-data.com/mcp/",
                   "--header",
                   "Authorization: ${ELEMENTARY_BEARER_TOKEN}"
-                ],
-                "env": {
-                  "NODE_ENV": "production"
-                }
+                ]
               }
             }
           }
@@ -123,9 +120,6 @@ jobs:
           echo "Contents of ~/.cursor/mcp.json:"
           cat ~/.cursor/mcp.json
           echo "---"
-          echo "Checking bearer token is set (first 20 chars):"
-          echo "${ELEMENTARY_BEARER_TOKEN:0:20}..."
-          echo "---"
           echo "Contents of ~/.cursor/cli-config.json:"
           cat ~/.cursor/cli-config.json
           echo "---"
@@ -138,18 +132,9 @@ jobs:
       - name: Test MCP connection
         env:
           CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
-          ELEMENTARY_BEARER_TOKEN: ${{ secrets.ELEMENTARY_BEARER_TOKEN }}
         run: |
-          echo "Checking cursor-agent help for approval flags..."
-          cursor-agent --help | grep -i "approve\|tool\|yes" || true
-          echo "---"
           echo "Testing MCP server connection..."
           cursor-agent mcp login elementary-remote
           cursor-agent list-tools elementary-remote
-          
-      - name: Run Cursor Agent with Elementary
-        env:
-          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
-          ELEMENTARY_BEARER_TOKEN: ${{ secrets.ELEMENTARY_BEARER_TOKEN }}
-        run: |
-          cursor-agent --print --approve-mcps -p "Using the Elementary MCP server, call get_environments to list all environments. Select the environment named 'Jaffle Shop - Online' and use its ID to call get_table_assets with asset_type='EXPOSURE' to list all BI assets."
+          cursor-agent "Using the Elementary MCP server, call get_environments to list all environments. Select the environment named 'Jaffle Shop - Online' and use its ID to call get_table_assets with asset_type='EXPOSURE' to list all BI assets."
+
