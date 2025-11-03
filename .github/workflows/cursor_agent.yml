@@ -41,7 +41,8 @@ jobs:
                   "https://demo.api.elementary-data.com/mcp/",
                   "--header",
                   "Authorization: $ELEMENTARY_BEARER_TOKEN"
-                ]
+                ],
+                "approved": true
               }
             }
           }
