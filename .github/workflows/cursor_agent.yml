@@ -124,4 +124,4 @@ jobs:
         run: |
           cursor-agent mcp login elementary-remote
           cursor-agent list-tools elementary-remote
-          cursor-agent -p "use the elementary-remote mcp server to generate a list of bi assets"
+          cursor-agent -p "list all environments in elementary"
