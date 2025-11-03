@@ -37,7 +37,7 @@ jobs:
                 "command": "npx",
                 "args": [
                   "-y",
-                  "--headless",
+                  "--print",
                   "mcp-remote@latest",
                   "https://demo.api.elementary-data.com/mcp/",
                   "--header",
