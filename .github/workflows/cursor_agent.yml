@@ -122,5 +122,4 @@ jobs:
         env:
           CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
         run: |
-          cursor-agent mcp login elementary-remote
-          cursor-agent -p "use the elementary-remote mcp server to generate a list of bi assets"
+          cursor-agent --print --approve-mcps -p "Using the Elementary MCP server, first call get_environments to find the environment ID for 'Jaffle Shop - Online', then use that environment ID to get a list of BI assets (exposures) by calling get_table_assets with asset_type='EXPOSURE'."
