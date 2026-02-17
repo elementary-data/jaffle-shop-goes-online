@@ -231,9 +231,9 @@ def generate_orders_data():
                 order_timestamp.strftime(
                     "%Y-%m-%d %H:%M:%S"
                 ),  # ORDER DATE (full timestamp)
-                all_order_statuses[
-                    random.randint(0, len(all_order_statuses) - 1)
-                ],  # ORDER STATUS
+                # INTENTIONAL TEST FAILURE: Occasionally generate invalid "cancelled" status
+                # This will cause accepted_values_stg_orders_status test to fail
+                random.choice(all_order_statuses) if random.random() > 0.001 else "cancelled",  # ORDER STATUS
             ]
         )
 
@@ -295,7 +295,10 @@ def generate_payments_data():
                     payment_amount_cents,  # AMOUNT in cents (realistic jaffle prices!)
                 ]
             )
-            payment_id += 1
+            # INTENTIONAL TEST FAILURE: Occasionally skip incrementing payment_id to create duplicates
+            # This will cause unique_stg_payments_payment_id test to fail
+            if random.random() > 0.001:  # 99.9% chance of incrementing (0.1% duplicates)
+                payment_id += 1
 
     write_to_csv(new_data_path, headers, new_payments)
 
@@ -369,6 +372,7 @@ def generate_signups_data():
     # Generate signup records
     new_signups = []
     signup_timestamps = []
+    previous_emails = []  # Track emails to create duplicates
 
     for customer in customers_data:
         customer_id = customer[0]
@@ -381,11 +385,16 @@ def generate_signups_data():
         signup_timestamps.append(signup_timestamp)
 
         # Generate realistic email (with some missing for data quality testing)
-        email = (
-            f"{first_name}{last_name.lower()}{customer_id}@example.com"
-            if random.randint(0, 30)  # 30/31 chance of having email
-            else ""
-        )
+        # INTENTIONAL TEST FAILURE: Occasionally create duplicate emails
+        # This will cause unique_stg_signups_customer_email and unique_customers_customer_email tests to fail
+        if random.random() < 0.01 and len(previous_emails) > 0:
+            # Reuse an email from a previous customer (duplicate)
+            email = random.choice(previous_emails)
+        elif random.randint(0, 30):  # 30/31 chance of having email
+            email = f"{first_name}{last_name.lower()}{customer_id}@example.com"
+            previous_emails.append(email)  # Store for potential reuse
+        else:
+            email = ""
 
         new_signups.append(
             [
