@@ -5,6 +5,8 @@
 
 set -e  # Exit on any error
 
+TARGET="${1:-snowflake}"
+
 echo "🚀 Starting Jaffle Shop Goes Online Pipeline..."
 echo "==============================================="
 
@@ -40,22 +42,22 @@ python -m data_creation.incremental_data_creation.sessions_data_generator
 echo ""
 echo "📦 Step 5: Installing dbt packages..."
 cd "$DBT_PROJECT_DIR"
-dbt deps
+dbt deps --target "$TARGET"
 
 # Step 6: Load Seeds
 echo ""
 echo "🌱 Step 6: Loading seed data into database..."
-dbt seed
+dbt seed --target "$TARGET"
 
 # Step 7: Run Models
 echo ""
 echo "🏗️  Step 7: Building dbt models..."
-dbt run
+dbt run --target "$TARGET"
 
 # Step 8: Run Tests
 echo ""
 echo "🧪 Step 8: Running data quality tests..."
-dbt test || echo "⚠️  dbt test completed with failures (expected for anomaly detection tests)"
+dbt test --target "$TARGET" || echo "⚠️  dbt test completed with failures (expected for anomaly detection tests)"
 
 echo ""
 echo "✅ Pipeline completed successfully!"
