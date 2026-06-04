@@ -2,6 +2,25 @@
 
 Elementary UI demo dbt project!
 
+## Quick Start - Run Complete Pipeline
+
+To run the complete data pipeline (generate data + build models + run tests):
+
+```bash
+./run_pipeline.sh
+```
+
+This script will:
+1. Generate training data
+2. Generate validation data  
+3. Generate marketing ads data
+4. Generate session data
+5. Load seed data into database
+6. Build all dbt models
+7. Run data quality tests (including ROAS anomaly detection)
+
+**Expected Result:** ROAS anomaly tests should FAIL, indicating successful detection of the artificial drop in return on advertising spend.
+
 ## Generate new demo
 
 To generate a new demo please do the following steps:

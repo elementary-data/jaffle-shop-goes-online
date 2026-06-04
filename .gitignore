@@ -97,3 +97,9 @@ venv/
 
 # vscode
 .vscode/
+
+# IDE config
+.cursor/
+
+# Temporary exports
+repomix-output.txt

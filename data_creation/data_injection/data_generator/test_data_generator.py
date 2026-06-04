@@ -1,4 +1,6 @@
-from elementary.clients.dbt.dbt_runner import DbtRunner
+from elementary.clients.dbt.subprocess_dbt_runner import (
+    SubprocessDbtRunner as DbtRunner,
+)
 from data_creation.data_injection.data_generator.specs.tests.test_spec import TestSpec
 
 

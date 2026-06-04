@@ -1,0 +1,48 @@
+name: Run daily pipeline
+
+on:
+  schedule:
+    - cron: "0 5 * * *"
+  workflow_dispatch: {}
+
+env:
+  DBT_PACKAGE_DEMO_BRANCH_NAME: now-uses-custom-run-started-at
+  PROFILE_DIR: ${{ github.workspace }}/jaffle_shop_online
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Write dbt profiles
+        env:
+          PROFILES_YML: ${{ secrets.CLOUD_DEMO_PROFILES_YML }}
+        run: |
+          echo "$PROFILES_YML" | base64 -d > ${{ env.PROFILE_DIR }}/profiles.yml
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9.13"
+
+      - name: Install dbt
+        run: pip install "dbt-core" "dbt-snowflake"
+
+      - name: Install jaffle shop online project
+        run: pip install -e .
+
+      - name: Use custom Elementary branch
+        run: |
+          sed -i 's/package: elementary-data\/elementary/git: https:\/\/github\.com\/elementary-data\/dbt-data-reliability\.git/' ./jaffle_shop_online/packages.yml
+          sed -i '3s/version: [0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$/revision: ${{ env.DBT_PACKAGE_DEMO_BRANCH_NAME }}/' ./jaffle_shop_online/packages.yml
+
+      - name: Run pipeline
+        run: bash run_pipeline.sh
+
+      - name: Upload generated seed CSVs
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-pipeline-seed-csvs
+          path: jaffle_shop_online/seeds

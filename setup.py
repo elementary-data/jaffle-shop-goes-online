@@ -18,7 +18,7 @@ setup(
     install_requires=[
         "click>=7.0,<9",
         "dbt-core>=0.20,<2.0.0",
-        "elementary-data==0.15.1",
+        "elementary-data==0.19.3",
         "numpy==1.24.3",
         "pydantic==1.10.14",
     ],

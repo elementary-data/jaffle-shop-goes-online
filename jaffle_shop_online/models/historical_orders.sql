@@ -39,7 +39,6 @@ final as (
 
 select *
 from final
-where date(order_date) < (
-    select date(max(order_date))
-    from final
-) 
+where date(order_date) < date((
+    select max(order_date) from final
+)) - interval '2 day' 

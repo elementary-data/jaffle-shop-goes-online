@@ -1,7 +1,7 @@
 {{
     config(
         materialized = "incremental",
-        unique_key = "session_id",
+        unique_key = ["session_id", "platform"],
     )
 }}
 
