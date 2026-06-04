@@ -18,6 +18,14 @@ TARGET="${1:?Usage: $0 <TARGET> [DAYS]}"
 DAYS="${2:-8}"
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+gen_uuid() {
+    if command -v uuidgen &>/dev/null; then
+        uuidgen
+    else
+        python -c "import uuid; print(uuid.uuid4())"
+    fi
+}
 DBT_PROJECT_DIR="$PROJECT_ROOT/jaffle_shop_online"
 
 echo "=== Multi-day pipeline: $DAYS days, target=$TARGET ==="
@@ -50,25 +58,31 @@ dbt seed --target "$TARGET"
 
 for (( day=1; day<=DAYS; day++ )); do
     days_ago=$(( DAYS - day ))
-    run_timestamp=$(date -u -v-${days_ago}d '+%Y-%m-%dT%H:%M:%S')
+    if date -v-1d &>/dev/null; then
+        # macOS
+        run_timestamp=$(date -u -v-${days_ago}d '+%Y-%m-%dT%H:%M:%S')
+    else
+        # Linux (CI)
+        run_timestamp=$(date -u -d "${days_ago} days ago" '+%Y-%m-%dT%H:%M:%S')
+    fi
 
     if [ "$day" -lt "$DAYS" ]; then
         echo ""
         echo "=== Day $day/$DAYS ($run_timestamp) - training ==="
         dbt run --target "$TARGET" \
-            --vars "{\"custom_run_started_at\": \"$run_timestamp\", \"orchestrator\": \"dbt_cloud\", \"job_name\": \"jaffle_shop_online_data_load\", \"job_id\": \"$(uuidgen)\"}" \
+            --vars "{\"custom_run_started_at\": \"$run_timestamp\", \"orchestrator\": \"dbt_cloud\", \"job_name\": \"jaffle_shop_online_data_load\", \"job_id\": \"$(gen_uuid)\"}" \
             || echo "Day $day: dbt run completed with errors (non-critical)"
         dbt test --target "$TARGET" \
-            --vars "{\"custom_run_started_at\": \"$run_timestamp\", \"orchestrator\": \"dbt_cloud\", \"job_name\": \"jaffle_shop_online_data_test\", \"job_id\": \"$(uuidgen)\"}" \
+            --vars "{\"custom_run_started_at\": \"$run_timestamp\", \"orchestrator\": \"dbt_cloud\", \"job_name\": \"jaffle_shop_online_data_test\", \"job_id\": \"$(gen_uuid)\"}" \
             || echo "Day $day: dbt test completed with failures (expected)"
     else
         echo ""
         echo "=== Day $day/$DAYS ($run_timestamp) - validation ==="
         dbt run --target "$TARGET" \
-            --vars "{\"custom_run_started_at\": \"$run_timestamp\", \"validation\": true, \"orchestrator\": \"dbt_cloud\", \"job_name\": \"jaffle_shop_online_data_load\", \"job_id\": \"$(uuidgen)\"}" \
+            --vars "{\"custom_run_started_at\": \"$run_timestamp\", \"validation\": true, \"orchestrator\": \"dbt_cloud\", \"job_name\": \"jaffle_shop_online_data_load\", \"job_id\": \"$(gen_uuid)\"}" \
             || echo "Final day: dbt run completed with errors (non-critical)"
         dbt test --target "$TARGET" \
-            --vars "{\"custom_run_started_at\": \"$run_timestamp\", \"validation\": true, \"orchestrator\": \"dbt_cloud\", \"job_name\": \"jaffle_shop_online_data_test\", \"job_id\": \"$(uuidgen)\"}" \
+            --vars "{\"custom_run_started_at\": \"$run_timestamp\", \"validation\": true, \"orchestrator\": \"dbt_cloud\", \"job_name\": \"jaffle_shop_online_data_test\", \"job_id\": \"$(gen_uuid)\"}" \
             || echo "Final day: dbt test completed with failures (expected)"
     fi
 done
