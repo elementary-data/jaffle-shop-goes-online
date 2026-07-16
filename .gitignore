@@ -103,3 +103,6 @@ venv/
 
 # Temporary exports
 repomix-output.txt
+
+# Internal interview material (contains credentials link / internal guide)
+interview/
