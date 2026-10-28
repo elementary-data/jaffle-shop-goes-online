@@ -14,4 +14,16 @@ sources:
     schema: "{{ target.schema }}"
     tables:
       - name: stg_website_sessions
+        columns:
+          - name: session_id
+            description: "Unique identifier for a session"
+            tests:
+              - not_null
+              - unique
       - name: stg_app_sessions
+        columns:
+          - name: session_id
+            description: "Unique identifier for a session"
+            tests:
+              - not_null
+              - unique

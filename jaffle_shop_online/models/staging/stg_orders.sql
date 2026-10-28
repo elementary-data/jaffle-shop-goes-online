@@ -1,15 +1,8 @@
--- depends_on: {{ ref('raw_orders_validation') }}
+with source as (
 
-{% if elementary.get_config_var('validation') %}
-    with source as (
-        select * from {{ ref('raw_orders_validation') }}
-    ),
+    select * from {{ source('jaffle_backend', 'raw_orders') }}
 
-{% else %}
-    with source as (
-        select * from {{ ref('raw_orders_training') }}
-    ),
-{% endif %}
+),
 
 renamed as (
 

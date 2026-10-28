@@ -1,5 +1,5 @@
 {{
-  config(materialized='view')
+  config(materialized='table')
 }}
 
 -- Union of historical and real-time datasets

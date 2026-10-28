@@ -47,8 +47,8 @@ jobs:
       - name: Run multi-day pipeline
         run: bash run_pipeline_multiday.sh keypair ${{ inputs.days-back || 8 }}
 
-      - name: Upload generated seed CSVs
+      - name: Upload generated source CSVs
         uses: actions/upload-artifact@v4
         with:
-          name: multiday-pipeline-seed-csvs
-          path: jaffle_shop_online/seeds
+          name: multiday-pipeline-source-csvs
+          path: generated_data

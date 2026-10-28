@@ -41,8 +41,8 @@ jobs:
       - name: Run pipeline
         run: bash run_pipeline.sh
 
-      - name: Upload generated seed CSVs
+      - name: Upload generated source CSVs
         uses: actions/upload-artifact@v4
         with:
-          name: daily-pipeline-seed-csvs
-          path: jaffle_shop_online/seeds
+          name: daily-pipeline-source-csvs
+          path: generated_data

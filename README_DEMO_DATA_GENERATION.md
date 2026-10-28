@@ -86,12 +86,17 @@ data_creation/
 
 ### Generated Data Types
 
-**Core Business Data** (CSV seeds):
+**Core Business Data** (loaded into warehouse source tables by the Python source
+loader in `data_creation/source_loading`, then consumed via dbt `source()`):
 
-- `raw_customers_training.csv` / `raw_customers_validation.csv` - Customer profiles
-- `raw_orders_training.csv` / `raw_orders_validation.csv` - Order transactions
-- `raw_payments_training.csv` / `raw_payments_validation.csv` - Payment records
-- `raw_signups_training.csv` / `raw_signups_validation.csv` - User registrations
+- `raw_customers` (from `generated_data/{training,validation}/raw_customers_*.csv`) - Customer profiles
+- `raw_orders` (from `generated_data/{training,validation}/raw_orders_*.csv`) - Order transactions
+- `raw_payments` (from `generated_data/{training,validation}/raw_payments_*.csv`) - Payment records
+- `raw_signups` (from `generated_data/{training,validation}/raw_signups_*.csv`) - User registrations
+
+The `training` and `validation` CSV variants load into the **same** warehouse
+table (e.g. `raw_orders`); which variant is loaded determines the table's current
+contents, mirroring a real table whose data changes over time.
 
 **Marketing Attribution Data**:
 
@@ -122,7 +127,7 @@ data_creation/
 for each_day in simulation_period:
     1. Generate new business data for that day
     2. Generate marketing sessions aligned with orders
-    3. Load data into warehouse (dbt seed)
+    3. Load data into warehouse source tables (Python source loader)
     4. Run analytics models (dbt run)
     5. Execute data quality tests (dbt test)
     6. Occasionally process validation data
@@ -210,7 +215,7 @@ The system runs automatically via GitHub Actions:
 
 When complete, you'll have:
 
-- Populated seed tables in your warehouse
+- Populated source tables in your warehouse
 - dbt models built with time-series data
 - Marketing attribution analysis available
 - Data quality test results
@@ -249,7 +254,7 @@ Modify constants in generator files:
 1. Create generator in `data_creation/incremental_data_creation/`
 2. Add CLI command in `cli.py`
 3. Integrate into `incremental_data_flow.py`
-4. Add seed configuration in `jaffle_shop_online/models/seeds.yml`
+4. Register the table/columns in the source loader (`data_creation/source_loading/source_loader.py`) and add a dbt `source()` entry
 
 ### Extending Attribution Logic
 

@@ -45,7 +45,7 @@ from utils.csv import write_to_csv
 # =============================================================================
 
 CURRENT_DIRECTORY_PATH = os.path.dirname(os.path.realpath(__file__))
-ADS_DATA_DIRECTORY_RELATIVE_PATH = "../../jaffle_shop_online/seeds/ads"
+ADS_DATA_DIRECTORY_RELATIVE_PATH = "../../generated_data/ads"
 
 # Business Parameters
 TIME_SPAN_IN_DAYS = 60  # Training data time span

@@ -51,8 +51,8 @@ cd "$DBT_PROJECT_DIR"
 echo "Installing dbt packages..."
 dbt deps --target "$TARGET"
 
-echo "Loading seed data..."
-dbt seed --target "$TARGET"
+echo "Loading source data (ads, sessions, training baseline)..."
+python -m data_creation.source_loading.source_loader --select ads,sessions,training --target "$TARGET"
 
 # --- Multi-day dbt run/test loop ---
 
@@ -78,6 +78,8 @@ for (( day=1; day<=DAYS; day++ )); do
     else
         echo ""
         echo "=== Day $day/$DAYS ($run_timestamp) - validation ==="
+        echo "Reloading raw sources with validation data..."
+        python -m data_creation.source_loading.source_loader --select validation --target "$TARGET"
         dbt run --target "$TARGET" \
             --vars "{\"custom_run_started_at\": \"$run_timestamp\", \"validation\": true, \"orchestrator\": \"dbt_cloud\", \"job_name\": \"jaffle_shop_online_data_load\", \"job_id\": \"$(gen_uuid)\"}" \
             || echo "Final day: dbt run completed with errors (non-critical)"

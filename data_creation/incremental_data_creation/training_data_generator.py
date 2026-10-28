@@ -53,10 +53,10 @@ logger = logging.getLogger(__name__)
 CURRENT_DIRECTORY_PATH = os.path.dirname(os.path.realpath(__file__))
 ORIGINAL_JAFFLE_DATA_DIRECTORY_NAME = "original_jaffle_shop_data"
 NEW_JAFFLE_TRAINING_DATA_DIRECORTY_RELATIVE_PATH = (
-    "../../jaffle_shop_online/seeds/training"
+    "../../generated_data/training"
 )
 NEW_JAFFLE_VALIDATION_DATA_DIRECORTY_RELATIVE_PATH = (
-    "../../jaffle_shop_online/seeds/validation"
+    "../../generated_data/validation"
 )
 
 # Business Parameters

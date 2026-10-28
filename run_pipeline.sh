@@ -44,10 +44,10 @@ echo "📦 Step 5: Installing dbt packages..."
 cd "$DBT_PROJECT_DIR"
 dbt deps --target "$TARGET"
 
-# Step 6: Load Seeds
+# Step 6: Load source data
 echo ""
-echo "🌱 Step 6: Loading seed data into database..."
-dbt seed --target "$TARGET"
+echo "🌱 Step 6: Loading source data into database..."
+python -m data_creation.source_loading.source_loader --select training,ads,sessions --target "$TARGET"
 
 # Step 7: Run Models
 echo ""
@@ -68,7 +68,7 @@ echo "   - Validation data generated"
 echo "   - Marketing ads data generated"
 echo "   - Session data generated"
 echo "   - dbt packages installed"
-echo "   - Seeds loaded to database"
+echo "   - Source data loaded to database"
 echo "   - All dbt models built"
 echo "   - Data quality tests executed"
 echo ""

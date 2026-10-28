@@ -47,7 +47,7 @@ logger = logging.getLogger(__name__)
 # =============================================================================
 
 CURRENT_DIRECTORY_PATH = os.path.dirname(os.path.realpath(__file__))
-SESSIONS_DATA_DIRECTORY_RELATIVE_PATH = "../../jaffle_shop_online/seeds/sessions"
+SESSIONS_DATA_DIRECTORY_RELATIVE_PATH = "../../generated_data/sessions"
 
 # Business Parameters
 TIME_SPAN_IN_DAYS = 60  # Training data time span
@@ -117,7 +117,7 @@ def load_available_ad_ids():
 
     ads_directory = os.path.join(
         CURRENT_DIRECTORY_PATH,
-        "../../jaffle_shop_online/seeds/ads",
+        "../../generated_data/ads",
     )
 
     # Map CSV files to utm_sources

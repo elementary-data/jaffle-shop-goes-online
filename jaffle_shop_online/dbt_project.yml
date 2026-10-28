@@ -14,7 +14,9 @@ profile: "jaffle_shop_online"
 model-paths: ["models"]
 analysis-paths: ["analyses"]
 test-paths: ["tests"]
-seed-paths: ["seeds"]
+# Raw data is loaded into the warehouse by the Python source loader
+# (data_creation/source_loading) and consumed via source(), so there are no dbt seeds.
+seed-paths: []
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
 
