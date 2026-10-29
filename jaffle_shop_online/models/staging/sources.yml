@@ -1,0 +1,26 @@
+version: 2
+
+sources:
+  - name: jaffle_backend
+    description: "Operational database behind the Jaffle Shop ordering app."
+    database: "{{ target.database }}"
+    schema: "{{ target.schema }}"
+    tables:
+      - name: raw_orders
+        loaded_at_field: order_date
+      - name: raw_customers
+
+  - name: stripe
+    description: "Payments processor."
+    database: "{{ target.database }}"
+    schema: "{{ target.schema }}"
+    tables:
+      - name: raw_payments
+
+  - name: jaffle_app
+    description: "Web/mobile app auth & signups."
+    database: "{{ target.database }}"
+    schema: "{{ target.schema }}"
+    tables:
+      - name: raw_signups
+        loaded_at_field: signup_date

@@ -97,3 +97,12 @@ venv/
 
 # vscode
 .vscode/
+
+# IDE config
+.cursor/
+
+# Temporary exports
+repomix-output.txt
+
+# Internal interview material (contains credentials link / internal guide)
+interview/

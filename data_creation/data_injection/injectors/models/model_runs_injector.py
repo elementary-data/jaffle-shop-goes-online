@@ -1,7 +1,9 @@
 from datetime import datetime
 from enum import Enum
 from typing import List, Optional
-from elementary.clients.dbt.dbt_runner import DbtRunner
+from elementary.clients.dbt.subprocess_dbt_runner import (
+    SubprocessDbtRunner as DbtRunner,
+)
 from pydantic import BaseModel
 
 from data_creation.data_injection.injectors.models.models_injector import ModelsInjector

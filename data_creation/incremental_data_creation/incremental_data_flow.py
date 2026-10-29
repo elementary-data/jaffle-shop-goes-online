@@ -7,7 +7,9 @@ import random
 from typing import Optional
 import uuid
 
-from elementary.clients.dbt.dbt_runner import DbtRunner
+from elementary.clients.dbt.subprocess_dbt_runner import (
+    SubprocessDbtRunner as DbtRunner,
+)
 from data_creation.incremental_data_creation.incremental_training_data_generator import (
     generate_incremental_training_data,
 )
@@ -18,6 +20,7 @@ from data_creation.incremental_data_creation.incremental_validation_data_generat
 from data_creation.incremental_data_creation.sessions_data_generator import (
     generate_sessions_data,
 )
+from data_creation.source_loading.source_loader import load as load_sources
 from utils.csv import clear_csv
 
 logger = logging.getLogger(__name__)
@@ -43,10 +46,10 @@ def run_incremental_data_creation(
     dbt_runner.run_operation(macro_name="jaffle_shop_online.clear_tests")
     clear_data(validation=True, training=True)
 
-    dbt_runner.seed(select="ads")
+    load_sources("ads", target=target, profiles_dir=profiles_dir)
     # Initial sessions seeding with training data (validation doesn't exist yet)
-    generate_sessions_data("training")
-    dbt_runner.seed(select="sessions")
+    generate_sessions_data()
+    load_sources("sessions", target=target, profiles_dir=profiles_dir)
 
     logger.info(f"Running incremental demo for {days_back} days back")
     current_time = datetime.utcnow()
@@ -57,7 +60,7 @@ def run_incremental_data_creation(
         if not first_run and not random.randint(0, round(days_back / 4)):
             clear_data(validation=True)
             generate_incremental_validation_data(custom_run_time)
-            dbt_runner.seed(select="validation")
+            load_sources("validation", target=target, profiles_dir=profiles_dir)
             dbt_runner.run(
                 vars={
                     "custom_run_started_at": custom_run_time.isoformat(),
@@ -78,14 +81,14 @@ def run_incremental_data_creation(
             )
             clear_data(validation=True)
             generate_incremental_training_data(custom_run_time)
-            dbt_runner.seed(select="training")
+            load_sources("training", target=target, profiles_dir=profiles_dir)
 
             # Regenerate sessions based on current training data
             logger.info(
                 f"Regenerating sessions for day {run_index} based on current order data..."
             )
-            generate_sessions_data("training")
-            dbt_runner.seed(select="sessions")
+            generate_sessions_data()
+            load_sources("sessions", target=target, profiles_dir=profiles_dir)
 
             dbt_runner.run(
                 vars={
@@ -98,14 +101,14 @@ def run_incremental_data_creation(
 
         else:
             generate_incremental_training_data(custom_run_time)
-            dbt_runner.seed(select="training")
+            load_sources("training", target=target, profiles_dir=profiles_dir)
 
             # Regenerate sessions based on current training data
             logger.info(
                 f"Regenerating sessions for day {run_index} based on current order data..."
             )
-            generate_sessions_data("training")
-            dbt_runner.seed(select="sessions")
+            generate_sessions_data()
+            load_sources("sessions", target=target, profiles_dir=profiles_dir)
 
             dbt_runner.run(
                 vars={
@@ -130,12 +133,12 @@ def run_incremental_data_creation(
     generate_incremental_validation_data(
         current_time, ammount_of_new_data=600, last_run=True
     )
-    dbt_runner.seed(select="validation")
+    load_sources("validation", target=target, profiles_dir=profiles_dir)
 
     # Regenerate sessions to include validation customers
     logger.info("Regenerating sessions to include validation customers...")
-    generate_sessions_data("validation")
-    dbt_runner.seed(select="sessions")
+    generate_sessions_data()
+    load_sources("sessions", target=target, profiles_dir=profiles_dir)
 
     dbt_runner.run(
         vars={
@@ -160,10 +163,10 @@ def run_incremental_data_creation(
 def clear_data(validation=False, training=False):
     current_directory_path = os.path.dirname(os.path.realpath(__file__))
     new_jaffle_training_data_direcorty_relative_path = (
-        "../../jaffle_shop_online/seeds/training"
+        "../../generated_data/training"
     )
     new_jaffle_validation_data_direcorty_relative_path = (
-        "../../jaffle_shop_online/seeds/validation"
+        "../../generated_data/validation"
     )
 
     training_path = os.path.join(

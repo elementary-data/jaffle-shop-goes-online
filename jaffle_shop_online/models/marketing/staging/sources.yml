@@ -2,6 +2,7 @@ version: 2
 
 sources:
   - name: ads
+    database: "{{ target.database }}"
     schema: "{{ target.schema }}"
     tables:
       - name: stg_google_ads
@@ -9,7 +10,20 @@ sources:
       - name: stg_instagram_ads
 
   - name: sessions
+    database: "{{ target.database }}"
     schema: "{{ target.schema }}"
     tables:
       - name: stg_website_sessions
+        columns:
+          - name: session_id
+            description: "Unique identifier for a session"
+            tests:
+              - not_null
+              - unique
       - name: stg_app_sessions
+        columns:
+          - name: session_id
+            description: "Unique identifier for a session"
+            tests:
+              - not_null
+              - unique

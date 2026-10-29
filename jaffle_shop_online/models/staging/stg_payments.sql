@@ -1,15 +1,8 @@
--- depends_on: {{ ref('raw_payments_validation') }}
+with source as (
 
-{% if elementary.get_config_var('validation') %}
-    with source as (
-        select * from {{ ref('raw_payments_validation') }}
-    ),
+    select * from {{ source('stripe', 'raw_payments') }}
 
-{% else %}
-    with source as (
-        select * from {{ ref('raw_payments_training') }}
-    ),
-{% endif %}
+),
 
 renamed as (
 

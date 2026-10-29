@@ -1,3 +1,7 @@
+{{
+  config(materialized='table')
+}}
+
 -- depends_on: {{ ref('orders') }}
 
 {% if execute %}

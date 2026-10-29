@@ -3,7 +3,7 @@ version: 2
 models:
   - name: stg_customers
     meta:
-      owner: "Idan"
+      owner: "@customer-team"
     config:
       tags: ["staging", "pii"]
     columns:
@@ -18,7 +18,7 @@ models:
 
   - name: stg_orders
     meta:
-      owner: "Idan"
+      owner: "@sales-team"
     config:
       tags: ["staging", "finance", "sales"]
       elementary:
@@ -43,7 +43,7 @@ models:
 
   - name: stg_payments
     meta:
-      owner: "Idan"
+      owner: "@finance-team"
     config:
       tags: ["staging", "finance"]
     columns:
@@ -61,7 +61,7 @@ models:
 
   - name: stg_signups
     meta:
-      owner: "Idan"
+      owner: "@customer-team"
     config:
       tags: ["staging", "pii"]
       elementary:

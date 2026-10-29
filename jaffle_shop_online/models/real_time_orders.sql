@@ -48,6 +48,6 @@ select
     {{ cents_to_dollars('credit_card_amount') }} as credit_card_amount,
     {{ cents_to_dollars('gift_card_amount') }} as gift_card_amount
 from final
-where date(order_date) = (
-    select date(max(order_date)) from final
-) 
+where date(order_date) >= date((
+    select max(order_date) from final
+)) - interval '2 day' 
