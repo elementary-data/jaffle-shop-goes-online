@@ -51,13 +51,15 @@ SESSIONS_DATA_DIRECTORY_RELATIVE_PATH = "../../generated_data/sessions"
 
 # Business Parameters
 TIME_SPAN_IN_DAYS = 60  # Training data time span
-WEBSITE_SESSIONS_COUNT = 1910  # Web platform sessions
-APP_SESSIONS_COUNT = 1143  # Mobile app sessions
+WEBSITE_SESSIONS_COUNT = 9600  # Web platform sessions
+APP_SESSIONS_COUNT = 6400  # Mobile app sessions
 
 # Extend coverage to include validation day (for order drop ROAS detection)
 VALIDATION_EXTENSION_DAYS = 1  # Extend 1 day beyond training to cover validation period
 
-# Session Channel Sources (marketing attribution)
+# Session Channel Sources (marketing attribution) with weights
+# Ad platforms (google/facebook/instagram) are weighted higher so enough sessions
+# flow through to attribution touches for a stable ROAS baseline.
 SESSION_SOURCES = [
     "google",  # Organic search
     "facebook",  # Social media
@@ -69,6 +71,18 @@ SESSION_SOURCES = [
     "linkedin",  # Professional network
     "twitter",  # Social media
     "organic",  # Organic/referral
+]
+SESSION_SOURCE_WEIGHTS = [
+    25,  # google
+    22,  # facebook
+    20,  # instagram
+    4,   # email
+    6,   # direct
+    4,   # youtube
+    3,   # bing
+    3,   # linkedin
+    3,   # twitter
+    6,   # organic
 ]
 
 # Session Mediums (traffic types)
@@ -185,6 +199,35 @@ def get_random_ad_id(utm_source, ad_ids_by_source):
         return f"{utm_source}_fallback_ad_001"
 
 
+def load_ordering_customer_ids():
+    """
+    Load customer IDs that appear in the training orders data.
+
+    Sessions are biased toward these customers so that enough sessions
+    match an order within the 7-day attribution window, producing a
+    stable ROAS baseline instead of a noisy one.
+    """
+    orders_path = os.path.join(
+        CURRENT_DIRECTORY_PATH,
+        "../../generated_data/training/raw_orders_training.csv",
+    )
+    customer_ids = set()
+    if os.path.exists(orders_path):
+        with open(orders_path, "r", newline="") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                customer_ids.add(int(row["user_id"]))
+        print(f"Loaded {len(customer_ids)} ordering customer IDs for session bias")
+    return sorted(customer_ids) if customer_ids else list(range(1, 2001))
+
+
+def pick_customer_id(ordering_customer_ids):
+    """Pick a customer_id, biased 85% toward customers who placed orders."""
+    if random.random() < 0.85:
+        return random.choice(ordering_customer_ids)
+    return random.randint(1, 2000)
+
+
 def generate_sessions_data():
     """
     Main function to generate all sessions data
@@ -200,11 +243,14 @@ def generate_sessions_data():
     print("Loading ad_ids for attribution linkage...")
     ad_ids_by_source = load_available_ad_ids()
 
-    generate_website_sessions(ad_ids_by_source)
-    generate_app_sessions(ad_ids_by_source)
+    # Load ordering customers for session bias
+    ordering_customer_ids = load_ordering_customer_ids()
+
+    generate_website_sessions(ad_ids_by_source, ordering_customer_ids)
+    generate_app_sessions(ad_ids_by_source, ordering_customer_ids)
 
 
-def generate_website_sessions(ad_ids_by_source):
+def generate_website_sessions(ad_ids_by_source, ordering_customer_ids):
     """
     Generate website session data for marketing attribution
 
@@ -290,15 +336,15 @@ def generate_website_sessions(ad_ids_by_source):
         )
         session_timestamps.append(session_timestamp)
 
-        # Generate marketing attribution data
-        utm_source = random.choice(SESSION_SOURCES)
+        # Generate marketing attribution data (weighted toward ad platforms)
+        utm_source = random.choices(SESSION_SOURCES, weights=SESSION_SOURCE_WEIGHTS)[0]
 
         # Generate session duration (5-120 minutes)
         session_duration_minutes = random.randint(5, 120)
         end_timestamp = session_timestamp + timedelta(minutes=session_duration_minutes)
 
-        # Generate customer ID (assuming customers 1-2000 exist from training data)
-        customer_id = random.randint(1, 2000)
+        # Bias toward customers who placed orders for better attribution coverage
+        customer_id = pick_customer_id(ordering_customer_ids)
 
         # Get actual ad ID for proper attribution linkage
         ad_id = get_random_ad_id(utm_source, ad_ids_by_source)
@@ -318,7 +364,7 @@ def generate_website_sessions(ad_ids_by_source):
     log_time_range("Website Sessions", session_timestamps)
 
 
-def generate_app_sessions(ad_ids_by_source):
+def generate_app_sessions(ad_ids_by_source, ordering_customer_ids):
     """
     Generate mobile app session data for marketing attribution
 
@@ -404,15 +450,15 @@ def generate_app_sessions(ad_ids_by_source):
         )
         session_timestamps.append(session_timestamp)
 
-        # Generate marketing attribution data (mobile-focused sources)
-        utm_source = random.choice(SESSION_SOURCES)
+        # Generate marketing attribution data (weighted toward ad platforms)
+        utm_source = random.choices(SESSION_SOURCES, weights=SESSION_SOURCE_WEIGHTS)[0]
 
         # Generate session duration (3-60 minutes for mobile)
         session_duration_minutes = random.randint(3, 60)
         end_timestamp = session_timestamp + timedelta(minutes=session_duration_minutes)
 
-        # Generate customer ID (assuming customers 1-2000 exist from training data)
-        customer_id = random.randint(1, 2000)
+        # Bias toward customers who placed orders for better attribution coverage
+        customer_id = pick_customer_id(ordering_customer_ids)
 
         # Get actual ad ID for proper attribution linkage (same pool as website)
         ad_id = get_random_ad_id(utm_source, ad_ids_by_source)
