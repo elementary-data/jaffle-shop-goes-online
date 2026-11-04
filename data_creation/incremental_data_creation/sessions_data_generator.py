@@ -51,8 +51,8 @@ SESSIONS_DATA_DIRECTORY_RELATIVE_PATH = "../../generated_data/sessions"
 
 # Business Parameters
 TIME_SPAN_IN_DAYS = 60  # Training data time span
-WEBSITE_SESSIONS_COUNT = 9600  # Web platform sessions
-APP_SESSIONS_COUNT = 6400  # Mobile app sessions
+WEBSITE_SESSIONS_COUNT = 9600  # Web platform sessions (distributed evenly across days/sources)
+APP_SESSIONS_COUNT = 6400  # Mobile app sessions (distributed evenly across days/sources)
 
 # Extend coverage to include validation day (for order drop ROAS detection)
 VALIDATION_EXTENSION_DAYS = 1  # Extend 1 day beyond training to cover validation period
@@ -221,11 +221,15 @@ def load_ordering_customer_ids():
     return sorted(customer_ids) if customer_ids else list(range(1, 2001))
 
 
-def pick_customer_id(ordering_customer_ids):
-    """Pick a customer_id, biased 85% toward customers who placed orders."""
-    if random.random() < 0.85:
-        return random.choice(ordering_customer_ids)
-    return random.randint(1, 2000)
+def make_daily_customer_pool(ordering_customer_ids, day_offset, size):
+    """Build a shuffled customer pool for one day, cycling through ordering customers."""
+    rng = random.Random(42 + day_offset)
+    pool = []
+    while len(pool) < size:
+        batch = ordering_customer_ids.copy()
+        rng.shuffle(batch)
+        pool.extend(batch)
+    return pool[:size]
 
 
 def generate_sessions_data():
@@ -291,74 +295,46 @@ def generate_website_sessions(ad_ids_by_source, ordering_customer_ids):
     sessions_data = []
     session_timestamps = []
 
-    for session_id in range(1, WEBSITE_SESSIONS_COUNT + 1):
-        # Generate uniform timestamp distribution across extended period (training + validation)
-        # This prevents attribution bias toward recent periods and covers the validation day
-        days_back = random.randint(-VALIDATION_EXTENSION_DAYS, TIME_SPAN_IN_DAYS)
-        base_datetime = datetime.now() - timedelta(days=days_back)
+    num_days = TIME_SPAN_IN_DAYS + VALIDATION_EXTENSION_DAYS + 1
+    total_weight = sum(SESSION_SOURCE_WEIGHTS)
+    sessions_per_day = WEBSITE_SESSIONS_COUNT // num_days
+    session_id = 0
 
-        # Weight hours toward peak usage times (similar to order patterns)
-        # Food delivery platforms see peak traffic around meal times
-        hour = random.choices(
-            range(24),
-            weights=[
-                1,  # 00:00 - Low traffic
-                1,  # 01:00
-                1,  # 02:00
-                1,  # 03:00
-                1,  # 04:00
-                2,  # 05:00
-                3,  # 06:00
-                4,  # 07:00
-                5,  # 08:00
-                6,  # 09:00
-                7,  # 10:00
-                8,  # 11:00
-                9,  # 12:00 - Peak lunch traffic
-                8,  # 13:00
-                7,  # 14:00
-                6,  # 15:00
-                5,  # 16:00
-                4,  # 17:00 - Dinner prep time
-                3,  # 18:00
-                2,  # 19:00
-                2,  # 20:00
-                1,  # 21:00
-                1,  # 22:00
-                1,  # 23:00
-            ],
-        )[0]
-        minute = random.randint(0, 59)
-        second = random.randint(0, 59)
+    hour_weights = [
+        1, 1, 1, 1, 1, 2, 3, 4, 5, 6, 7, 8,
+        9, 8, 7, 6, 5, 4, 3, 2, 2, 1, 1, 1,
+    ]
 
-        session_timestamp = base_datetime.replace(
-            hour=hour, minute=minute, second=second
-        )
-        session_timestamps.append(session_timestamp)
+    for day_offset in range(num_days):
+        days_back = TIME_SPAN_IN_DAYS - day_offset
+        base_date = datetime.now() - timedelta(days=days_back)
+        day_pool = make_daily_customer_pool(ordering_customer_ids, day_offset, sessions_per_day)
+        pool_idx = 0
 
-        # Generate marketing attribution data (weighted toward ad platforms)
-        utm_source = random.choices(SESSION_SOURCES, weights=SESSION_SOURCE_WEIGHTS)[0]
+        for source_idx, utm_source in enumerate(SESSION_SOURCES):
+            source_count = max(1, round(sessions_per_day * SESSION_SOURCE_WEIGHTS[source_idx] / total_weight))
+            for _ in range(source_count):
+                session_id += 1
+                hour = random.choices(range(24), weights=hour_weights)[0]
+                minute = random.randint(0, 59)
+                second = random.randint(0, 59)
+                session_timestamp = base_date.replace(hour=hour, minute=minute, second=second)
+                session_timestamps.append(session_timestamp)
 
-        # Generate session duration (5-120 minutes)
-        session_duration_minutes = random.randint(5, 120)
-        end_timestamp = session_timestamp + timedelta(minutes=session_duration_minutes)
+                session_duration_minutes = random.randint(5, 120)
+                end_timestamp = session_timestamp + timedelta(minutes=session_duration_minutes)
+                customer_id = day_pool[pool_idx % len(day_pool)]
+                pool_idx += 1
+                ad_id = get_random_ad_id(utm_source, ad_ids_by_source)
 
-        # Bias toward customers who placed orders for better attribution coverage
-        customer_id = pick_customer_id(ordering_customer_ids)
-
-        # Get actual ad ID for proper attribution linkage
-        ad_id = get_random_ad_id(utm_source, ad_ids_by_source)
-
-        sessions_data.append(
-            [
-                session_id,  # SESSION_ID
-                customer_id,  # CUSTOMER_ID
-                session_timestamp.strftime("%Y-%m-%d %H:%M:%S"),  # STARTED_AT
-                end_timestamp.strftime("%Y-%m-%d %H:%M:%S"),  # ENDED_AT
-                utm_source,  # UTM_SOURCE (attribution)
-                ad_id,  # AD_ID (ad attribution)
-            ]
-        )
+                sessions_data.append([
+                    session_id,
+                    customer_id,
+                    session_timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+                    end_timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+                    utm_source,
+                    ad_id,
+                ])
 
     write_to_csv(website_sessions_path, headers, sessions_data)
     log_time_range("Website Sessions", session_timestamps)
@@ -405,74 +381,46 @@ def generate_app_sessions(ad_ids_by_source, ordering_customer_ids):
     sessions_data = []
     session_timestamps = []
 
-    for session_id in range(1, APP_SESSIONS_COUNT + 1):
-        # Generate uniform timestamp distribution across extended period (training + validation)
-        # Matches website session timing for consistent attribution analysis
-        days_back = random.randint(-VALIDATION_EXTENSION_DAYS, TIME_SPAN_IN_DAYS)
-        base_datetime = datetime.now() - timedelta(days=days_back)
+    num_days = TIME_SPAN_IN_DAYS + VALIDATION_EXTENSION_DAYS + 1
+    total_weight = sum(SESSION_SOURCE_WEIGHTS)
+    sessions_per_day = APP_SESSIONS_COUNT // num_days
+    session_id = 0
 
-        # Mobile app usage patterns (slightly different from web)
-        # Mobile apps often see more distributed usage throughout the day
-        hour = random.choices(
-            range(24),
-            weights=[
-                1,  # 00:00
-                1,  # 01:00
-                1,  # 02:00
-                1,  # 03:00
-                2,  # 04:00
-                3,  # 05:00
-                4,  # 06:00
-                5,  # 07:00
-                6,  # 08:00 - Morning commute
-                7,  # 09:00
-                8,  # 10:00
-                9,  # 11:00
-                10,  # 12:00 - Peak lunch (mobile convenience)
-                9,  # 13:00
-                8,  # 14:00
-                7,  # 15:00
-                6,  # 16:00
-                5,  # 17:00 - Evening commute
-                4,  # 18:00
-                3,  # 19:00
-                2,  # 20:00
-                2,  # 21:00
-                1,  # 22:00
-                1,  # 23:00
-            ],
-        )[0]
-        minute = random.randint(0, 59)
-        second = random.randint(0, 59)
+    hour_weights = [
+        1, 1, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+        10, 9, 8, 7, 6, 5, 4, 3, 2, 2, 1, 1,
+    ]
 
-        session_timestamp = base_datetime.replace(
-            hour=hour, minute=minute, second=second
-        )
-        session_timestamps.append(session_timestamp)
+    for day_offset in range(num_days):
+        days_back = TIME_SPAN_IN_DAYS - day_offset
+        base_date = datetime.now() - timedelta(days=days_back)
+        day_pool = make_daily_customer_pool(ordering_customer_ids, 1000 + day_offset, sessions_per_day)
+        pool_idx = 0
 
-        # Generate marketing attribution data (weighted toward ad platforms)
-        utm_source = random.choices(SESSION_SOURCES, weights=SESSION_SOURCE_WEIGHTS)[0]
+        for source_idx, utm_source in enumerate(SESSION_SOURCES):
+            source_count = max(1, round(sessions_per_day * SESSION_SOURCE_WEIGHTS[source_idx] / total_weight))
+            for _ in range(source_count):
+                session_id += 1
+                hour = random.choices(range(24), weights=hour_weights)[0]
+                minute = random.randint(0, 59)
+                second = random.randint(0, 59)
+                session_timestamp = base_date.replace(hour=hour, minute=minute, second=second)
+                session_timestamps.append(session_timestamp)
 
-        # Generate session duration (3-60 minutes for mobile)
-        session_duration_minutes = random.randint(3, 60)
-        end_timestamp = session_timestamp + timedelta(minutes=session_duration_minutes)
+                session_duration_minutes = random.randint(3, 60)
+                end_timestamp = session_timestamp + timedelta(minutes=session_duration_minutes)
+                customer_id = day_pool[pool_idx % len(day_pool)]
+                pool_idx += 1
+                ad_id = get_random_ad_id(utm_source, ad_ids_by_source)
 
-        # Bias toward customers who placed orders for better attribution coverage
-        customer_id = pick_customer_id(ordering_customer_ids)
-
-        # Get actual ad ID for proper attribution linkage (same pool as website)
-        ad_id = get_random_ad_id(utm_source, ad_ids_by_source)
-
-        sessions_data.append(
-            [
-                session_id,  # SESSION_ID
-                customer_id,  # CUSTOMER_ID
-                session_timestamp.strftime("%Y-%m-%d %H:%M:%S"),  # STARTED_AT
-                end_timestamp.strftime("%Y-%m-%d %H:%M:%S"),  # ENDED_AT
-                utm_source,  # UTM_SOURCE (attribution)
-                ad_id,  # AD_ID (mobile ad attribution)
-            ]
-        )
+                sessions_data.append([
+                    session_id,
+                    customer_id,
+                    session_timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+                    end_timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+                    utm_source,
+                    ad_id,
+                ])
 
     write_to_csv(app_sessions_path, headers, sessions_data)
     log_time_range("App Sessions", session_timestamps)
