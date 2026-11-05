@@ -27,8 +27,12 @@ jobs:
           PROFILES_YML: ${{ secrets.KEYPAIR_PROFILES_YML }}
         run: |
           echo "$PROFILES_YML" | base64 -d > ${{ env.PROFILE_DIR }}/profiles.yml
-          # Remove reuse_connections lines (null value breaks dbt-snowflake >=1.12.5)
-          sed -i '/reuse_connections/d' ${{ env.PROFILE_DIR }}/profiles.yml
+          # Fix reuse_connections: null → false (breaks dbt-snowflake >=1.12.5)
+          sed -i 's/reuse_connections:.*/reuse_connections: false/' ${{ env.PROFILE_DIR }}/profiles.yml
+          # If reuse_connections wasn't in the file, add it under each target
+          if ! grep -q 'reuse_connections' ${{ env.PROFILE_DIR }}/profiles.yml; then
+            sed -i '/private_key_path:/a\      reuse_connections: false' ${{ env.PROFILE_DIR }}/profiles.yml
+          fi
 
       - name: Write Snowflake private key
         env:
