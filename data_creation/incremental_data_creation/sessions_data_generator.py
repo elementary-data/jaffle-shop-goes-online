@@ -221,9 +221,9 @@ def load_ordering_customer_ids():
     return sorted(customer_ids) if customer_ids else list(range(1, 2001))
 
 
-def make_daily_customer_pool(ordering_customer_ids, day_offset, size):
-    """Build a shuffled customer pool for one day, cycling through ordering customers."""
-    rng = random.Random(42 + day_offset)
+def make_customer_pool(ordering_customer_ids, seed, size):
+    """Build a shuffled customer pool, cycling through ordering customers."""
+    rng = random.Random(seed)
     pool = []
     while len(pool) < size:
         batch = ordering_customer_ids.copy()
@@ -305,10 +305,12 @@ def generate_website_sessions(ad_ids_by_source, ordering_customer_ids):
         9, 8, 7, 6, 5, 4, 3, 2, 2, 1, 1, 1,
     ]
 
+    # Fixed pool reused every day so customer-to-source mapping is stable across days
+    fixed_pool = make_customer_pool(ordering_customer_ids, 42, sessions_per_day)
+
     for day_offset in range(num_days):
         days_back = TIME_SPAN_IN_DAYS - day_offset
         base_date = datetime.now() - timedelta(days=days_back)
-        day_pool = make_daily_customer_pool(ordering_customer_ids, day_offset, sessions_per_day)
         pool_idx = 0
 
         for source_idx, utm_source in enumerate(SESSION_SOURCES):
@@ -323,7 +325,7 @@ def generate_website_sessions(ad_ids_by_source, ordering_customer_ids):
 
                 session_duration_minutes = random.randint(5, 120)
                 end_timestamp = session_timestamp + timedelta(minutes=session_duration_minutes)
-                customer_id = day_pool[pool_idx % len(day_pool)]
+                customer_id = fixed_pool[pool_idx % len(fixed_pool)]
                 pool_idx += 1
                 ad_id = get_random_ad_id(utm_source, ad_ids_by_source)
 
@@ -391,10 +393,12 @@ def generate_app_sessions(ad_ids_by_source, ordering_customer_ids):
         10, 9, 8, 7, 6, 5, 4, 3, 2, 2, 1, 1,
     ]
 
+    # Fixed pool reused every day (different seed from website for diversity)
+    fixed_pool = make_customer_pool(ordering_customer_ids, 1000, sessions_per_day)
+
     for day_offset in range(num_days):
         days_back = TIME_SPAN_IN_DAYS - day_offset
         base_date = datetime.now() - timedelta(days=days_back)
-        day_pool = make_daily_customer_pool(ordering_customer_ids, 1000 + day_offset, sessions_per_day)
         pool_idx = 0
 
         for source_idx, utm_source in enumerate(SESSION_SOURCES):
@@ -409,7 +413,7 @@ def generate_app_sessions(ad_ids_by_source, ordering_customer_ids):
 
                 session_duration_minutes = random.randint(3, 60)
                 end_timestamp = session_timestamp + timedelta(minutes=session_duration_minutes)
-                customer_id = day_pool[pool_idx % len(day_pool)]
+                customer_id = fixed_pool[pool_idx % len(fixed_pool)]
                 pool_idx += 1
                 ad_id = get_random_ad_id(utm_source, ad_ids_by_source)
 
