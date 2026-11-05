@@ -27,6 +27,8 @@ jobs:
           PROFILES_YML: ${{ secrets.KEYPAIR_PROFILES_YML }}
         run: |
           echo "$PROFILES_YML" | base64 -d > ${{ env.PROFILE_DIR }}/profiles.yml
+          # Remove reuse_connections if set to null (breaks dbt-snowflake >=1.12.5)
+          sed -i '/^ *reuse_connections: *$/d' ${{ env.PROFILE_DIR }}/profiles.yml
 
       - name: Write Snowflake private key
         env:
